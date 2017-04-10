@@ -1,0 +1,28 @@
+﻿<div class="login-box">
+    <div class="login-logo">
+        <a href="../../index2.html"><b>Sales</b>Ventana</a>
+    </div>
+    <div class="login-box-body">
+        <p class="login-box-msg">Sign in to start your session</p>
+
+        <form class="form-signin" role="form" novalidate angular-validator name="userLoginForm" angular-validator-submit="login()">
+            <div class="form-group has-feedback">
+                <input type="text" id="inputUsername" name="inputUsername" class="form-control"
+                       ng-model="user.username" validate-on="blur" required required-message="'Username is required'" placeholder="Username">
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" id="inputPassword" name="inputPassword" class="form-control" ng-model="user.password" placeholder="Password"
+                       validate-on="blur" required required-message="'Password is required'">
+            </div>
+            <div class="row">
+                <div class="col-xs-8">
+                </div>
+                <div class="col-xs-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                </div>
+            </div>
+        </form>
+        <a href="#">I forgot my password</a><br>
+        <a href="register.html" class="text-center">Register a new membership</a>
+    </div>
+</div>

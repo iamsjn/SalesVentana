@@ -1,0 +1,181 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <label>
+                                    <input type="radio" name="salesType" value="yearly" class="flat-red" ng-model="salesType">
+                                    Yearly &nbsp;
+                                </label>
+                                <label>
+                                    <input type="radio" name="salesType" value="quarterly" class="flat-red" ng-model="salesType">
+                                    Quarterly &nbsp;
+                                </label>
+                                <label>
+                                    <input type="radio" name="salesType" value="monthly" class="flat-red" ng-model="salesType">
+                                    Monthly &nbsp;
+                                </label>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <form role="form" role="form" novalidate angular-validator name="salesFilterForm" angular-validator-submit="filterSales();">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Year :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputSalesYear"
+                                                     output-model="outputSalesYear"
+                                                     button-label="icon year"
+                                                     item-label="icon year"
+                                                     tick-property="ticked"
+                                                     selection-mode="single"
+                                                     is-checkbox-layer-open="true"
+                                                     max-height="250px">
+                                                </div>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Quarter :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputSalesQuarter"
+                                                     output-model="outputSalesQuarter"
+                                                     button-label="icon quarter"
+                                                     item-label="icon quarter"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Month :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputSalesMonth"
+                                                     output-model="outputSalesMonth"
+                                                     button-label="icon month"
+                                                     item-label="icon month"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Brand :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputBrands"
+                                                     output-model="outputBrands"
+                                                     button-label="icon brandName"
+                                                     item-label="icon brandName"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     on-close="brandClick()"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Product Category :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputProductCategories"
+                                                     output-model="outputProductCategories"
+                                                     button-label="icon name"
+                                                     item-label="icon name"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     on-close="productCategoryClick()"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Product :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputProducts"
+                                                     output-model="outputProducts"
+                                                     button-label="icon productName"
+                                                     item-label="icon productName"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Region :</label>
+                                                <div isteven-multi-select
+                                                     input-model="modernBrowsers"
+                                                     output-model="outputBrowsers"
+                                                     button-label="icon name"
+                                                     item-label="icon name maker"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Channel :</label>
+                                                <div isteven-multi-select
+                                                     input-model="modernBrowsers"
+                                                     output-model="outputBrowsers"
+                                                     button-label="icon name"
+                                                     item-label="icon name maker"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <br />
+                                                <label>
+                                                    <input type="checkbox" class="flat-red">
+                                                    Brand &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" class="flat-red">
+                                                    Product Type &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" class="flat-red">
+                                                    Product &nbsp;
+                                                </label>
+                                            </div>
+                                            <div class="btn-group pull-right">
+                                                <input type="submit" class="btn btn-primary" value="Search" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div fusioncharts
+                                             width="100%"
+                                             height="400"
+                                             type="pie2d"
+                                             chart="{{yearlysalesattrs}}"
+                                             dataset="{{yearlysalesdataset}}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div fusioncharts
+                                             width="100%"
+                                             height="400"
+                                             type="pie3d"
+                                             chart="{{yearlysalesshareattrs}}"
+                                             dataset="{{yearlysalessharedataset}}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

@@ -1,0 +1,33 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html ng-app="salesVentana">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Ventana</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body class="skin-purple" ng-controller="rootCtrl">
+    <div class="wrapper">
+        <top-bar></top-bar>
+        <side-bar ng-if="userData.isUserLoggedIn"></side-bar>
+        <div class="content-wrapper" ng-if="userData.isUserLoggedIn">
+            <bread-crumb ng-if="userData.isUserLoggedIn"></bread-crumb>
+            <section class="content">
+                <div ng-view></div>
+            </section>
+        </div>
+        <div class="content-wrapper" style="margin-left:0px;" ng-if="!userData.isUserLoggedIn">
+            <bread-crumb ng-if="userData.isUserLoggedIn"></bread-crumb>
+            <section class="content">
+                <div ng-view></div>
+            </section>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/vendors")
+    @Scripts.Render("~/bundles/app")
+</body>
+</html>
