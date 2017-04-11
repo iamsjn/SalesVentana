@@ -11,9 +11,11 @@ namespace SalesVentana.Data
 {
     public interface ISalesRepository
     {
-        DataTable GetYearlySales(int year);
+        DataTable GetYearlySales(int year, string reportType, string brandIds, string categoryIds, string productIds, string regionIds, string channelIds);
         DataTable GetProductCategory(string brandIds);
         DataTable GetBrand();
         DataTable GetProduct(string categoryIds);
+        DataTable GetRegion();
+        DataTable GetChannel();
     }
 }

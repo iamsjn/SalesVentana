@@ -42,6 +42,42 @@ namespace SalesVentana.Controllers
         }
 
         [Authorize]
+        [Route("region")]
+        [HttpGet]
+        public HttpResponseMessage GetRegion(HttpRequestMessage request)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                DataTable table = _productCategoryWiseSalesRepository.GetRegion();
+
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    regions = table.AsEnumerable().Select(x => new { regionId = x.Field<int>("RegionId"), regionName = x.Field<string>("RegionName") })
+                });
+                return response;
+            });
+        }
+
+        [Authorize]
+        [Route("channel")]
+        [HttpGet]
+        public HttpResponseMessage GetChannel(HttpRequestMessage request)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                DataTable table = _productCategoryWiseSalesRepository.GetChannel();
+
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    channels = table.AsEnumerable().Select(x => new { channelId = x.Field<int>("ChannelId"), channelName = x.Field<string>("ChannelName") })
+                });
+                return response;
+            });
+        }
+
+        [Authorize]
         [Route("product-category")]
         [HttpGet]
         [HttpPost]
@@ -60,7 +96,7 @@ namespace SalesVentana.Controllers
 
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    productCategories = table.AsEnumerable().Select(x => new { categoryId = x.Field<int>("CategoryId"), name = x.Field<string>("CategoryName") })
+                    productCategories = table.AsEnumerable().Select(x => new { categoryId = x.Field<int>("CategoryId"), categoryName = x.Field<string>("CategoryName") })
                 });
                 return response;
             });
@@ -70,18 +106,18 @@ namespace SalesVentana.Controllers
         [Route("product")]
         [HttpGet]
         [HttpPost]
-        public HttpResponseMessage GetProduct(HttpRequestMessage request, dynamic[] productCategory)
+        public HttpResponseMessage GetProduct(HttpRequestMessage request, dynamic[] category)
         {
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
                 DataTable table = null;
-                string productIds = string.Empty;
+                string categoryIds = string.Empty;
 
-                if (productCategory != null && productCategory.Count() > 0)
-                    productIds = string.Join(",", productCategory.Select(x => x.categoryId).ToArray());
+                if (category != null && category.Count() > 0)
+                    categoryIds = string.Join(",", category.Select(x => x.categoryId).ToArray());
 
-                table = _productCategoryWiseSalesRepository.GetProduct(productIds);
+                table = _productCategoryWiseSalesRepository.GetProduct(categoryIds);
 
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -95,13 +131,30 @@ namespace SalesVentana.Controllers
         [Route("yearly-sales/{year}")]
         [HttpGet]
         [HttpPost]
-        public HttpResponseMessage GetYearlySales(HttpRequestMessage request, int year)
+        public HttpResponseMessage GetYearlySales(HttpRequestMessage request, int year, dynamic searchCriteria)
         {
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
-                DataTable table = _productCategoryWiseSalesRepository.GetYearlySales(year);
+                string brandIds = string.Empty;
+                string categoryIds = string.Empty;
+                string productIds = string.Empty;
+                string regionIds = string.Empty;
+                string channelIds = string.Empty;
+                string reportType = string.Empty;
 
+                if (searchCriteria != null)
+                {
+                    brandIds = searchCriteria.brandIds;
+                    categoryIds = searchCriteria.categoryIds;
+                    productIds = searchCriteria.productIds;
+                    regionIds = searchCriteria.regionIds;
+                    channelIds = searchCriteria.channelIds;
+                    reportType = "brandType:" + searchCriteria.brandType + "," + "categoryType:" + searchCriteria.categoryType + "," + "productType:" + searchCriteria.productType;
+                }
+
+                DataTable table = _productCategoryWiseSalesRepository.GetYearlySales(year, reportType, brandIds, categoryIds, productIds, regionIds, channelIds);
+                table = table.DefaultView.ToTable( /*distinct*/ true);
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
                     table

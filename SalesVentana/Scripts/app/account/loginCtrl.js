@@ -8,7 +8,7 @@
     function loginCtrl($scope, membershipService, notificationService, $rootScope, $location) {
 
         if ($scope.userData.isUserLoggedIn)
-            $location.path('/home');
+            $location.path('/sales');
 
         $scope.login = login;
         $scope.user = {};
@@ -25,7 +25,7 @@
                 if ($rootScope.previousState)
                     $location.path($rootScope.previousState);
                 else
-                    $location.path('/home');
+                    $location.path('/sales');
             }
             else {
                 notificationService.displayError('Login failed. Try again.');

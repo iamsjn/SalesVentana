@@ -41,7 +41,7 @@ namespace SalesVentana.Data
         {
             get
             {
-                var filePath = @"G:\LOCAL\SalesVentana\Updated\SalesVentana\SalesVentana.Data\App.config";
+                var filePath = @"G:\LOCAL\SalesVentana\SalesVentana.Data\App.config";
                 //var filePath = @"E:\SalesVentana\SalesVentana.Data\App.config";
                 var map = new ExeConfigurationFileMap { ExeConfigFilename = filePath };
                 return ConfigurationManager.OpenMappedExeConfiguration(map, ConfigurationUserLevel.None);
