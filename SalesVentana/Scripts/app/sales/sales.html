@@ -1,4 +1,4 @@
-﻿<div class="row">
+﻿<div class="row" ng-init="loadInitData();">
     <div class="col-md-12">
         <div class="panel panel-info">
             <div class="panel-body">
@@ -7,15 +7,15 @@
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <label>
-                                    <input type="radio" name="salesType" value="yearly" class="flat-red" ng-model="salesType" checked>
+                                    <input type="radio" name="salesType" value="yearly" ng-model="salesType" ng-change="changeSalesType();" checked>
                                     Yearly &nbsp;
                                 </label>
                                 <label>
-                                    <input type="radio" name="salesType" value="quarterly" class="flat-red" ng-model="salesType">
+                                    <input type="radio" name="salesType" value="quarterly" ng-model="salesType" ng-change="changeSalesType();">
                                     Quarterly &nbsp;
                                 </label>
                                 <label>
-                                    <input type="radio" name="salesType" value="monthly" class="flat-red" ng-model="salesType">
+                                    <input type="radio" name="salesType" value="monthly" ng-model="salesType" ng-change="changeSalesType();">
                                     Monthly &nbsp;
                                 </label>
                             </div>
@@ -35,6 +35,7 @@
                                                      tick-property="ticked"
                                                      selection-mode="single"
                                                      is-checkbox-layer-open="true"
+                                                     is-disabled="yearItemIsDisabled"
                                                      max-height="250px">
                                                 </div>
                                                 </select>
@@ -48,6 +49,8 @@
                                                      item-label="icon quarter"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
+                                                     is-disabled="quarterItemIsDisabled"
+                                                     max-labels="3"
                                                      max-height="250px">
                                                 </div>
                                             </div>
@@ -60,8 +63,34 @@
                                                      item-label="icon month"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
+                                                     is-disabled="monthItemIsDisabled"
+                                                     max-labels="3"
                                                      max-height="250px">
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Report bases on:</label>
+                                                <br />
+                                                <label>
+                                                    <input type="checkbox" name="brand" ng-model="brandType" ng-checked="true">
+                                                    Brand &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" name="category" ng-model="categoryType">
+                                                    Product Category &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" name="product" ng-model="productType">
+                                                    Product &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" name="region" ng-model="regionType">
+                                                    Region &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" name="showroom" ng-model="showroomType">
+                                                    Showroom &nbsp;
+                                                </label>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -75,6 +104,7 @@
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
                                                      on-close="brandClick()"
+                                                     max-labels="3"
                                                      max-height="250px">
                                                 </div>
                                             </div>
@@ -88,6 +118,7 @@
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
                                                      on-close="productCategoryClick()"
+                                                     max-labels="3"
                                                      max-height="250px">
                                                 </div>
                                             </div>
@@ -100,8 +131,33 @@
                                                      item-label="icon productName"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
+                                                     max-labels="3"
                                                      max-height="250px">
                                                 </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Chart bases on:</label>
+                                                <br />
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="Brand" ng-model="chartFilter" ng-checked="true">
+                                                    Brand &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="ProductCategory" ng-model="chartFilter">
+                                                    Product Category &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="Product" ng-model="chartFilter">
+                                                    Product &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="Region" ng-model="chartFilter">
+                                                    Region &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="Showroom" ng-model="chartFilter">
+                                                    Showroom &nbsp;
+                                                </label>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
@@ -114,6 +170,7 @@
                                                      item-label="icon regionName"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
+                                                     max-labels="3"
                                                      max-height="250px">
                                                 </div>
                                             </div>
@@ -126,24 +183,22 @@
                                                      item-label="icon channelName"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
+                                                     max-labels="3"
                                                      max-height="250px">
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label>&nbsp;</label>
-                                                <br />
-                                                <label>
-                                                    <input type="checkbox" name="brand" ng-model="brandType">
-                                                    Brand &nbsp;
-                                                </label>
-                                                <label>
-                                                    <input type="checkbox" name="category" ng-model="categoryType">
-                                                    Product Category &nbsp;
-                                                </label>
-                                                <label>
-                                                    <input type="checkbox" name="product" ng-model="productType">
-                                                    Product &nbsp;
-                                                </label>
+                                                <label>Showroom :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputShowroom"
+                                                     output-model="outputShowroom"
+                                                     button-label="icon showroomName"
+                                                     item-label="icon showroomName"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     max-labels="3"
+                                                     max-height="250px">
+                                                </div>
                                             </div>
                                             <div class="btn-group pull-right">
                                                 <input type="submit" class="btn btn-primary" value="Search" />
@@ -153,6 +208,15 @@
                                 </form>
                                 <hr />
                                 <div class="row">
+                                    <div class="col-md-12 text-center" ng-if="showChart">
+                                        <div fusioncharts
+                                             width="100%"
+                                             height="400"
+                                             type="pie3d"
+                                             chart="{{yearlysalesattrs}}"
+                                             dataset="{{yearlysalesdataset}}">
+                                        </div>
+                                    </div>
                                     <div class="col-md-12">
                                         <table class="table table-bordered table-responsive table-striped" style="font-size:13px;">
                                             <thead>
@@ -163,34 +227,13 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr ng-repeat="(k, v) in yearlylSales">
-                                                    <td>
-                                                        {{v["Item"]}}
-                                                    </td>
-                                                    <td class="text-right">
-                                                        {{v["Share"]}} %
-                                                    </td>
-                                                    <td class="text-right">
-                                                        {{v["Total Sales(Tk)"]}}
-                                                    </td>
-                                                    <td class="text-right">
-                                                        {{v["Total Sales(Tk M)"]}}
-                                                    </td>
-                                                    <td class="text-right">
-                                                        {{v["Retail"]}}
+                                                <tr ng-repeat="yearlylSale in yearlylSales">
+                                                    <td ng-repeat="header in salesHeader">
+                                                        {{yearlylSale[header]}}
                                                     </td>
                                                 </tr>
                                             </tbody>
                                         </table>
-                                    </div>
-                                    <div class="col-md-12 text-center" ng-if="showChart">
-                                        <div fusioncharts
-                                             width="100%"
-                                             height="400"
-                                             type="pie3d"
-                                             chart="{{yearlysalesattrs}}"
-                                             dataset="{{yearlysalesdataset}}">
-                                        </div>
                                     </div>
                                 </div>
                             </div>

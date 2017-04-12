@@ -175,7 +175,6 @@
     <Content Include="Content\css\flat.png" />
     <Content Include="Content\css\isteven-multi-select.css" />
     <Content Include="Content\css\purple.css" />
-    <Content Include="Content\css\select2.min.css" />
     <Content Include="Content\css\site.css" />
     <Content Include="Content\css\blank.gif" />
     <Content Include="Content\css\bootstrap-theme.css" />
@@ -187,9 +186,7 @@
     <Content Include="Content\css\font-awesome.css" />
     <Content Include="Content\css\jquery.fancybox.css" />
     <Content Include="Content\css\loading-bar.css" />
-    <Content Include="Content\css\morris.css" />
     <Content Include="Content\css\purple%402x.png" />
-    <Content Include="Content\css\i-check-purple.css" />
     <Content Include="Content\css\purple.png" />
     <Content Include="Content\css\skin-purple.css" />
     <Content Include="Content\css\toastr.css" />
@@ -208,6 +205,7 @@
     <Content Include="Content\fonts\fontawesome-webfont.woff2" />
     <Content Include="Content\fonts\FontAwesome.otf" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
+    <None Include="Properties\PublishProfiles\SalesVentana.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\app\account\login - Copy.html" />
     <Content Include="Scripts\app\home\index.html" />
@@ -294,6 +292,7 @@
     <Content Include="Scripts\vendors\raphael.js" />
     <Content Include="Scripts\vendors\respond.src.js" />
     <Content Include="Scripts\vendors\select2.min.js" />
+    <Content Include="Scripts\vendors\smart-table.min.js" />
     <Content Include="Scripts\vendors\toastr.js" />
     <Content Include="Scripts\vendors\ui-bootstrap-tpls-0.13.1.js" />
     <Content Include="Scripts\vendors\underscore.js" />

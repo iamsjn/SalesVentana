@@ -16,11 +16,13 @@ namespace SalesVentana.Controllers
     public class SalesController : ApiControllerBase
     {
         ISalesRepository _productCategoryWiseSalesRepository = null;
+        IUnitOfWork _unitOfWork = null;
         public SalesController(IBaseRepository<Error> errorRepository, ISalesRepository productCategoryWiseSalesRepository,
             IUnitOfWork unitOfWork)
             : base(errorRepository, unitOfWork)
         {
             _productCategoryWiseSalesRepository = productCategoryWiseSalesRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [Authorize]
@@ -32,7 +34,7 @@ namespace SalesVentana.Controllers
             {
                 HttpResponseMessage response = null;
                 DataTable table = _productCategoryWiseSalesRepository.GetBrand();
-
+                _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
                     brands = table.AsEnumerable().Select(x => new { brandId = x.Field<int>("BrandId"), brandName = x.Field<string>("BrandName") })
@@ -50,7 +52,7 @@ namespace SalesVentana.Controllers
             {
                 HttpResponseMessage response = null;
                 DataTable table = _productCategoryWiseSalesRepository.GetRegion();
-
+                _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
                     regions = table.AsEnumerable().Select(x => new { regionId = x.Field<int>("RegionId"), regionName = x.Field<string>("RegionName") })
@@ -68,7 +70,7 @@ namespace SalesVentana.Controllers
             {
                 HttpResponseMessage response = null;
                 DataTable table = _productCategoryWiseSalesRepository.GetChannel();
-
+                _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
                     channels = table.AsEnumerable().Select(x => new { channelId = x.Field<int>("ChannelId"), channelName = x.Field<string>("ChannelName") })
@@ -76,6 +78,25 @@ namespace SalesVentana.Controllers
                 return response;
             });
         }
+
+        [Authorize]
+        [Route("showroom")]
+        [HttpGet]
+        public HttpResponseMessage GetShowroom(HttpRequestMessage request)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                DataTable table = _productCategoryWiseSalesRepository.GetShowroom();
+                _unitOfWork.Terminate();
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    showrooms = table.AsEnumerable().Select(x => new { showroomId = x.Field<int>("ShowroomId"), showroomName = x.Field<string>("Name") })
+                });
+                return response;
+            });
+        }
+
 
         [Authorize]
         [Route("product-category")]
@@ -93,7 +114,7 @@ namespace SalesVentana.Controllers
                     brandIds = string.Join(",", brand.Select(x => x.brandId).ToArray());
 
                 table = _productCategoryWiseSalesRepository.GetProductCategory(brandIds);
-
+                _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
                     productCategories = table.AsEnumerable().Select(x => new { categoryId = x.Field<int>("CategoryId"), categoryName = x.Field<string>("CategoryName") })
@@ -118,7 +139,7 @@ namespace SalesVentana.Controllers
                     categoryIds = string.Join(",", category.Select(x => x.categoryId).ToArray());
 
                 table = _productCategoryWiseSalesRepository.GetProduct(categoryIds);
-
+                _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
                     products = table.AsEnumerable().Select(x => new { productId = x.Field<int>("ProductId"), productName = x.Field<string>("ProductName") })
@@ -141,6 +162,7 @@ namespace SalesVentana.Controllers
                 string productIds = string.Empty;
                 string regionIds = string.Empty;
                 string channelIds = string.Empty;
+                string showroomIds = string.Empty;
                 string reportType = string.Empty;
 
                 if (searchCriteria != null)
@@ -150,11 +172,14 @@ namespace SalesVentana.Controllers
                     productIds = searchCriteria.productIds;
                     regionIds = searchCriteria.regionIds;
                     channelIds = searchCriteria.channelIds;
-                    reportType = "brandType:" + searchCriteria.brandType + "," + "categoryType:" + searchCriteria.categoryType + "," + "productType:" + searchCriteria.productType;
+                    showroomIds = searchCriteria.showroomIds;
+                    reportType = "brandType:" + searchCriteria.brandType + "," + "categoryType:" + searchCriteria.categoryType + "," +
+                        "productType:" + searchCriteria.productType + "," + "regionType:" + searchCriteria.regionType + "," + "showroomType:" + searchCriteria.showroomType;
                 }
 
-                DataTable table = _productCategoryWiseSalesRepository.GetYearlySales(year, reportType, brandIds, categoryIds, productIds, regionIds, channelIds);
-                table = table.DefaultView.ToTable( /*distinct*/ true);
+                DataTable table = _productCategoryWiseSalesRepository.GetYearlySales(year, reportType, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
+                //table = table.DefaultView.ToTable( /*distinct*/ true);
+                _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
                     table

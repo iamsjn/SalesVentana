@@ -31,18 +31,17 @@ namespace SalesVentana
             "~/Scripts/Vendors/fusioncharts.charts.js",
             "~/Scripts/Vendors/fusioncharts.theme.fint.js",
             "~/Scripts/Vendors/angular-fusioncharts.min.js",
-            "~/Scripts/Vendors/icheck.min.js",
             "~/Scripts/Vendors/jquery.fancybox.js",
             "~/Scripts/Vendors/jquery.fancybox-media.js",
             "~/Scripts/Vendors/isteven-multi-select.js",
             "~/Scripts/Vendors/jquery-ui.min.js",
             "~/Scripts/Vendors/moment.min.js",
             "~/Scripts/Vendors/daterangepicker.js",
-            "~/Scripts/Vendors/select2.min.js",
             "~/Scripts/Vendors/bootstrap-datepicker.js",
             "~/Scripts/Vendors/jquery.slimscroll.min.js",
             "~/Scripts/Vendors/fastclick.min.js",
             "~/Scripts/Vendors/loading-bar.js",
+            "~/Scripts/Vendors/smart-table.min.js",
             "~/Scripts/site.js"
             ));
 
@@ -58,36 +57,20 @@ namespace SalesVentana
              "~/Scripts/app/layout/sideBar.directive.js",
              "~/Scripts/app/layout/breadCrumb.directive.js",
              "~/Scripts/app/layout/customPager.directive.js",
-             "~/Scripts/app/directives/rating.directive.js",
-             "~/Scripts/app/directives/availableMovie.directive.js",
              "~/Scripts/app/account/loginCtrl.js",
              "~/Scripts/app/account/registerCtrl.js",
              "~/Scripts/app/home/rootCtrl.js",
              "~/Scripts/app/home/indexCtrl.js",
-             "~/Scripts/app/customers/customersCtrl.js",
-             "~/Scripts/app/customers/customersRegCtrl.js",
-             "~/Scripts/app/customers/customerEditCtrl.js",
-             "~/Scripts/app/sales/salesCtrl.js",
-             "~/Scripts/app/movies/moviesCtrl.js",
-             "~/Scripts/app/movies/movieAddCtrl.js",
-             "~/Scripts/app/movies/movieDetailsCtrl.js",
-             "~/Scripts/app/movies/movieEditCtrl.js",
-             "~/Scripts/app/controllers/rentalCtrl.js",
-             "~/Scripts/app/rental/rentMovieCtrl.js",
-             "~/Scripts/app/rental/rentStatsCtrl.js"
-             ));
+             "~/Scripts/app/sales/salesCtrl.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
             "~/content/css/bootstrap.css",
             "~/content/css/font-awesome.css",
             "~/content/css/site.css",
             "~/content/css/skin-purple.css",
-            "~/content/css/flat.css",
-            "~/content/css/purple.css",
             "~/content/css/datepicker3.css",
             "~/content/css/isteven-multi-select.css",
             "~/content/css/daterangepicker.css",
-            "~/content/css/select2.min.css",
             "~/content/css/toastr.css",
             "~/content/css/jquery.fancybox.css",
             "~/content/css/loading-bar.css"));

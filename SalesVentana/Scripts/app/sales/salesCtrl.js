@@ -25,18 +25,29 @@
         $scope.outputRegion = [];
         $scope.inputChannel = [];
         $scope.outputChannel = [];
+        $scope.inputShowroom = [];
+        $scope.outputShowroom = [];
         $scope.yearlylSales = [];
         $scope.salesHeader = [];
-        $scope.brandType = 0;
-        $scope.categoryType = 0;
-        $scope.productType = 0;
+        $scope.salesData = [];
+        $scope.brandType = true;
+        $scope.categoryType = false;
+        $scope.productType = false;
+        $scope.regionType = false;
+        $scope.showroomType = false;
         $scope.showChart = false;
+        $scope.salesType = 'yearly';
+        $scope.chartFilter = 'Brand';
         $scope.currentYear = currentYear;
+        $scope.yearItemIsDisabled = false;
+        $scope.quarterItemIsDisabled = true;
+        $scope.monthItemIsDisabled = true;
         $scope.currentMonth = monthNames[new Date().getMonth()];
 
         //drop down filling
-        for (var i = parseInt(currentYear) ; i >= 2000; i--) {
-            $scope.inputSalesYear.push({ year: i });
+        $scope.inputSalesYear.push({ year: parseInt(currentYear), ticked: true });
+        for (var i = parseInt(currentYear - 1) ; i >= 2000; i--) {
+            $scope.inputSalesYear.push({ year: i, ticked: false });
         }
 
         for (var i = 1 ; i <= 4; i++) {
@@ -56,7 +67,7 @@
                 showpercentvalues: "1",
                 showborder: "0",
                 showplotborder: "0",
-                showlegend: "1",
+                showlegend: "0",
                 legendborder: "0",
                 legendposition: "bottom",
                 enablesmartlabels: "1",
@@ -77,6 +88,11 @@
         $scope.yearlysalesdataset = { "category": [[{ "label": "AC" }]], "data": [[{ "label": "AC", "value": 1987354192 }]] };
 
         //apiServices
+        $scope.loadInitData = function () {
+            $scope.outputSalesYear = [{ year: parseInt(currentYear), ticked: true }];
+            $scope.filterSales();
+        }
+
         function loadBrand() {
             apiService.get('/api/sales/brand/#', null,
                         brandDataLoadCompleted,
@@ -127,6 +143,16 @@
             $scope.inputChannel = result.data.channels;
         }
 
+        function loadShowroom() {
+            apiService.get('/api/sales/showroom/#', null,
+                        showroomDataLoadCompleted,
+                        dataLoadFailed);
+        }
+
+        function showroomDataLoadCompleted(result) {
+            $scope.inputShowroom = result.data.showrooms;
+        }
+
         $scope.brandClick = function () {
             apiService.post('/api/sales/product-category/#', $scope.outputBrands,
                         productCategoryDataLoadCompleted,
@@ -142,41 +168,40 @@
         $scope.filterSales = function () {
             var searchCriteria = [];
             var reportType = [];
-            var brandIds = '', categoryIds = '', productIds = '', regionIds = '', channelIds = '';
+            var brandIds = '', categoryIds = '', productIds = '', regionIds = '', channelIds = '', showroomIds = '';
 
             $.each($scope.outputBrands, function () {
-                //searchCriteria.push({ branchId: v["branchId"] })
                 brandIds += this.brandId + ',';
             })
 
             $.each($scope.outputProductCategories, function () {
-                //searchCriteria.push({ categoryId: v["categoryId"] })
                 categoryIds += this.categoryId + ',';
             })
 
             $.each($scope.outputProducts, function () {
-                //searchCriteria.push({ productId: v["productId"] })
                 productIds += this.productId + ',';
             })
 
             $.each($scope.outputRegion, function () {
-                //searchCriteria.push({ productId: v["productId"] })
                 regionIds += this.regionId + ',';
             })
 
             $.each($scope.outputChannel, function () {
-                //searchCriteria.push({ productId: v["productId"] })
                 channelIds += this.channelId + ',';
+            })
+
+            $.each($scope.outputShowroom, function () {
+                showroomIds += this.showroomId + ',';
             })
 
             this.reportType = {};
 
             searchCriteria = {
-                brandIds: brandIds, categoryIds: categoryIds, productIds: productIds, regionIds: regionIds, channelIds: channelIds,
-                brandType: $scope.brandType, categoryType: $scope.categoryType, productType: $scope.productType
+                brandIds: brandIds, categoryIds: categoryIds, productIds: productIds, regionIds: regionIds, channelIds: channelIds, showroomIds: showroomIds,
+                brandType: $scope.brandType, categoryType: $scope.categoryType, productType: $scope.productType, regionType: $scope.regionType, showroomType: $scope.showroomType
             };
 
-            apiService.post('/api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]["year"]), searchCriteria,
+            apiService.post('/api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
                         yearlySalesDataLoadCompleted,
                         dataLoadFailed);
         }
@@ -184,24 +209,48 @@
         function yearlySalesDataLoadCompleted(result) {
             var yearlysalesCategory = [];
             var yearlysalesData = [];
-            var teast = [];
+            var test = [];
+
+            $scope.salesHeader = [];
+            $scope.yearlylSales = [];
             $scope.showChart = true;
             $scope.yearlylSales = result.data.table;
 
             $.each(result.data.table, function (k, v) {
-                yearlysalesCategory.push({ label: v["Item"] });
-                yearlysalesData.push({ label: v["Item"], value: v["Share"] });
+                yearlysalesCategory.push({ label: v[$scope.chartFilter] });
+                yearlysalesData.push({ label: v[$scope.chartFilter], value: v["Share"] });
             });
 
             $scope.yearlysalesdataset.category = yearlysalesCategory;
             $scope.yearlysalesdataset.data = yearlysalesData;
 
             $.each($scope.yearlylSales, function (k, v) {
-                teast = (k, v);
+                test = (k, v);
             })
 
-            for (var headerName in teast) {
+            for (var headerName in test) {
                 $scope.salesHeader.push(headerName);
+            }
+        }
+
+        $scope.changeSalesType = function () {
+            $scope.outputSalesYear = [];
+            $scope.outputSalesQuarter = [];
+            $scope.outputSalesMonth = [];
+            if ($scope.salesType == 'yearly') {
+                $scope.yearItemIsDisabled = false;
+                $scope.quarterItemIsDisabled = true;
+                $scope.monthItemIsDisabled = true;
+            }
+            if ($scope.salesType == 'quarterly') {
+                $scope.yearItemIsDisabled = false;
+                $scope.quarterItemIsDisabled = false;
+                $scope.monthItemIsDisabled = true;
+            }
+            if ($scope.salesType == 'monthly') {
+                $scope.yearItemIsDisabled = false;
+                $scope.quarterItemIsDisabled = true;
+                $scope.monthItemIsDisabled = false;
             }
         }
 
@@ -216,13 +265,8 @@
         loadProduct();
         loadRegion();
         loadChannel();
-
+        loadShowroom();
         //library initialization
-        $(".select2").select2();
-        $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-            checkboxClass: 'icheckbox_flat-purple',
-            radioClass: 'iradio_flat-purple'
-        });
     }
 
 })(angular.module('salesVentana'));

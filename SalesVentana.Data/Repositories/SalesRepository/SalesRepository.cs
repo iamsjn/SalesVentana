@@ -42,9 +42,9 @@ namespace SalesVentana.Data
         {
             string categoryIdQuery = string.Empty;
             if (!string.IsNullOrEmpty(categoryIds))
-                categoryIdQuery = "AND CategoryId In (" + categoryIds + ")";
+                categoryIdQuery = "Where ParentId In (" + categoryIds + ")";
 
-            _sqlQuery = string.Format(@"SELECT SKUId ProductId, p1.Name ProductName FROM vw_DimProduct p1, vw_DimProductCategory p2 WHERE p1.Hierarchynodeid = p2.categoryid {0};", categoryIdQuery);
+            _sqlQuery = string.Format(@"SELECT SKUId ProductId, p1.Name ProductName FROM vw_DimProduct p1 {0};", categoryIdQuery);
             return ExecuteDataTable();
         }
 
@@ -60,20 +60,25 @@ namespace SalesVentana.Data
             return ExecuteDataTable();
         }
 
+        public DataTable GetShowroom()
+        {
+            _sqlQuery = string.Format(@"Select * from vw_DimShowRoom;");
+            return ExecuteDataTable();
+        }
+
         public DataTable GetProductCategory(string brandIds)
         {
             string brandIdQuery = string.Empty;
             if (!string.IsNullOrEmpty(brandIds))
                 brandIdQuery = "And BS.BrandId In (" + brandIds + ")";
 
-            _sqlQuery = string.Format(@"SELECT Distinct CategoryId, PC.Name CategoryName FROM vw_DimBrandSku BS, vw_DimProduct Prod, vw_DimProductCategory PC
-                                        Where BS.SKUID=Prod.SKUID
-                                        And Prod.HierarchynodeId=PC.CategoryId {0};", brandIdQuery);
+            _sqlQuery = string.Format(@"SELECT Distinct CategoryId, PC.Name CategoryName FROM vw_DimProductCategory PC
+                                        Where parentcategoryid IS NULL ORDER BY name;", brandIdQuery);
             return ExecuteDataTable();
         }
 
         public DataTable GetYearlySales(int year, string reportType, string brandIds, string categoryIds, string productIds,
-            string regionIds, string channelIds)
+            string regionIds, string channelIds, string showroomIds)
         {
             DateTime startDate = new DateTime(year, 1, 1);
             DateTime endDate = new DateTime(year, 12, 31);
@@ -82,8 +87,12 @@ namespace SalesVentana.Data
             string productIdQuery = string.Empty;
             string regionIdQuery = string.Empty;
             string channelIdQuery = string.Empty;
-            string reportFilter = this.FindReportFilter(reportType);
-            string reportFilterAlias = "Item";
+            string showroomIdQuery = string.Empty;
+            string reportFilterWithAlias = this.FindReportFilterWithAlias(reportType);
+            string reportFilterWithoutAlias = FindReportFilterWithoutAlias(reportType);
+            string reportFilterAlias = FindReportFilterAlias(reportType);
+            string aliasQuery = AliasQuery(reportFilterAlias);
+            string orderQuery = OrderQuery(reportFilterAlias);
 
             if (!string.IsNullOrEmpty(brandIds))
                 brandIdQuery = "AND vb.BrandID IN(" + brandIds.Trim(',') + ")";
@@ -100,6 +109,9 @@ namespace SalesVentana.Data
             if (!string.IsNullOrEmpty(channelIds))
                 channelIdQuery = "AND Channel.ID IN(" + channelIds.Trim(',') + ")";
 
+            if (!string.IsNullOrEmpty(showroomIds))
+                showroomIdQuery = "AND vsr.ShowroomId IN(" + showroomIds.Trim(',') + ")";
+
             _sqlQuery = string.Format(@"declare @columns varchar(max)
                                         declare @convert varchar(max)
                                         select   @columns = stuff (( select distinct'],[' +  channel.Name 
@@ -109,7 +121,7 @@ namespace SalesVentana.Data
                                         --print @columns
                                         set @convert =
                                         'Select t2.*,'+@columns+' from(Select * from(
-                                        SELECT {2} {3},Channel.Name,SUM(vsf.NetAmount) TotalSales 
+                                        SELECT {2},Channel.Name,SUM(vsf.NetAmount) TotalSales 
                                         FROM vw_SalesFacts vsf,
                                         vw_DimBrandSku vb,
                                         vw_DimProduct vprod,
@@ -119,17 +131,17 @@ namespace SalesVentana.Data
                                         vw_DimChannel Channel
                                         WHERE vsf.SKUID=vb.SKUID
                                         AND vprod.skuid=vsf.SKUID
-                                        AND vprod.Hierarchynodeid=vpc.categoryid  
+                                        AND vprod.ParentId=vpc.categoryid  
                                         AND vsf.saleschannel=Channel.ID  
                                         AND vsf.ShowroomID=vsr.showroomid
                                         AND vsr.RegionID=vr.MarketHierarchyID 
                                         AND vsf.InvoiceDate BETWEEN ''{0}'' AND ''{1}'' 
-                                        {4} {5} {6} {7} {8}
-                                        GROUP BY {2},Channel.Name)tab1
+                                        {5} {6} {7} {8} {9} {12}
+                                        GROUP BY {3},Channel.Name)tab1
                                         pivot(sum(TotalSales) for Name
                                         in ('+@columns+')) as pivottable) t1,(
-                                        select {3},FORMAT((100*TotalSales)/NetSales,''N2'')Share,TotalSales ''Total Sales(Tk)'',FORMAT(TotalSales/1000000,''N2'')''Total Sales(Tk M)'' from (
-                                        SELECT {2} {3},SUM(vsf.NetAmount) TotalSales 
+                                        select {4},FORMAT((100*TotalSales)/NetSales,''N2'')Share,TotalSales ''Total Sales(Tk)'',FORMAT(TotalSales/1000000,''N2'')''Total Sales(Tk M)'' from (
+                                        SELECT {2},SUM(vsf.NetAmount) TotalSales 
                                         FROM vw_SalesFacts vsf,
                                         vw_DimBrandSku vb,  
                                         vw_DimProduct vprod,
@@ -139,15 +151,15 @@ namespace SalesVentana.Data
                                         vw_DimChannel Channel
                                         WHERE vsf.SKUID=vb.SKUID
                                         AND vprod.skuid=vsf.SKUID
-                                        AND vprod.Hierarchynodeid=vpc.categoryid  
+                                        AND vprod.ParentId=vpc.categoryid  
                                         AND vsf.saleschannel=Channel.ID  
                                         AND vsf.ShowroomID=vsr.showroomid
                                         AND vsr.RegionID=vr.MarketHierarchyID 
                                         AND vsf.InvoiceDate BETWEEN ''{0}'' AND ''{1}'' 
-                                        {4} {5} {6} {7} {8}
-                                        GROUP BY {2}) tab2,
+                                        {5} {6} {7} {8} {9} {12}
+                                        GROUP BY {3}) tab2,
                                         (select sum(TotalSales)NetSales from(
-                                        SELECT {2} {3},SUM(vsf.NetAmount) TotalSales 
+                                        SELECT SUM(vsf.NetAmount) TotalSales 
                                         FROM vw_SalesFacts vsf,
                                         vw_DimBrandSku vb,  
                                         vw_DimProduct vprod,
@@ -157,18 +169,48 @@ namespace SalesVentana.Data
                                         vw_DimChannel Channel
                                         WHERE vsf.SKUID=vb.SKUID
                                         AND vprod.skuid=vsf.SKUID
-                                        AND vprod.Hierarchynodeid=vpc.categoryid  
+                                        AND vprod.ParentId=vpc.categoryid  
                                         AND vsf.saleschannel=Channel.ID  
                                         AND vsf.ShowroomID=vsr.showroomid
                                         AND vsr.RegionID=vr.MarketHierarchyID 
                                         AND vsf.InvoiceDate BETWEEN ''{0}'' AND ''{1}''   
-                                        {4} {5} {6} {7} {8}
-                                        GROUP BY {2})tab1)tab3)t2 where t1.{3}=t2.{3} order by t1.{3}'
-                                        execute (@convert);", startDate, endDate, reportFilter, reportFilterAlias, brandIdQuery, categoryIdQuery, productIdQuery, regionIdQuery, channelIdQuery);
+                                        {5} {6} {7} {8} {9} {12}
+                                        GROUP BY {3})tab1)tab3)t2 {10} {11}'
+                                        execute (@convert);", startDate, endDate, reportFilterWithAlias, 
+                                                            reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery, 
+                                                            productIdQuery, regionIdQuery, channelIdQuery, aliasQuery, orderQuery, showroomIdQuery);
             return ExecuteDataTable();
         }
 
-        private string FindReportFilter(string reportType)
+        private string FindReportFilterWithAlias(string reportType)
+        {
+            string reportFilter = string.Empty;
+            string[] reportTypeArr = reportType.Split(',');
+
+            if (reportTypeArr == null || reportTypeArr.Length <= 0)
+                return reportFilter;
+
+            for (int i = 0; i < reportTypeArr.Length; i++)
+            {
+                if (reportTypeArr[i].ToString().ToLower() == "brandtype:true")
+                    reportFilter += "vb.Brand Brand" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "categorytype:true")
+                    reportFilter += "vpc.Name ProductCategory" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "producttype:true")
+                    reportFilter += "vprod.Name Product" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "regiontype:true")
+                    reportFilter += "vr.Region Region" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "showroomtype:true")
+                    reportFilter += "vsr.Name Showroom" + ",";
+            }
+
+            if (!string.IsNullOrEmpty(reportFilter))
+                reportFilter = reportFilter.Trim(',');
+
+            return reportFilter;
+        }
+
+        private string FindReportFilterWithoutAlias(string reportType)
         {
             string reportFilter = string.Empty;
             string[] reportTypeArr = reportType.Split(',');
@@ -184,6 +226,10 @@ namespace SalesVentana.Data
                     reportFilter += "vpc.Name" + ",";
                 else if (reportTypeArr[i].ToString().ToLower() == "producttype:true")
                     reportFilter += "vprod.Name" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "regiontype:true")
+                    reportFilter += "vr.Region" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "showroomtype:true")
+                    reportFilter += "vsr.Name" + ",";
             }
 
             if (!string.IsNullOrEmpty(reportFilter))
@@ -194,21 +240,62 @@ namespace SalesVentana.Data
 
         private string FindReportFilterAlias(string reportType)
         {
-            string reportFilterAlias = string.Empty;
-            switch (reportType)
+            string reportFilter = string.Empty;
+            string[] reportTypeArr = reportType.Split(',');
+
+            if (reportTypeArr == null || reportTypeArr.Length <= 0)
+                return reportFilter;
+
+            for (int i = 0; i < reportTypeArr.Length; i++)
             {
-                case "1":
-                    reportFilterAlias = "Item";
-                    return reportFilterAlias;
-                case "2":
-                    reportFilterAlias = "Item";
-                    return reportFilterAlias;
-                case "3":
-                    reportFilterAlias = "Item";
-                    return reportFilterAlias;
-                default:
-                    return reportFilterAlias;
+                if (reportTypeArr[i].ToString().ToLower() == "brandtype:true")
+                    reportFilter += "Brand" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "categorytype:true")
+                    reportFilter += "ProductCategory" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "producttype:true")
+                    reportFilter += "Product" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "regiontype:true")
+                    reportFilter += "Region" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "showroomtype:true")
+                    reportFilter += "Showroom" + ",";
             }
+
+            if (!string.IsNullOrEmpty(reportFilter))
+                reportFilter = reportFilter.Trim(',');
+
+            return reportFilter;
+        }
+
+        private string AliasQuery(string reportFilterAlias)
+        {
+            string aliasQuery = "Where ";
+            string[] reportFilterAliasArr = reportFilterAlias.Split(',');
+
+            for (int i = 0; i < reportFilterAliasArr.Length; i++)
+            {
+                if ((i + 1) < reportFilterAliasArr.Length)
+                    aliasQuery += "t1." + reportFilterAliasArr[i] + "=" + "t2." + reportFilterAliasArr[i] + " And ";
+                else
+                    aliasQuery += "t1." + reportFilterAliasArr[i] + "=" + "t2." + reportFilterAliasArr[i];
+            }
+
+            return aliasQuery;
+        }
+
+        private string OrderQuery(string reportFilterAlias)
+        {
+            string aliasQuery = "Order By ";
+            string[] reportFilterAliasArr = reportFilterAlias.Split(',');
+
+            for (int i = 0; i < reportFilterAliasArr.Length; i++)
+            {
+                if ((i + 1) < reportFilterAliasArr.Length)
+                    aliasQuery += "t1." + reportFilterAliasArr[i]  + " , ";
+                else
+                    aliasQuery += "t1." + reportFilterAliasArr[i];
+            }
+
+            return aliasQuery;
         }
 
         private IDataReader ExecuteReader()
