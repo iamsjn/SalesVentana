@@ -1,60 +1,29 @@
 ﻿(function () {
     'use strict';
-
     angular.module('salesVentana', ['common.core', 'common.ui'])
         .config(config).run(run);
 
     config.$inject = ['$routeProvider'];
     function config($routeProvider) {
+        var pathName = window.location.pathname;
         $routeProvider
             .when("/", {
-                templateUrl: "scripts/app/account/login.html",
+                templateUrl: pathName + "/scripts/app/account/login.html",
                 controller: "loginCtrl"
             })
             .when("/home", {
-                templateUrl: "scripts/app/home/index.html",
+                templateUrl: pathName + "/scripts/app/home/index.html",
                 controller: "indexCtrl",
                 resolve: { isAuthenticated: isAuthenticated }
             })
             .when("/register", {
-                templateUrl: "scripts/app/account/register.html",
+                templateUrl: pathName + "/scripts/app/account/register.html",
                 controller: "registerCtrl"
             })
-            .when("/customers", {
-                templateUrl: "scripts/app/customers/customers.html",
-                controller: "customersCtrl"
-            })
-            .when("/customers/register", {
-                templateUrl: "scripts/app/customers/register.html",
-                controller: "customersRegCtrl",
-                resolve: { isAuthenticated: isAuthenticated }
-            })
             .when("/sales", {
-                templateUrl: "scripts/app/sales/sales.html",
+                templateUrl: pathName + "/scripts/app/sales/sales.html",
                 controller: "salesCtrl",
                 resolve: { isAuthenticated: isAuthenticated }
-            })
-            .when("/movies", {
-                templateUrl: "scripts/app/movies/movies.html",
-                controller: "moviesCtrl"
-            })
-            .when("/movies/add", {
-                templateUrl: "scripts/app/movies/add.html",
-                controller: "movieAddCtrl",
-                resolve: { isAuthenticated: isAuthenticated }
-            })
-            .when("/movies/:id", {
-                templateUrl: "scripts/app/movies/details.html",
-                controller: "movieDetailsCtrl",
-                resolve: { isAuthenticated: isAuthenticated }
-            })
-            .when("/movies/edit/:id", {
-                templateUrl: "scripts/app/movies/edit.html",
-                controller: "movieEditCtrl"
-            })
-            .when("/rental", {
-                templateUrl: "scripts/app/rental/rental.html",
-                controller: "rentStatsCtrl"
             }).otherwise({ redirectTo: "/" });
     }
 
@@ -92,7 +61,7 @@
     function isAuthenticated(membershipService, $rootScope, $location) {
         if (!membershipService.isUserLoggedIn()) {
             $rootScope.previousState = $location.path();
-            $location.path('/login');
+            $location.path('#/');
         }
     }
 

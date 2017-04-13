@@ -207,9 +207,7 @@
     <Content Include="Content\fonts\glyphicons-halflings-regular.eot" />
     <None Include="Properties\PublishProfiles\SalesVentana.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\app\account\login - Copy.html" />
     <Content Include="Scripts\app\home\index.html" />
-    <Content Include="Scripts\app\layout\testsideBar2.html" />
     <Content Include="Scripts\app\layout\breadCrumb.html" />
     <Content Include="Scripts\app\layout\breadCrumb.directive.js" />
     <Content Include="Scripts\app\layout\topBar.html" />
@@ -240,32 +238,13 @@
     <Content Include="Scripts\app\customers\customersRegCtrl.js" />
     <Content Include="Scripts\app\customers\editCustomerModal.html" />
     <Content Include="Scripts\app\customers\register.html" />
-    <Content Include="Scripts\app\directives\availableMovie.directive.js" />
-    <Content Include="Scripts\app\directives\availableMovie.html" />
-    <Content Include="Scripts\app\directives\rating.directive.js" />
-    <Content Include="Scripts\app\home\index2.html" />
     <Content Include="Scripts\app\home\indexCtrl.js" />
     <Content Include="Scripts\app\home\rootCtrl.js" />
-    <Content Include="Scripts\app\layout\customPager.directive.js" />
-    <Content Include="Scripts\app\layout\pager.html" />
     <Content Include="Scripts\app\layout\sideBar.directive.js" />
     <Content Include="Scripts\app\layout\sideBar.html" />
     <Content Include="Scripts\app\layout\topBar.directive.js" />
-    <Content Include="Scripts\app\layout\testtopBar2.html" />
     <Content Include="Scripts\app\modules\common.core.js" />
     <Content Include="Scripts\app\modules\common.ui.js" />
-    <Content Include="Scripts\app\movies\add.html" />
-    <Content Include="Scripts\app\movies\details.html" />
-    <Content Include="Scripts\app\movies\edit.html" />
-    <Content Include="Scripts\app\movies\movieAddCtrl.js" />
-    <Content Include="Scripts\app\movies\movieDetailsCtrl.js" />
-    <Content Include="Scripts\app\movies\movieEditCtrl.js" />
-    <Content Include="Scripts\app\movies\movies.html" />
-    <Content Include="Scripts\app\movies\moviesCtrl.js" />
-    <Content Include="Scripts\app\rental\rental.html" />
-    <Content Include="Scripts\app\rental\rentMovieCtrl.js" />
-    <Content Include="Scripts\app\rental\rentMovieModal.html" />
-    <Content Include="Scripts\app\rental\rentStatsCtrl.js" />
     <Content Include="Scripts\app\services\apiService.js" />
     <Content Include="Scripts\app\services\fileUploadService.js" />
     <Content Include="Scripts\app\services\membershipService.js" />
@@ -288,12 +267,12 @@
     <Content Include="Scripts\vendors\loading-bar.js" />
     <Content Include="Scripts\vendors\modernizr.js" />
     <Content Include="Scripts\vendors\moment.min.js" />
-    <Content Include="Scripts\vendors\morris.js" />
     <Content Include="Scripts\vendors\raphael.js" />
     <Content Include="Scripts\vendors\respond.src.js" />
     <Content Include="Scripts\vendors\select2.min.js" />
     <Content Include="Scripts\vendors\smart-table.min.js" />
     <Content Include="Scripts\vendors\toastr.js" />
+    <Content Include="Scripts\vendors\ui-bootstrap-tpls-0.10.0.js" />
     <Content Include="Scripts\vendors\ui-bootstrap-tpls-0.13.1.js" />
     <Content Include="Scripts\vendors\underscore.js" />
     <Content Include="Web.config" />
@@ -309,7 +288,6 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\Index2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SalesVentana.Data\SalesVentana.Data.csproj">

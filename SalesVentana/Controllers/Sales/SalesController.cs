@@ -187,5 +187,47 @@ namespace SalesVentana.Controllers
                 return response;
             });
         }
+
+        [Authorize]
+        [Route("quarterly-sales/{year}")]
+        [HttpGet]
+        [HttpPost]
+        public HttpResponseMessage GetQuaterlySales(HttpRequestMessage request, int year, dynamic searchCriteria)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                string brandIds = string.Empty;
+                string categoryIds = string.Empty;
+                string productIds = string.Empty;
+                string regionIds = string.Empty;
+                string channelIds = string.Empty;
+                string showroomIds = string.Empty;
+                string reportType = string.Empty;
+                string salesQuarter = string.Empty;
+
+                if (searchCriteria != null)
+                {
+                    brandIds = searchCriteria.brandIds;
+                    categoryIds = searchCriteria.categoryIds;
+                    productIds = searchCriteria.productIds;
+                    regionIds = searchCriteria.regionIds;
+                    channelIds = searchCriteria.channelIds;
+                    showroomIds = searchCriteria.showroomIds;
+                    salesQuarter = searchCriteria.salesQuarter;
+                    reportType = "brandType:" + searchCriteria.brandType + "," + "categoryType:" + searchCriteria.categoryType + "," +
+                        "productType:" + searchCriteria.productType + "," + "regionType:" + searchCriteria.regionType + "," + "showroomType:" + searchCriteria.showroomType;
+                }
+
+                DataTable table = _productCategoryWiseSalesRepository.GetQuaterlySales(year, salesQuarter, reportType, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
+                //table = table.DefaultView.ToTable( /*distinct*/ true);
+                _unitOfWork.Terminate();
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    table
+                });
+                return response;
+            });
+        }
     }
 }

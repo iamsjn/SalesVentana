@@ -15,7 +15,7 @@ namespace SalesVentana.Data
 
         public SalesVentanaConnection Initialize()
         {
-            string connectionString = ConfigManager.ConnectionStrings.ConnectionStrings["SalesVentanaConnection"].ToString();
+            string connectionString = ConfigurationManager.ConnectionStrings["SalesVentanaConnection"].ToString();
 
             if (_dbConnection == null)
                 _dbConnection = new SalesVentanaConnection(connectionString);

@@ -6,7 +6,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
-    <_PublishTargetUrl>G:\Published\SalesVentana</_PublishTargetUrl>
+    <_PublishTargetUrl>G:\Published\SalesVentana\13 Apr 2017</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="App_Start/fonts/glyphicons-halflings-regular.eot">
@@ -130,16 +130,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/03/2017 09:14:04</publishTime>
     </File>
     <File Include="bin/SalesVentana.Data.dll">
-      <publishTime>04/12/2017 09:36:50</publishTime>
+      <publishTime>04/13/2017 17:36:54</publishTime>
     </File>
     <File Include="bin/SalesVentana.dll">
-      <publishTime>04/12/2017 09:36:55</publishTime>
+      <publishTime>04/13/2017 18:02:27</publishTime>
     </File>
     <File Include="bin/SalesVentana.Entities.dll">
       <publishTime>04/12/2017 09:36:49</publishTime>
     </File>
     <File Include="bin/SalesVentana.Services.dll">
-      <publishTime>04/12/2017 09:36:50</publishTime>
+      <publishTime>04/13/2017 17:36:54</publishTime>
     </File>
     <File Include="bin/sv/FluentValidation.resources.dll">
       <publishTime>03/03/2017 09:14:04</publishTime>
@@ -190,7 +190,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/02/2017 01:19:58</publishTime>
     </File>
     <File Include="Content/css/bootstrap.css">
-      <publishTime>04/09/2017 13:10:42</publishTime>
+      <publishTime>04/13/2017 16:12:58</publishTime>
     </File>
     <File Include="Content/css/datepicker3.css">
       <publishTime>04/02/2017 01:28:38</publishTime>
@@ -244,7 +244,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/05/2017 18:32:14</publishTime>
     </File>
     <File Include="Content/css/site.css">
-      <publishTime>04/05/2017 18:26:18</publishTime>
+      <publishTime>04/13/2017 16:10:29</publishTime>
     </File>
     <File Include="Content/css/skin-purple.css">
       <publishTime>04/02/2017 01:23:46</publishTime>
@@ -304,7 +304,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/06/2017 03:42:10</publishTime>
     </File>
     <File Include="Scripts/app/account/loginCtrl.js">
-      <publishTime>04/11/2017 15:45:56</publishTime>
+      <publishTime>04/13/2017 17:57:59</publishTime>
     </File>
     <File Include="Scripts/app/account/register.html">
       <publishTime>10/22/2016 13:32:52</publishTime>
@@ -313,7 +313,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/22/2016 13:32:52</publishTime>
     </File>
     <File Include="Scripts/app/app.js">
-      <publishTime>04/11/2017 15:45:16</publishTime>
+      <publishTime>04/13/2017 17:47:11</publishTime>
     </File>
     <File Include="Scripts/app/customers/customerEditCtrl.js">
       <publishTime>04/01/2017 19:39:32</publishTime>
@@ -352,10 +352,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/06/2017 03:00:54</publishTime>
     </File>
     <File Include="Scripts/app/home/rootCtrl.js">
-      <publishTime>04/06/2017 03:27:34</publishTime>
+      <publishTime>04/13/2017 17:57:28</publishTime>
     </File>
     <File Include="Scripts/app/layout/breadCrumb.directive.js">
-      <publishTime>04/04/2017 16:09:26</publishTime>
+      <publishTime>04/13/2017 17:41:07</publishTime>
     </File>
     <File Include="Scripts/app/layout/breadCrumb.html">
       <publishTime>04/06/2017 03:35:54</publishTime>
@@ -367,10 +367,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/22/2016 13:32:52</publishTime>
     </File>
     <File Include="Scripts/app/layout/sideBar.directive.js">
-      <publishTime>04/01/2017 19:33:00</publishTime>
+      <publishTime>04/13/2017 17:41:07</publishTime>
     </File>
     <File Include="Scripts/app/layout/sideBar.html">
-      <publishTime>04/11/2017 15:46:30</publishTime>
+      <publishTime>04/13/2017 18:09:35</publishTime>
     </File>
     <File Include="Scripts/app/layout/testsideBar2.html">
       <publishTime>04/02/2017 02:34:40</publishTime>
@@ -379,13 +379,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/22/2016 13:32:52</publishTime>
     </File>
     <File Include="Scripts/app/layout/topBar.directive.js">
-      <publishTime>04/01/2017 19:33:00</publishTime>
+      <publishTime>04/13/2017 17:40:36</publishTime>
     </File>
     <File Include="Scripts/app/layout/topBar.html">
-      <publishTime>04/06/2017 03:57:02</publishTime>
+      <publishTime>04/13/2017 18:09:22</publishTime>
     </File>
     <File Include="Scripts/app/modules/common.core.js">
-      <publishTime>04/05/2017 19:55:20</publishTime>
+      <publishTime>04/12/2017 15:17:49</publishTime>
     </File>
     <File Include="Scripts/app/modules/common.ui.js">
       <publishTime>04/09/2017 15:25:05</publishTime>
@@ -427,19 +427,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/01/2017 18:37:02</publishTime>
     </File>
     <File Include="Scripts/app/sales/sales.html">
-      <publishTime>04/12/2017 09:01:25</publishTime>
+      <publishTime>04/13/2017 15:49:07</publishTime>
     </File>
     <File Include="Scripts/app/sales/salesCtrl.js">
-      <publishTime>04/12/2017 09:10:16</publishTime>
+      <publishTime>04/13/2017 18:02:10</publishTime>
     </File>
     <File Include="Scripts/app/services/apiService.js">
-      <publishTime>04/06/2017 14:17:47</publishTime>
+      <publishTime>04/13/2017 18:00:28</publishTime>
     </File>
     <File Include="Scripts/app/services/fileUploadService.js">
       <publishTime>10/22/2016 13:32:52</publishTime>
     </File>
     <File Include="Scripts/app/services/membershipService.js">
-      <publishTime>04/06/2017 14:16:58</publishTime>
+      <publishTime>04/13/2017 17:58:49</publishTime>
     </File>
     <File Include="Scripts/app/services/notificationService.js">
       <publishTime>04/06/2017 14:18:16</publishTime>
@@ -555,8 +555,14 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Scripts/vendors/select2.min.js">
       <publishTime>04/05/2017 18:32:40</publishTime>
     </File>
+    <File Include="Scripts/vendors/smart-table.min.js">
+      <publishTime>04/12/2017 15:16:41</publishTime>
+    </File>
     <File Include="Scripts/vendors/toastr.js">
       <publishTime>10/22/2016 13:32:52</publishTime>
+    </File>
+    <File Include="Scripts/vendors/ui-bootstrap-tpls-0.10.0.js">
+      <publishTime>04/13/2017 09:19:42</publishTime>
     </File>
     <File Include="Scripts/vendors/ui-bootstrap-tpls-0.13.1.js">
       <publishTime>10/22/2016 13:32:52</publishTime>
@@ -565,10 +571,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/22/2016 13:32:52</publishTime>
     </File>
     <File Include="Scripts/_references.js">
-      <publishTime>04/09/2017 16:40:41</publishTime>
+      <publishTime>04/13/2017 17:33:15</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>04/06/2017 04:02:28</publishTime>
+      <publishTime>04/13/2017 16:31:18</publishTime>
     </File>
     <File Include="Views/Home/Index2.cshtml">
       <publishTime>04/02/2017 02:35:28</publishTime>
@@ -586,7 +592,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/04/2017 14:11:32</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>04/12/2017 09:36:57</publishTime>
+      <publishTime>04/13/2017 17:36:58</publishTime>
     </File>
   </ItemGroup>
 </Project>

@@ -24,7 +24,7 @@ namespace SalesVentana
             "~/Scripts/Vendors/angular-base64.js",
             "~/Scripts/Vendors/angular-file-upload.js",
             "~/Scripts/Vendors/angucomplete-alt.min.js",
-            "~/Scripts/Vendors/ui-bootstrap-tpls-0.13.1.js",
+            "~/Scripts/Vendors/ui-bootstrap-tpls-0.10.0.js",
             "~/Scripts/Vendors/underscore.js",
             "~/Scripts/Vendors/raphael.js",
             "~/Scripts/Vendors/fusioncharts.js",

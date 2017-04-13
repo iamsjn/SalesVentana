@@ -7,7 +7,7 @@
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: '/scripts/app/layout/topBar.html'
+            templateUrl: window.location.pathname + '/scripts/app/layout/topBar.html'
         }
     }
 
