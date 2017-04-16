@@ -8,20 +8,20 @@
         var pathName = window.location.pathname;
         $routeProvider
             .when("/", {
-                templateUrl: pathName + "/scripts/app/account/login.html",
+                templateUrl: pathName + "scripts/app/account/login.html",
                 controller: "loginCtrl"
             })
             .when("/home", {
-                templateUrl: pathName + "/scripts/app/home/index.html",
+                templateUrl: pathName + "scripts/app/home/index.html",
                 controller: "indexCtrl",
                 resolve: { isAuthenticated: isAuthenticated }
             })
             .when("/register", {
-                templateUrl: pathName + "/scripts/app/account/register.html",
+                templateUrl: pathName + "scripts/app/account/register.html",
                 controller: "registerCtrl"
             })
             .when("/sales", {
-                templateUrl: pathName + "/scripts/app/sales/sales.html",
+                templateUrl: pathName + "scripts/app/sales/sales.html",
                 controller: "salesCtrl",
                 resolve: { isAuthenticated: isAuthenticated }
             }).otherwise({ redirectTo: "/" });

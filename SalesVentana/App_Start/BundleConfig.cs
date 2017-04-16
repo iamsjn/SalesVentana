@@ -53,6 +53,7 @@ namespace SalesVentana
              "~/Scripts/app/services/notificationService.js",
              "~/Scripts/app/services/membershipService.js",
              "~/Scripts/app/services/fileUploadService.js",
+             "~/Scripts/app/services/pathNameService.js",
              "~/Scripts/app/layout/topBar.directive.js",
              "~/Scripts/app/layout/sideBar.directive.js",
              "~/Scripts/app/layout/breadCrumb.directive.js",

@@ -33,7 +33,7 @@ namespace SalesVentana.Controllers
                 if (ModelState.IsValid)
                 {
                     MembershipContext userContext = _membershipService.ValidateUser(user.Username, user.Password);
-                    if (userContext != null)
+                    if (userContext != null && userContext.User != null)
                         response = request.CreateResponse(HttpStatusCode.OK, new { success = true });
                     else
                         response = request.CreateResponse(HttpStatusCode.OK, new { success = false });

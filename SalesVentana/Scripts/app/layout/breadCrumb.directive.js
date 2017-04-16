@@ -7,7 +7,7 @@
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: window.location.pathname + '/scripts/app/layout/breadCrumb.html'
+            templateUrl: window.location.pathname + 'scripts/app/layout/breadCrumb.html'
         }
     }
 

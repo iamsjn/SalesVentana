@@ -46,6 +46,7 @@
         $scope.productType = false;
         $scope.regionType = false;
         $scope.showroomType = false;
+        $scope.employeeType = false;
         $scope.showChart = false;
         $scope.salesType = 'Share';
         $scope.chartFilter = 'Brand';
@@ -53,6 +54,13 @@
         $scope.yearItemIsDisabled = false;
         $scope.quarterItemIsDisabled = true;
         $scope.monthItemIsDisabled = true;
+        $scope.isBrandDisabled = false;
+        $scope.isCategoryDisabled = true;
+        $scope.isProductDisabled = true;
+        $scope.isRegionDisabled = true;
+        $scope.isShowroomDisabled = true;
+        $scope.isEmployeeDisabled = true;
+        $scope.chartFilterChecked = false;
         $scope.currentPage = 0;
         $scope.totalItems = 0;
         $scope.entryLimit = 0; // items per page
@@ -105,12 +113,14 @@
 
         //apiServices
         $scope.loadInitData = function () {
-            $scope.outputSalesYear = [{ year: parseInt(currentYear), ticked: true }];
-            $scope.filterSales();
+            if ($scope.userData.isUserLoggedIn) {
+                $scope.outputSalesYear = [{ year: parseInt(currentYear), ticked: true }];
+                $scope.filterSales();
+            }
         }
 
         function loadBrand() {
-            apiService.get(pathName + '/api/sales/brand/#', null,
+            apiService.get('api/sales/brand/#', null,
                         brandDataLoadCompleted,
                         dataLoadFailed);
         }
@@ -120,7 +130,7 @@
         }
 
         function loadProductCategory() {
-            apiService.get(pathName + '/api/sales/product-category/#', null,
+            apiService.get('api/sales/product-category/#', null,
                         productCategoryDataLoadCompleted,
                         dataLoadFailed);
         }
@@ -130,7 +140,7 @@
         }
 
         function loadProduct() {
-            apiService.get(pathName + '/api/sales/product/#', null,
+            apiService.get('api/sales/product/#', null,
                         productDataLoadCompleted,
                         dataLoadFailed);
         }
@@ -140,7 +150,7 @@
         }
 
         function loadRegion() {
-            apiService.get(pathName + '/api/sales/region/#', null,
+            apiService.get('api/sales/region/#', null,
                         regionDataLoadCompleted,
                         dataLoadFailed);
         }
@@ -150,7 +160,7 @@
         }
 
         function loadChannel() {
-            apiService.get(pathName + '/api/sales/channel/#', null,
+            apiService.get('api/sales/channel/#', null,
                         channelDataLoadCompleted,
                         dataLoadFailed);
         }
@@ -160,7 +170,7 @@
         }
 
         function loadShowroom() {
-            apiService.get(pathName + '/api/sales/showroom/#', null,
+            apiService.get('api/sales/showroom/#', null,
                         showroomDataLoadCompleted,
                         dataLoadFailed);
         }
@@ -170,13 +180,13 @@
         }
 
         $scope.brandClick = function () {
-            apiService.post(pathName + '/api/sales/product-category/#', $scope.outputBrands,
+            apiService.post('api/sales/product-category/#', $scope.outputBrands,
                         productCategoryDataLoadCompleted,
                         dataLoadFailed);
         }
 
         $scope.productCategoryClick = function () {
-            apiService.post(pathName + '/api/sales/product/#', $scope.outputProductCategories,
+            apiService.post('api/sales/product/#', $scope.outputProductCategories,
                         productDataLoadCompleted,
                         dataLoadFailed);
         }
@@ -225,22 +235,22 @@
 
             switch ($scope.salesType) {
                 case 'Share':
-                    apiService.post(pathName + '/api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
+                    apiService.post('api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
                         yearlySalesDataLoadCompleted,
                         dataLoadFailed);
                     break;
                 case 'TotalSales(Mil)':
-                    apiService.post(pathName + '/api/sales/quarterly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
+                    apiService.post('api/sales/quarterly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
                         yearlySalesDataLoadCompleted,
                         dataLoadFailed);
                     break;
                 case 'TotalSalesWEE(Mil)':
-                    apiService.post(pathName + '/api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
+                    apiService.post('api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
                         yearlySalesDataLoadCompleted,
                         dataLoadFailed);
                     break;
                 default:
-                    apiService.post(pathName + '/api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
+                    apiService.post('api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
                         yearlySalesDataLoadCompleted,
                         dataLoadFailed);
                     break;
@@ -254,13 +264,14 @@
             var total = 0;
             $scope.salesHeader = [];
             $scope.salesData = [];
+            $scope.salesCommaSprtdData = [];
             $scope.salesDataTotal = [];
             $scope.showChart = true;
             $scope.salesData = result.data.table;
             //pagination
             $scope.currentPage = 1;
             $scope.totalItems = $scope.salesData.length;
-            $scope.entryLimit = 15;
+            $scope.entryLimit = 100;
             $scope.noOfPages = Math.ceil($scope.totalItems / $scope.entryLimit);
 
             $.each(result.data.table, function (k, v) {
@@ -276,7 +287,8 @@
             })
 
             for (var header in test) {
-                $scope.salesHeader.push(header);
+                if (header != 'Share')
+                    $scope.salesHeader.push(header);
             }
 
             for (var i = 0; i < $scope.salesHeader.length; i++) {
@@ -294,30 +306,71 @@
                     $scope.salesDataTotal.push(total.toLocaleString());
                 else if (total <= 0 && i > 0)
                     $scope.salesDataTotal.push('');
-            }   
+            }
+        }
+
+        $scope.getCommaSeparatedValue = function (data) {
+            if (!isNaN(data) && data != null)
+                return data.toLocaleString();
+            else
+                return data;
         }
 
         $scope.changeSalesType = function () {
-            $scope.outputSalesYear = [];
+            $.each($scope.inputSalesQuarter, function (k,v) {
+                v.ticked = false;
+            })
+            $.each($scope.inputSalesMonth, function (k, v) {
+                v.ticked = false;
+            })
             $scope.outputSalesQuarter = [];
             $scope.outputSalesMonth = [];
 
-            if ($scope.salesType == 'Share') {
-                $scope.yearItemIsDisabled = false;
-                $scope.quarterItemIsDisabled = true;
-                $scope.monthItemIsDisabled = true;
-            }
-            else if ($scope.salesType == 'TotalSales(Mil)') {
-                $scope.yearItemIsDisabled = false;
-                $scope.quarterItemIsDisabled = false;
-                $scope.monthItemIsDisabled = true;
-            }
-            else if ($scope.salesType == 'TotalSalesWE(Mil)') {
-                $scope.yearItemIsDisabled = false;
-                $scope.quarterItemIsDisabled = true;
-                $scope.monthItemIsDisabled = false;
+            switch ($scope.salesType) {
+                case 'Share':
+                    $scope.quarterItemIsDisabled = true;
+                    $scope.monthItemIsDisabled = true;
+                    break;
+                case 'TotalSales(Mil)':
+                    $scope.quarterItemIsDisabled = false;
+                    $scope.monthItemIsDisabled = true;
+                    break;
+                case 'TotalSalesWE(Mil)':
+                    $scope.quarterItemIsDisabled = true;
+                    $scope.monthItemIsDisabled = false;
+                    break;
+                default:
+                    break;
             }
         }
+
+        $scope.enableChartType = function () {
+            if ($scope.brandType)
+                $scope.isBrandDisabled = !$scope.brandType;
+            else
+                $scope.isBrandDisabled = !$scope.brandType;
+            if ($scope.categoryType)
+                $scope.isCategoryDisabled = !$scope.categoryType;
+            else
+                $scope.isCategoryDisabled = !$scope.categoryType;
+            if ($scope.productType)
+                $scope.isProductDisabled = !$scope.productType;
+            else
+                $scope.isProductDisabled = !$scope.productType;
+            if ($scope.regionType)
+                $scope.isRegionDisabled = !$scope.regionType;
+            else
+                $scope.isRegionDisabled = !$scope.regionType;
+            if ($scope.showroomType)
+                $scope.isShowroomDisabled = !$scope.showroomType;
+            else
+                $scope.isShowroomDisabled = !$scope.showroomType;
+            if ($scope.employeeType)
+                $scope.isEmployeeDisabled = !$scope.employeeType;
+            else
+                $scope.isEmployeeDisabled = !$scope.employeeType;
+        }
+
 
         //common data load fail function
         function dataLoadFailed(response) {

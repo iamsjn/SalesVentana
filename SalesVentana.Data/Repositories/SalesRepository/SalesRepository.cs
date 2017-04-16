@@ -246,7 +246,7 @@ namespace SalesVentana.Data
                                         for xml path('')), 1, 2, '') + ']'
                                         print @columns
                                         set @convert =
-                                        'SELECT t1.*,cast(t2.TotalSales as decimal(20,2)) ''TotalSales(TK)'',cast(t2.TotalSales/1000000 as decimal(20,2)) ''TotalSales(Mil)''  FROM (Select * from(SELECT {2},sum(vsf.InvoiceQty)InvoiceQty,case DATENAME(mm, InvoiceDate) 
+                                        'SELECT t1.*,cast(t2.TotalSales as decimal(20,2)) ''TotalSales(TK)'',cast(t2.TotalSales/1000000 as decimal(20,2)) ''TotalSales(Mil)''  FROM (Select * from(SELECT {2},case DATENAME(mm, InvoiceDate) 
                                         when ''January'' then ''Q1''
                                         when ''February'' then ''Q1''
                                         when ''March'' then ''Q1''
@@ -419,7 +419,12 @@ namespace SalesVentana.Data
 
         private string QuarterSearchQuery( int year, string salesQuarter)
         {
-            string quarterQuery = "AND ( ";
+            string quarterQuery = string.Empty;
+
+            if (string.IsNullOrEmpty(salesQuarter))
+                return quarterQuery;
+
+            quarterQuery = "AND ( ";
             string[] salesQuarterArr = salesQuarter.Split(',');
 
             for (int i = 0; i < salesQuarterArr.Length; i++)
@@ -460,7 +465,11 @@ namespace SalesVentana.Data
 
         private string QuarterSearchQueryCTE( int year, string salesQuarter)
         {
-            string quarterQuery = "WHERE ( ";
+            string quarterQuery = string.Empty;
+            if(string.IsNullOrEmpty(salesQuarter))
+                return quarterQuery;
+
+            quarterQuery = "WHERE ( ";
             string[] salesQuarterArr = salesQuarter.Split(',');
 
             for (int i = 0; i < salesQuarterArr.Length; i++)

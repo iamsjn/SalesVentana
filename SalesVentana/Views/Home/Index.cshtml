@@ -13,7 +13,6 @@
 <body class="skin-purple" ng-controller="rootCtrl">
     <div class="wrapper">
         <top-bar></top-bar>
-        <side-bar ng-if="userData.isUserLoggedIn"></side-bar>
         <div class="content-wrapper" ng-if="userData.isUserLoggedIn">
             <bread-crumb ng-if="userData.isUserLoggedIn"></bread-crumb>
             <section class="content">

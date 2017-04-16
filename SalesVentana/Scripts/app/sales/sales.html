@@ -7,7 +7,7 @@
                         <div class="panel panel-default">
                             <div class="panel-body">
                                 <label>
-                                    <input type="radio" name="salesType" value="Share" ng-model="salesType" ng-change="changeSalesType();" checked>
+                                    <input type="radio" name="salesType" value="Share" ng-model="salesType" ng-change="changeSalesType();" ng-checked="true">
                                     Yearly &nbsp;
                                 </label>
                                 <label>
@@ -69,31 +69,48 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label>Report bases on:</label>
+                                                <label>Report based on:</label>
                                                 <br />
                                                 <label>
-                                                    <input type="checkbox" name="brand" ng-model="brandType" ng-checked="true">
+                                                    <input type="checkbox" name="brand" value="brand" ng-model="brandType" ng-checked="true" ng-change="enableChartType();">
                                                     Brand &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="checkbox" name="category" ng-model="categoryType">
+                                                    <input type="checkbox" name="category" value="category" ng-model="categoryType" ng-change="enableChartType();">
                                                     Product Category &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="checkbox" name="product" ng-model="productType">
+                                                    <input type="checkbox" name="product" value="product" ng-model="productType" ng-change="enableChartType();">
                                                     Product &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="checkbox" name="region" ng-model="regionType">
+                                                    <input type="checkbox" name="region" value="region" ng-model="regionType" ng-change="enableChartType();">
                                                     Region &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="checkbox" name="showroom" ng-model="showroomType">
+                                                    <input type="checkbox" name="showroom" value="showroom" ng-model="showroomType" ng-change="enableChartType();">
                                                     Showroom &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" name="employee" value="employee" ng-model="employeeType" ng-change="enableChartType();">
+                                                    Employee &nbsp;
                                                 </label>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Channel :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputChannel"
+                                                     output-model="outputChannel"
+                                                     button-label="icon channelName"
+                                                     item-label="icon channelName"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     max-labels="3"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
                                             <div class="form-group">
                                                 <label>Brand :</label>
                                                 <div isteven-multi-select
@@ -123,6 +140,36 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
+                                                <label>Chart based on:</label>
+                                                <br />
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="Brand" ng-model="chartFilter" ng-checked="true" ng-disabled="isBrandDisabled">
+                                                    Brand &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="ProductCategory" ng-model="chartFilter" ng-checked="chartFilterChecked" ng-disabled="isCategoryDisabled">
+                                                    Product Category &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="Product" ng-model="chartFilter" ng-checked="chartFilterChecked" ng-disabled="isProductDisabled">
+                                                    Product &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="Region" ng-model="chartFilter" ng-checked="chartFilterChecked" ng-disabled="isRegionDisabled">
+                                                    Region &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="Showroom" ng-model="chartFilter" ng-checked="chartFilterChecked" ng-disabled="isShowroomDisabled">
+                                                    Showroom &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="chartFilter" value="Employee" ng-model="chartFilter" ng-checked="chartFilterChecked" ng-disabled="isEmployeeDisabled">
+                                                    Employee &nbsp;
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
                                                 <label>Product :</label>
                                                 <div isteven-multi-select
                                                      input-model="inputProducts"
@@ -136,51 +183,12 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label>Chart bases on:</label>
-                                                <br />
-                                                <label>
-                                                    <input type="radio" name="chartFilter" value="Brand" ng-model="chartFilter" ng-checked="true">
-                                                    Brand &nbsp;
-                                                </label>
-                                                <label>
-                                                    <input type="radio" name="chartFilter" value="ProductCategory" ng-model="chartFilter">
-                                                    Product Category &nbsp;
-                                                </label>
-                                                <label>
-                                                    <input type="radio" name="chartFilter" value="Product" ng-model="chartFilter">
-                                                    Product &nbsp;
-                                                </label>
-                                                <label>
-                                                    <input type="radio" name="chartFilter" value="Region" ng-model="chartFilter">
-                                                    Region &nbsp;
-                                                </label>
-                                                <label>
-                                                    <input type="radio" name="chartFilter" value="Showroom" ng-model="chartFilter">
-                                                    Showroom &nbsp;
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
                                                 <label>Region :</label>
                                                 <div isteven-multi-select
                                                      input-model="inputRegion"
                                                      output-model="outputRegion"
                                                      button-label="icon regionName"
                                                      item-label="icon regionName"
-                                                     tick-property="ticked"
-                                                     is-checkbox-layer-open="true"
-                                                     max-labels="3"
-                                                     max-height="250px">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Channel :</label>
-                                                <div isteven-multi-select
-                                                     input-model="inputChannel"
-                                                     output-model="outputChannel"
-                                                     button-label="icon channelName"
-                                                     item-label="icon channelName"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
                                                      max-labels="3"
@@ -238,12 +246,12 @@
                                             <tbody>
                                                 <tr ng-repeat="yearlylSale in salesData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
                                                     <td ng-repeat="header in salesHeader">
-                                                        {{yearlylSale[header]}}
+                                                        {{getCommaSeparatedValue(yearlylSale[header])}}
                                                     </td>
                                                 </tr>
                                                 <tr ng-if="currentPage == noOfPages">
                                                     <td ng-repeat="total in salesDataTotal track by $index">
-                                                        {{total}}
+                                                        <b>{{total}}</b>
                                                     </td>
                                                 </tr>
                                             </tbody>

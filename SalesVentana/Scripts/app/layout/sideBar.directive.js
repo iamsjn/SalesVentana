@@ -7,7 +7,7 @@
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: window.location.pathname + '/scripts/app/layout/sideBar.html'
+            templateUrl: window.location.pathname + 'scripts/app/layout/sideBar.html'
         }
     }
 

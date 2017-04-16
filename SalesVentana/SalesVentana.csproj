@@ -213,6 +213,7 @@
     <Content Include="Scripts\app\layout\topBar.html" />
     <Content Include="Scripts\app\sales\sales.html" />
     <Content Include="Scripts\app\sales\salesCtrl.js" />
+    <Content Include="Scripts\app\services\pathNameService.js" />
     <Content Include="Scripts\site.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

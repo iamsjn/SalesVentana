@@ -7,7 +7,6 @@
 
     function membershipService(apiService, notificationService, $http, $base64, $cookieStore, $rootScope) {
 
-        var pathName = window.location.pathname;
         var service = {
             login: login,
             register: register,
@@ -17,13 +16,13 @@
         }
 
         function login(user, completed) {
-            apiService.post(pathName + '/api/account/authenticate/#', user,
+            apiService.post('api/account/authenticate/#', user,
             completed,
             loginFailed);
         }
 
         function register(user, completed) {
-            apiService.post(pathName + '/api/account/register/#', user,
+            apiService.post('api/account/register/#', user,
             completed,
             registrationFailed);
         }

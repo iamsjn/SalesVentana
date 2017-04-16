@@ -3,16 +3,16 @@
 
     app.factory('apiService', apiService);
 
-    apiService.$inject = ['$http', '$location', 'notificationService','$rootScope'];
+    apiService.$inject = ['$http', '$location', 'notificationService', 'pathNameService', '$rootScope'];
 
-    function apiService($http, $location, notificationService, $rootScope) {
+    function apiService($http, $location, notificationService, pathNameService, $rootScope) {
         var service = {
             get: get,
             post: post
         };
 
         function get(url, config, success, failure) {
-            return $http.get(url, config)
+            return $http.get((pathNameService.pathName + url), config)
                     .then(function (result) {
                         success(result);
                     }, function (error) {
@@ -28,7 +28,7 @@
         }
 
         function post(url, data, success, failure) {
-            return $http.post(url, data)
+            return $http.post((pathNameService.pathName + url), data)
                     .then(function (result) {
                         success(result);
                     }, function (error) {
