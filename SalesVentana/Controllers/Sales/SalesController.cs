@@ -174,7 +174,8 @@ namespace SalesVentana.Controllers
                     channelIds = searchCriteria.channelIds;
                     showroomIds = searchCriteria.showroomIds;
                     reportType = "brandType:" + searchCriteria.brandType + "," + "categoryType:" + searchCriteria.categoryType + "," +
-                        "productType:" + searchCriteria.productType + "," + "regionType:" + searchCriteria.regionType + "," + "showroomType:" + searchCriteria.showroomType;
+                        "productType:" + searchCriteria.productType + "," + "regionType:" + searchCriteria.regionType + "," + "showroomType:" + searchCriteria.showroomType + "," +
+                        "employeeType:" + searchCriteria.employeeType;
                 }
 
                 DataTable table = _productCategoryWiseSalesRepository.GetYearlySales(year, reportType, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
@@ -197,6 +198,13 @@ namespace SalesVentana.Controllers
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
+                DataSet dataSet = null;
+                DataTable dtTotalSales = null;
+                DataTable dtTotalQty = null;
+                DataTable table = new DataTable();
+                DataRow row = null;
+                int index1 = 0;
+                int ordinal = 0;
                 string brandIds = string.Empty;
                 string categoryIds = string.Empty;
                 string productIds = string.Empty;
@@ -216,12 +224,49 @@ namespace SalesVentana.Controllers
                     showroomIds = searchCriteria.showroomIds;
                     salesQuarter = searchCriteria.salesQuarter;
                     reportType = "brandType:" + searchCriteria.brandType + "," + "categoryType:" + searchCriteria.categoryType + "," +
-                        "productType:" + searchCriteria.productType + "," + "regionType:" + searchCriteria.regionType + "," + "showroomType:" + searchCriteria.showroomType;
+                        "productType:" + searchCriteria.productType + "," + "regionType:" + searchCriteria.regionType + "," + "showroomType:" + searchCriteria.showroomType + "," +
+                        "employeeType:" + searchCriteria.employeeType; ;
                 }
 
-                DataTable table = _productCategoryWiseSalesRepository.GetQuaterlySales(year, salesQuarter, reportType, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
-                //table = table.DefaultView.ToTable( /*distinct*/ true);
+                dataSet = _productCategoryWiseSalesRepository.GetQuaterlySales(year, salesQuarter, reportType, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
+
+                dtTotalSales = dataSet.Tables[0].Copy();
+                dtTotalQty = dataSet.Tables[1].Copy();
+
+                foreach (DataColumn item in dataSet.Tables[0].Columns)
+                {
+                    if (item.ColumnName == "Q1" || item.ColumnName == "Q2" ||
+                        item.ColumnName == "Q3" || item.ColumnName == "Q4")
+                    {
+                        ordinal = dtTotalSales.Columns[item.ColumnName].Ordinal + 1;
+                        dtTotalSales.Columns.Add(item.ColumnName + " Quantity", typeof(double)).SetOrdinal(ordinal);
+                        dtTotalSales.Columns[item.ColumnName].ColumnName = item.ColumnName + " Value";
+                    }
+                }
+
+                foreach (DataRow item in dtTotalSales.Rows)
+                {
+                    index1 = dtTotalSales.Columns.Count - 3;
+
+                    for (int i = (dtTotalQty.Columns.Count - 3); i >= 1; i--)
+                    {
+                        row = dtTotalQty.AsEnumerable().Where(x => x.ItemArray[0].ToString().ToLower() == item.ItemArray[0].ToString().ToLower()).Select(x => x).First();
+                        item[index1] = !DBNull.Value.Equals(row.ItemArray[i]) ? Convert.ToDouble(row.ItemArray[i]) : 0.0;
+                        index1 = index1 - 2;
+                    }
+
+                }
+
+                foreach (DataColumn item in dtTotalSales.Columns)
+                    table.Columns.Add(item.ColumnName);
+
+                foreach (DataRow item in dtTotalSales.Rows)
+                {
+                    table.Rows.Add(item.ItemArray);
+                }
+
                 _unitOfWork.Terminate();
+
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
                     table

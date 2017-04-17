@@ -230,7 +230,7 @@
             searchCriteria = {
                 brandIds: brandIds, categoryIds: categoryIds, productIds: productIds, regionIds: regionIds, channelIds: channelIds, showroomIds: showroomIds,
                 brandType: $scope.brandType, categoryType: $scope.categoryType, productType: $scope.productType, regionType: $scope.regionType,
-                showroomType: $scope.showroomType, salesQuarter: salesQuarter
+                showroomType: $scope.showroomType, salesQuarter: salesQuarter, employeeType: $scope.employeeType
             };
 
             switch ($scope.salesType) {
@@ -294,30 +294,30 @@
             for (var i = 0; i < $scope.salesHeader.length; i++) {
                 total = 0;
                 $.each($scope.salesData, function (k, v) {
-                    if (!isNaN(v[$scope.salesHeader[i]])) {
-                        total += v[$scope.salesHeader[i]];
+                    if (!isNaN(v[$scope.salesHeader[i]]) && v[$scope.salesHeader[i]] != null) {
+                        total += parseFloat(v[$scope.salesHeader[i]]);
                     }
                     else if (i == 0 && isNaN(v[$scope.salesHeader[i]])) {
                         $scope.salesDataTotal.push('Total');
                         return false;
                     }
                 })
-                if (total > 0)
+                if (total >= 0 && i > 0)
                     $scope.salesDataTotal.push(total.toLocaleString());
-                else if (total <= 0 && i > 0)
-                    $scope.salesDataTotal.push('');
+                else if (i > 0)
+                    $scope.salesDataTotal.push(0);
             }
         }
 
         $scope.getCommaSeparatedValue = function (data) {
             if (!isNaN(data) && data != null)
-                return data.toLocaleString();
+                return parseFloat(data).toLocaleString();
             else
-                return data;
+                return 0;
         }
 
         $scope.changeSalesType = function () {
-            $.each($scope.inputSalesQuarter, function (k,v) {
+            $.each($scope.inputSalesQuarter, function (k, v) {
                 v.ticked = false;
             })
             $.each($scope.inputSalesMonth, function (k, v) {

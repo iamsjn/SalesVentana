@@ -2,25 +2,32 @@
     <div class="col-md-12">
         <div class="panel panel-info">
             <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="panel panel-default">
-                            <div class="panel-body">
-                                <label>
-                                    <input type="radio" name="salesType" value="Share" ng-model="salesType" ng-change="changeSalesType();" ng-checked="true">
-                                    Yearly &nbsp;
-                                </label>
-                                <label>
-                                    <input type="radio" name="salesType" value="TotalSales(Mil)" ng-model="salesType" ng-change="changeSalesType();">
-                                    Quarterly &nbsp;
-                                </label>
-                                <label>
-                                    <input type="radio" name="salesType" value="TotalSalesWE(Mil)" ng-model="salesType" ng-change="changeSalesType();">
-                                    Monthly &nbsp;
-                                </label>
-                            </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <label>
+                            <input type="radio" name="salesType" value="Share" ng-model="salesType" ng-change="changeSalesType();" ng-checked="true">
+                            Yearly &nbsp;
+                        </label>
+                        <label>
+                            <input type="radio" name="salesType" value="TotalSales(Mil)" ng-model="salesType" ng-change="changeSalesType();">
+                            Quarterly &nbsp;
+                        </label>
+                        <label>
+                            <input type="radio" name="salesType" value="TotalSalesWE(Mil)" ng-model="salesType" ng-change="changeSalesType();">
+                            Monthly &nbsp;
+                        </label>
+                    </div>
+                </div>
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="!/#collapseOne">
+                                    Customise report based on multiple search criteria
+                                </a>
+                            </h4>
                         </div>
-                        <div class="panel panel-default">
+                        <div id="collapseOne" class="panel-collapse collapse">
                             <div class="panel-body">
                                 <form role="form" role="form" novalidate angular-validator name="salesFilterForm" angular-validator-submit="filterSales();">
                                     <div class="row">
@@ -214,57 +221,55 @@
                                         </div>
                                     </div>
                                 </form>
-                                <hr />
-                                <div class="row">
-                                    <div class="col-md-6 text-center" ng-if="showChart">
-                                        <div fusioncharts
-                                             width="100%"
-                                             height="400"
-                                             type="pie3d"
-                                             chart="{{saleschartattrs}}"
-                                             dataset="{{saleschartdataset}}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 text-center" ng-if="showChart">
-                                        <div fusioncharts
-                                             width="100%"
-                                             height="400"
-                                             type="column3d"
-                                             chart="{{saleschartattrs}}"
-                                             dataset="{{saleschartdataset}}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <table class="table table-bordered table-responsive table-striped" style="font-size:13px;">
-                                            <thead>
-                                                <tr style="background-color: #605ca8; color: white; ">
-                                                    <th ng-repeat="header in salesHeader">
-                                                        {{header}}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr ng-repeat="yearlylSale in salesData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
-                                                    <td ng-repeat="header in salesHeader">
-                                                        {{getCommaSeparatedValue(yearlylSale[header])}}
-                                                    </td>
-                                                </tr>
-                                                <tr ng-if="currentPage == noOfPages">
-                                                    <td ng-repeat="total in salesDataTotal track by $index">
-                                                        <b>{{total}}</b>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <pagination class="pull-right" page="currentPage" max-size="noOfPages" total-items="totalItems" items-per-page="entryLimit" style="cursor:pointer;"></pagination>
-                                    </div>
-                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-center" ng-if="showChart">
+                        <div fusioncharts
+                             width="100%"
+                             height="400"
+                             type="pie3d"
+                             chart="{{saleschartattrs}}"
+                             dataset="{{saleschartdataset}}">
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center" ng-if="showChart">
+                        <div fusioncharts
+                             width="100%"
+                             height="400"
+                             type="column3d"
+                             chart="{{saleschartattrs}}"
+                             dataset="{{saleschartdataset}}">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-responsive table-striped" style="font-size:13px;">
+                            <thead>
+                                <tr style="background-color: #605ca8; color: white; ">
+                                    <th ng-repeat="header in salesHeader">
+                                        {{header}}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="yearlylSale in salesData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
+                                    <td ng-repeat="header in salesHeader">
+                                        {{getCommaSeparatedValue(yearlylSale[header])}}
+                                    </td>
+                                </tr>
+                                <tr ng-if="currentPage == noOfPages">
+                                    <td ng-repeat="total in salesDataTotal track by $index">
+                                        <b>{{total}}</b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <pagination class="pull-right" page="currentPage" max-size="noOfPages" total-items="totalItems" items-per-page="entryLimit" style="cursor:pointer;"></pagination>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>

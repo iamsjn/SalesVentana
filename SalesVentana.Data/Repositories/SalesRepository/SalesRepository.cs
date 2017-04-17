@@ -15,6 +15,8 @@ namespace SalesVentana.Data
     {
         private SalesVentanaConnection _dbConnection;
         private string _sqlQuery;
+        string _employeeTable;
+        string _employeeSearch;
         private SqlCommand _command;
 
         #region Properties
@@ -91,7 +93,7 @@ namespace SalesVentana.Data
             string reportFilterWithAlias = this.FindReportFilterWithAlias(reportType);
             string reportFilterWithoutAlias = FindReportFilterWithoutAlias(reportType);
             string reportFilterAlias = FindReportFilterAlias(reportType);
-            string aliasQuery = AliasQuery(reportFilterAlias);
+            string aliasQuery = YearlyAliasQuery(reportFilterAlias);
             string orderQuery = OrderQuery(reportFilterAlias);
 
             if (!string.IsNullOrEmpty(brandIds))
@@ -120,7 +122,7 @@ namespace SalesVentana.Data
                                         for xml path('')), 1, 2, '') + ']'
                                         --print @columns
                                         set @convert =
-                                        'Select t2.*,'+@columns+' from(Select * from(
+                                        'Select t2.*,t3.InvoiceQty,'+@columns+' from(Select * from(
                                         SELECT {2},Channel.Name, SUM(vsf.NetAmount) TotalSales
                                         FROM vw_SalesFacts vsf,
                                         vw_DimBrandSku vb,
@@ -129,18 +131,20 @@ namespace SalesVentana.Data
                                         vw_DimRegion vr,
                                         vw_DimShowRoom vsr,
                                         vw_DimChannel Channel
+                                        {13}
                                         WHERE vsf.SKUID=vb.SKUID
                                         AND vprod.skuid=vsf.SKUID
                                         AND vprod.ParentId=vpc.categoryid  
                                         AND vsf.saleschannel=Channel.ID  
                                         AND vsf.ShowroomID=vsr.showroomid
                                         AND vsr.RegionID=vr.MarketHierarchyID 
+                                        {14}
                                         AND vsf.InvoiceDate BETWEEN ''{0}'' AND ''{1}'' 
                                         {5} {6} {7} {8} {9} {12}
                                         GROUP BY {3},Channel.Name)tab1
                                         pivot(sum(TotalSales) for Name
                                         in ('+@columns+')) as pivottable) t1,(
-                                        select {4},cast((100*TotalSales)/NetSales as decimal(20,2))Share,TotalSales ''TotalSales(Tk)'',cast(TotalSales/1000000 as decimal(20,2))''TotalSales(Mil)'' from (
+                                        select {4},cast((100*TotalSales)/NetSales as decimal(20,2))Share,TotalSales ''TotalSales(Tk)'' from (
                                         SELECT {2},SUM(vsf.NetAmount) TotalSales 
                                         FROM vw_SalesFacts vsf,
                                         vw_DimBrandSku vb,  
@@ -149,12 +153,14 @@ namespace SalesVentana.Data
                                         vw_DimRegion vr,
                                         vw_DimShowRoom vsr,
                                         vw_DimChannel Channel
+                                        {13}
                                         WHERE vsf.SKUID=vb.SKUID
                                         AND vprod.skuid=vsf.SKUID
                                         AND vprod.ParentId=vpc.categoryid  
                                         AND vsf.saleschannel=Channel.ID  
                                         AND vsf.ShowroomID=vsr.showroomid
                                         AND vsr.RegionID=vr.MarketHierarchyID 
+                                        {14}
                                         AND vsf.InvoiceDate BETWEEN ''{0}'' AND ''{1}'' 
                                         {5} {6} {7} {8} {9} {12}
                                         GROUP BY {3}) tab2,
@@ -167,26 +173,49 @@ namespace SalesVentana.Data
                                         vw_DimRegion vr,
                                         vw_DimShowRoom vsr,
                                         vw_DimChannel Channel
+                                        {13}
+                                        WHERE vsf.SKUID=vb.SKUID
+                                        AND vprod.skuid=vsf.SKUID
+                                        AND vprod.ParentId=vpc.categoryid  
+                                        AND vsf.saleschannel=Channel.ID  
+                                        AND vsf.ShowroomID=vsr.showroomid
+                                        AND vsr.RegionID=vr.MarketHierarchyID
+                                        {14} 
+                                        AND vsf.InvoiceDate BETWEEN ''{0}'' AND ''{1}''   
+                                        {5} {6} {7} {8} {9} {12}
+                                        GROUP BY {3})tab1)tab3)t2,
+                                        (SELECT {2}, SUM(vsf.InvoiceQty) InvoiceQty
+                                        FROM vw_SalesFacts vsf,
+                                        vw_DimBrandSku vb,
+                                        vw_DimProduct vprod,
+                                        vw_DimProductCategory vpc,
+                                        vw_DimRegion vr,
+                                        vw_DimShowRoom vsr,
+                                        vw_DimChannel Channel
+                                        {13}
                                         WHERE vsf.SKUID=vb.SKUID
                                         AND vprod.skuid=vsf.SKUID
                                         AND vprod.ParentId=vpc.categoryid  
                                         AND vsf.saleschannel=Channel.ID  
                                         AND vsf.ShowroomID=vsr.showroomid
                                         AND vsr.RegionID=vr.MarketHierarchyID 
-                                        AND vsf.InvoiceDate BETWEEN ''{0}'' AND ''{1}''   
-                                        {5} {6} {7} {8} {9} {12}
-                                        GROUP BY {3})tab1)tab3)t2 {10} {11}'
+                                        {14}
+                                        AND vsf.InvoiceDate BETWEEN ''{0}'' AND ''{1}'' 
+                                             
+                                        GROUP BY {3}
+                                        ) t3 {10} {11}'
                                         execute (@convert);", startDate, endDate, reportFilterWithAlias,
                                                             reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
-                                                            productIdQuery, regionIdQuery, channelIdQuery, aliasQuery, orderQuery, showroomIdQuery);
+                                                            productIdQuery, regionIdQuery, channelIdQuery, aliasQuery, orderQuery, showroomIdQuery, _employeeTable, _employeeSearch);
             return ExecuteDataTable();
         }
 
-        public DataTable GetQuaterlySales(int year, string salesQuarter, string reportType, string brandIds,
+        public DataSet GetQuaterlySales(int year, string salesQuarter, string reportType, string brandIds,
             string categoryIds, string productIds, string regionIds, string channelIds, string showroomIds)
         {
             DateTime startDate = new DateTime(year, 1, 1);
             DateTime endDate = new DateTime(year, 12, 31);
+            DataSet ds = new DataSet();
             string brandIdQuery = string.Empty;
             string categoryIdQuery = string.Empty;
             string productIdQuery = string.Empty;
@@ -219,6 +248,7 @@ namespace SalesVentana.Data
             if (!string.IsNullOrEmpty(showroomIds))
                 showroomIdQuery = "AND vsr.ShowroomId IN(" + showroomIds.Trim(',') + ")";
 
+            #region Total Sales
             _sqlQuery = string.Format(@"declare @columns varchar(max)
                                         declare @convert varchar(max);
                                         with cte as (SELECT  
@@ -267,11 +297,13 @@ namespace SalesVentana.Data
                                         vw_DimRegion vr,
                                         vw_DimShowRoom vsr,
                                         vw_DimChannel Channel
+                                        {13}
                                         WHERE vsf.SKUID=vb.SKUID
                                         AND vprod.skuid=vsf.SKUID
                                         AND vprod.ParentId=vpc.categoryid  
                                         AND vsf.saleschannel=Channel.ID  
                                         AND vsf.ShowroomID=vsr.showroomid
+                                        {14}
                                         AND vsr.RegionID=vr.MarketHierarchyID 
                                         {0}
                                         {5} {6} {7} {8} {9} {10}
@@ -286,19 +318,112 @@ namespace SalesVentana.Data
                                         vw_DimRegion vr,
                                         vw_DimShowRoom vsr,
                                         vw_DimChannel Channel
+                                        {13}
                                         WHERE vsf.SKUID=vb.SKUID
                                         AND vprod.skuid=vsf.SKUID
                                         AND vprod.ParentId=vpc.categoryid  
                                         AND vsf.saleschannel=Channel.ID  
                                         AND vsf.ShowroomID=vsr.showroomid
+                                        {14}
                                         AND vsr.RegionID=vr.MarketHierarchyID 
                                         {0}                                            
                                         {5} {6} {7} {8} {9} {10}
                                         GROUP BY {3})t2 {11} {12}  '
                                         execute (@convert)
                                         ;", quarterQuery, quarterQueryCTE, reportFilterWithAlias, reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
-                                                            productIdQuery, regionIdQuery, channelIdQuery, showroomIdQuery, aliasQuery, orderQuery);
-            return ExecuteDataTable();
+                                                    productIdQuery, regionIdQuery, channelIdQuery, showroomIdQuery, aliasQuery, orderQuery, _employeeTable, _employeeSearch);
+            ds.Tables.Add(ExecuteDataTable());
+            #endregion
+
+            #region Total Qty
+            _sqlQuery = string.Format(@"declare @columns varchar(max)
+                                        declare @convert varchar(max);
+                                        with cte as (SELECT  
+                                        case DATENAME(mm, InvoiceDate) 
+                                        when 'January' then 'Q1' 
+                                        when 'February' then 'Q1' 
+                                        when 'March' then 'Q1' 
+                                        when 'April' then 'Q2' 
+                                        when 'May' then 'Q2' 
+                                        when 'June' then 'Q2' 
+                                        when 'July' then 'Q3' 
+                                        when 'August' then 'Q3' 
+                                        when 'September' then 'Q3' 
+                                        when 'October' then 'Q4' 
+                                        when 'November' then 'Q4' 
+                                        when 'December' then 'Q4' 
+                                        end InvoiceNumber
+                                        ,Row_NUMBER() OVER(ORDER BY InvoiceDate) sn
+                                        from  vw_SalesFacts 
+                                        {1}
+                                        ) select @columns = stuff (( select '],[' +  max(InvoiceNumber)
+                                        from cte sf
+                                        group by invoicenumber --Generated CTE has same Month value for which its needed in group by 
+                                        order by MIN (sf.sn) -- we need only one row for a single month
+                                        for xml path('')), 1, 2, '') + ']'
+                                        print @columns
+                                        set @convert =
+                                        'SELECT t1.*,cast(t2.TotalSales as decimal(20,2)) ''TotalSales(TK)'',cast(t2.TotalSales/1000000 as decimal(20,2)) ''TotalSales(Mil)''  FROM (Select * from(SELECT {2},case DATENAME(mm, InvoiceDate) 
+                                        when ''January'' then ''Q1''
+                                        when ''February'' then ''Q1''
+                                        when ''March'' then ''Q1''
+                                        when ''April'' then ''Q2''
+                                        when ''May'' then ''Q2''
+                                        when ''June'' then ''Q2''
+                                        when ''July'' then ''Q3''
+                                        when ''August'' then ''Q3'' 
+                                        when ''September'' then ''Q3'' 
+                                        when ''October'' then ''Q4''
+                                        when ''November'' then ''Q4''
+                                        when ''December'' then ''Q4''
+                                        end Quarterr,SUM(vsf.InvoiceQty) TotalSales 
+                                        FROM vw_SalesFacts vsf,
+                                        vw_DimBrandSku vb,
+                                        vw_DimProduct vprod,
+                                        vw_DimProductCategory vpc,
+                                        vw_DimRegion vr,
+                                        vw_DimShowRoom vsr,
+                                        vw_DimChannel Channel
+                                        {13}
+                                        WHERE vsf.SKUID=vb.SKUID
+                                        AND vprod.skuid=vsf.SKUID
+                                        AND vprod.ParentId=vpc.categoryid  
+                                        AND vsf.saleschannel=Channel.ID  
+                                        AND vsf.ShowroomID=vsr.showroomid
+                                        {14}
+                                        AND vsr.RegionID=vr.MarketHierarchyID 
+                                        {0}
+                                        {5} {6} {7} {8} {9} {10}
+                                        GROUP BY {3},DATENAME(mm, vsf.InvoiceDate))tab1
+                                        pivot(sum(TotalSales) for Quarterr
+                                        in ('+@columns+')) as pivottable)t1,
+                                        (SELECT {2},SUM(vsf.InvoiceQty) TotalSales 
+                                        FROM vw_SalesFacts vsf,
+                                        vw_DimBrandSku vb,
+                                        vw_DimProduct vprod,
+                                        vw_DimProductCategory vpc,
+                                        vw_DimRegion vr,
+                                        vw_DimShowRoom vsr,
+                                        vw_DimChannel Channel
+                                        {13}
+                                        WHERE vsf.SKUID=vb.SKUID
+                                        AND vprod.skuid=vsf.SKUID
+                                        AND vprod.ParentId=vpc.categoryid  
+                                        AND vsf.saleschannel=Channel.ID  
+                                        AND vsf.ShowroomID=vsr.showroomid
+                                        {14}
+                                        AND vsr.RegionID=vr.MarketHierarchyID 
+                                        {0}                                            
+                                        {5} {6} {7} {8} {9} {10}
+                                        GROUP BY {3})t2 {11} {12}  '
+                                        execute (@convert)
+                                        ;", quarterQuery, quarterQueryCTE, reportFilterWithAlias, reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
+                                                    productIdQuery, regionIdQuery, channelIdQuery, showroomIdQuery, aliasQuery, orderQuery, _employeeTable, _employeeSearch);
+            ds.Tables.Add(ExecuteDataTable());
+            #endregion
+
+            return ds;
+
         }
 
         private string FindReportFilterWithAlias(string reportType)
@@ -321,6 +446,8 @@ namespace SalesVentana.Data
                     reportFilter += "vr.Region Region" + ",";
                 else if (reportTypeArr[i].ToString().ToLower() == "showroomtype:true")
                     reportFilter += "vsr.Name Showroom" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "employeetype:true")
+                    reportFilter += "emp.Name Employee" + ",";
             }
 
             if (!string.IsNullOrEmpty(reportFilter))
@@ -349,6 +476,8 @@ namespace SalesVentana.Data
                     reportFilter += "vr.Region" + ",";
                 else if (reportTypeArr[i].ToString().ToLower() == "showroomtype:true")
                     reportFilter += "vsr.Name" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "employeetype:true")
+                    reportFilter += "emp.Name" + ",";
             }
 
             if (!string.IsNullOrEmpty(reportFilter))
@@ -377,12 +506,40 @@ namespace SalesVentana.Data
                     reportFilter += "Region" + ",";
                 else if (reportTypeArr[i].ToString().ToLower() == "showroomtype:true")
                     reportFilter += "Showroom" + ",";
+                else if (reportTypeArr[i].ToString().ToLower() == "employeetype:true")
+                {
+                    reportFilter += "Employee" + ",";
+                    _employeeTable = ",vw_DimEmployee emp";
+                    _employeeSearch = "AND vsf.salesEmployeeID=emp.EmployeeID";
+                }
             }
 
             if (!string.IsNullOrEmpty(reportFilter))
                 reportFilter = reportFilter.Trim(',');
 
             return reportFilter;
+        }
+
+        private string YearlyAliasQuery(string reportFilterAlias)
+        {
+            string aliasQuery = "Where ";
+            string[] reportFilterAliasArr = reportFilterAlias.Split(',');
+
+            for (int i = 0; i < reportFilterAliasArr.Length; i++)
+            {
+                if ((i + 1) < reportFilterAliasArr.Length)
+                {
+                    aliasQuery += "t1." + reportFilterAliasArr[i] + "=" + "t2." + reportFilterAliasArr[i] + " And " +
+                        "t2." + reportFilterAliasArr[i] + "=" + "t3." + reportFilterAliasArr[i] + " And ";
+                }
+                else
+                {
+                    aliasQuery += "t1." + reportFilterAliasArr[i] + "=" + "t2." + reportFilterAliasArr[i] +
+                        " And t2." + reportFilterAliasArr[i] + "=" + "t3." + reportFilterAliasArr[i];
+                }
+            }
+
+            return aliasQuery;
         }
 
         private string AliasQuery(string reportFilterAlias)
@@ -393,9 +550,13 @@ namespace SalesVentana.Data
             for (int i = 0; i < reportFilterAliasArr.Length; i++)
             {
                 if ((i + 1) < reportFilterAliasArr.Length)
+                {
                     aliasQuery += "t1." + reportFilterAliasArr[i] + "=" + "t2." + reportFilterAliasArr[i] + " And ";
+                }
                 else
+                {
                     aliasQuery += "t1." + reportFilterAliasArr[i] + "=" + "t2." + reportFilterAliasArr[i];
+                }
             }
 
             return aliasQuery;
@@ -417,7 +578,7 @@ namespace SalesVentana.Data
             return aliasQuery;
         }
 
-        private string QuarterSearchQuery( int year, string salesQuarter)
+        private string QuarterSearchQuery(int year, string salesQuarter)
         {
             string quarterQuery = string.Empty;
 
@@ -463,10 +624,10 @@ namespace SalesVentana.Data
             return quarterQuery + ")";
         }
 
-        private string QuarterSearchQueryCTE( int year, string salesQuarter)
+        private string QuarterSearchQueryCTE(int year, string salesQuarter)
         {
             string quarterQuery = string.Empty;
-            if(string.IsNullOrEmpty(salesQuarter))
+            if (string.IsNullOrEmpty(salesQuarter))
                 return quarterQuery;
 
             quarterQuery = "WHERE ( ";

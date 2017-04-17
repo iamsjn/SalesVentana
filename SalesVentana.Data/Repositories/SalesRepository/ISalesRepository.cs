@@ -20,7 +20,7 @@ namespace SalesVentana.Data
         DataTable GetRegion();
         DataTable GetChannel();
         DataTable GetShowroom();
-        DataTable GetQuaterlySales(int year, string salesQuarter, string reportType, 
+        DataSet GetQuaterlySales(int year, string salesQuarter, string reportType, 
             string brandIds, string categoryIds, string productIds, string regionIds, 
             string channelIds, string showroomIds);
     }
