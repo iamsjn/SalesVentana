@@ -130,16 +130,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/03/2017 09:14:04</publishTime>
     </File>
     <File Include="bin/SalesVentana.Data.dll">
-      <publishTime>04/16/2017 14:50:15</publishTime>
+      <publishTime>04/18/2017 14:50:40</publishTime>
     </File>
     <File Include="bin/SalesVentana.dll">
-      <publishTime>04/16/2017 14:50:19</publishTime>
+      <publishTime>04/18/2017 14:50:44</publishTime>
     </File>
     <File Include="bin/SalesVentana.Entities.dll">
       <publishTime>04/12/2017 09:36:49</publishTime>
     </File>
     <File Include="bin/SalesVentana.Services.dll">
-      <publishTime>04/16/2017 14:50:15</publishTime>
+      <publishTime>04/18/2017 14:50:41</publishTime>
     </File>
     <File Include="bin/sv/FluentValidation.resources.dll">
       <publishTime>03/03/2017 09:14:04</publishTime>
@@ -190,7 +190,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/02/2017 01:19:58</publishTime>
     </File>
     <File Include="Content/css/bootstrap.css">
-      <publishTime>04/13/2017 16:12:58</publishTime>
+      <publishTime>04/17/2017 10:02:08</publishTime>
     </File>
     <File Include="Content/css/datepicker3.css">
       <publishTime>04/02/2017 01:28:38</publishTime>
@@ -244,7 +244,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/05/2017 18:32:14</publishTime>
     </File>
     <File Include="Content/css/site.css">
-      <publishTime>04/13/2017 16:10:29</publishTime>
+      <publishTime>04/17/2017 11:38:47</publishTime>
     </File>
     <File Include="Content/css/skin-purple.css">
       <publishTime>04/02/2017 01:23:46</publishTime>
@@ -382,7 +382,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/16/2017 11:11:11</publishTime>
     </File>
     <File Include="Scripts/app/layout/topBar.html">
-      <publishTime>04/13/2017 18:11:54</publishTime>
+      <publishTime>04/16/2017 15:40:31</publishTime>
     </File>
     <File Include="Scripts/app/modules/common.core.js">
       <publishTime>04/12/2017 15:17:49</publishTime>
@@ -427,10 +427,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/01/2017 18:37:02</publishTime>
     </File>
     <File Include="Scripts/app/sales/sales.html">
-      <publishTime>04/16/2017 14:46:00</publishTime>
+      <publishTime>04/18/2017 17:00:50</publishTime>
     </File>
     <File Include="Scripts/app/sales/salesCtrl.js">
-      <publishTime>04/16/2017 14:33:09</publishTime>
+      <publishTime>04/18/2017 17:02:13</publishTime>
     </File>
     <File Include="Scripts/app/services/apiService.js">
       <publishTime>04/16/2017 12:51:52</publishTime>
@@ -577,7 +577,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/16/2017 10:27:11</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>04/13/2017 16:31:18</publishTime>
+      <publishTime>04/16/2017 15:35:27</publishTime>
     </File>
     <File Include="Views/Home/Index2.cshtml">
       <publishTime>04/02/2017 02:35:28</publishTime>
@@ -595,7 +595,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/04/2017 14:11:32</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>04/13/2017 17:36:58</publishTime>
+      <publishTime>04/18/2017 15:42:46</publishTime>
     </File>
   </ItemGroup>
 </Project>

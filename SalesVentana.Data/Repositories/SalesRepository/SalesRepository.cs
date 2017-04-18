@@ -213,8 +213,6 @@ namespace SalesVentana.Data
         public DataSet GetQuaterlySales(int year, string salesQuarter, string reportType, string brandIds,
             string categoryIds, string productIds, string regionIds, string channelIds, string showroomIds)
         {
-            DateTime startDate = new DateTime(year, 1, 1);
-            DateTime endDate = new DateTime(year, 12, 31);
             DataSet ds = new DataSet();
             string brandIdQuery = string.Empty;
             string categoryIdQuery = string.Empty;
@@ -276,7 +274,7 @@ namespace SalesVentana.Data
                                         for xml path('')), 1, 2, '') + ']'
                                         print @columns
                                         set @convert =
-                                        'SELECT t1.*,cast(t2.TotalSales as decimal(20,2)) ''TotalSales(TK)'',cast(t2.TotalSales/1000000 as decimal(20,2)) ''TotalSales(Mil)''  FROM (Select * from(SELECT {2},case DATENAME(mm, InvoiceDate) 
+                                        'SELECT t1.*,cast(t2.TotalSales as decimal(20,2)) ''TotalSales(TK)'' FROM (Select * from(SELECT {2},case DATENAME(mm, InvoiceDate) 
                                         when ''January'' then ''Q1''
                                         when ''February'' then ''Q1''
                                         when ''March'' then ''Q1''
@@ -329,8 +327,7 @@ namespace SalesVentana.Data
                                         {0}                                            
                                         {5} {6} {7} {8} {9} {10}
                                         GROUP BY {3})t2 {11} {12}  '
-                                        execute (@convert)
-                                        ;", quarterQuery, quarterQueryCTE, reportFilterWithAlias, reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
+                                        execute (@convert);", quarterQuery, quarterQueryCTE, reportFilterWithAlias, reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
                                                     productIdQuery, regionIdQuery, channelIdQuery, showroomIdQuery, aliasQuery, orderQuery, _employeeTable, _employeeSearch);
             ds.Tables.Add(ExecuteDataTable());
             #endregion
@@ -363,7 +360,7 @@ namespace SalesVentana.Data
                                         for xml path('')), 1, 2, '') + ']'
                                         print @columns
                                         set @convert =
-                                        'SELECT t1.*,cast(t2.TotalSales as decimal(20,2)) ''TotalSales(TK)'',cast(t2.TotalSales/1000000 as decimal(20,2)) ''TotalSales(Mil)''  FROM (Select * from(SELECT {2},case DATENAME(mm, InvoiceDate) 
+                                        'SELECT t1.*,cast(t2.TotalSales as decimal(20,2)) ''TotalSales(TK)'' FROM (Select * from(SELECT {2},case DATENAME(mm, InvoiceDate) 
                                         when ''January'' then ''Q1''
                                         when ''February'' then ''Q1''
                                         when ''March'' then ''Q1''
@@ -419,6 +416,165 @@ namespace SalesVentana.Data
                                         execute (@convert)
                                         ;", quarterQuery, quarterQueryCTE, reportFilterWithAlias, reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
                                                     productIdQuery, regionIdQuery, channelIdQuery, showroomIdQuery, aliasQuery, orderQuery, _employeeTable, _employeeSearch);
+            ds.Tables.Add(ExecuteDataTable());
+            #endregion
+
+            return ds;
+
+        }
+
+        public DataSet GetMonthlySales(int year, string salesMonth, string reportType, string brandIds,
+            string categoryIds, string productIds, string regionIds, string channelIds, string showroomIds)
+        {
+            DateTime startDate = new DateTime(year, 1, 1);
+            DateTime endDate = new DateTime(year, 12, 31);
+            DataSet ds = new DataSet();
+            string brandIdQuery = string.Empty;
+            string categoryIdQuery = string.Empty;
+            string productIdQuery = string.Empty;
+            string regionIdQuery = string.Empty;
+            string channelIdQuery = string.Empty;
+            string showroomIdQuery = string.Empty;
+            string reportFilterWithAlias = this.FindReportFilterWithAlias(reportType);
+            string reportFilterWithoutAlias = FindReportFilterWithoutAlias(reportType);
+            string reportFilterAlias = FindReportFilterAlias(reportType);
+            string aliasQuery = AliasQuery(reportFilterAlias);
+            string orderQuery = OrderQuery(reportFilterAlias);
+            string monthQuery = MonthSearchQuery(year, salesMonth.Trim(','));
+            string monthQueryCTE = MonthSearchQueryCTE(year, salesMonth.Trim(','));
+
+            if (!string.IsNullOrEmpty(brandIds))
+                brandIdQuery = "AND vb.BrandID IN(" + brandIds.Trim(',') + ")";
+
+            if (!string.IsNullOrEmpty(categoryIds))
+                categoryIdQuery = "AND vpc.CategoryId IN(" + categoryIds.Trim(',') + ")";
+
+            if (!string.IsNullOrEmpty(productIds))
+                productIdQuery = "AND vprod.SKUId IN(" + productIds.Trim(',') + ")";
+
+            if (!string.IsNullOrEmpty(regionIds))
+                regionIdQuery = "AND vr.ParentID IN(" + regionIds.Trim(',') + ")";
+
+            if (!string.IsNullOrEmpty(channelIds))
+                channelIdQuery = "AND Channel.ID IN(" + channelIds.Trim(',') + ")";
+
+            if (!string.IsNullOrEmpty(showroomIds))
+                showroomIdQuery = "AND vsr.ShowroomId IN(" + showroomIds.Trim(',') + ")";
+
+            #region Total Sales
+            _sqlQuery = string.Format(@"declare @columns varchar(max)
+                                        declare @convert varchar(max)
+                                        -- CTE is needed as STUFF fails to order by correctly for varchar column
+                                        ;with cte as (SELECT left(right(convert(varchar, InvoiceDate, 106), 8),3) InvoiceNumber,Row_NUMBER() OVER(ORDER BY InvoiceDate) sn
+                                        from  vw_SalesFacts {1} ) 
+                                        select @columns = stuff (( select '],[' +  max(InvoiceNumber)
+                                        from cte sf
+                                        group by invoicenumber --Generated CTE has same Month value for which its needed in group by 
+                                        order by MIN (sf.sn) -- we need only one row for a single month
+                                        for xml path('')), 1, 2, '') + ']'
+                                        print @columns
+                                        set @convert =
+                                        'SELECT t1.*,cast(t2.TotalSales as decimal(20,2)) ''TotalSales(TK)'' FROM (Select * from(SELECT {2},left(right(convert(varchar, vsf.InvoiceDate, 106), 8),3)InvoiceDate, SUM(vsf.NetAmount) TotalSales
+                                        FROM vw_SalesFacts vsf,
+                                        vw_DimBrandSku vb,
+                                        vw_DimProduct vprod,
+                                        vw_DimProductCategory vpc,
+                                        vw_DimRegion vr,
+                                        vw_DimShowRoom vsr,
+                                        vw_DimChannel Channel
+                                        {13}
+                                        WHERE vsf.SKUID=vb.SKUID
+                                        AND vprod.skuid=vsf.SKUID
+                                        AND vprod.ParentId=vpc.categoryid  
+                                        AND vsf.saleschannel=Channel.ID  
+                                        AND vsf.ShowroomID=vsr.showroomid
+                                        AND vsr.RegionID=vr.MarketHierarchyID 
+                                        {14}
+                                        {0}
+                                        {5} {6} {7} {8} {9} {10}
+                                        GROUP BY {3} ,vsf.InvoiceDate)tab1
+                                        pivot(sum(TotalSales) for InvoiceDate
+                                        in ('+@columns+')) as pivottable)t1,
+                                        (SELECT {2},SUM(vsf.NetAmount) TotalSales 
+                                        FROM vw_SalesFacts vsf,
+                                        vw_DimBrandSku vb,
+                                        vw_DimProduct vprod,
+                                        vw_DimProductCategory vpc,
+                                        vw_DimRegion vr,
+                                        vw_DimShowRoom vsr,
+                                        vw_DimChannel Channel
+                                        {13}
+                                        WHERE vsf.SKUID=vb.SKUID
+                                        AND vprod.skuid=vsf.SKUID
+                                        AND vprod.ParentId=vpc.categoryid  
+                                        AND vsf.saleschannel=Channel.ID  
+                                        AND vsf.ShowroomID=vsr.showroomid
+                                        AND vsr.RegionID=vr.MarketHierarchyID 
+                                        {14}
+                                        {0}
+                                        {5} {6} {7} {8} {9} {10}
+                                        GROUP BY {3}) t2 {11} {12}'
+                                        execute (@convert);", monthQuery, monthQueryCTE, reportFilterWithAlias, reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
+                                                                productIdQuery, regionIdQuery, channelIdQuery, showroomIdQuery, aliasQuery, orderQuery, _employeeTable, _employeeSearch);
+
+            ds.Tables.Add(ExecuteDataTable());
+            #endregion
+
+            #region Total Qty
+            _sqlQuery = string.Format(@"declare @columns varchar(max)
+                                        declare @convert varchar(max)
+                                        -- CTE is needed as STUFF fails to order by correctly for varchar column
+                                        ;with cte as (SELECT left(right(convert(varchar, InvoiceDate, 106), 8),3) InvoiceNumber,Row_NUMBER() OVER(ORDER BY InvoiceDate) sn
+                                        from  vw_SalesFacts {1} ) 
+                                        select @columns = stuff (( select '],[' +  max(InvoiceNumber)
+                                        from cte sf
+                                        group by invoicenumber --Generated CTE has same Month value for which its needed in group by 
+                                        order by MIN (sf.sn) -- we need only one row for a single month
+                                        for xml path('')), 1, 2, '') + ']'
+                                        print @columns
+                                        set @convert =
+                                        'SELECT t1.*,cast(t2.TotalSales as decimal(20,2)) ''TotalSales(TK)'' FROM (Select * from(SELECT {2},left(right(convert(varchar, vsf.InvoiceDate, 106), 8),3)InvoiceDate, SUM(vsf.InvoiceQty) TotalSales
+                                        FROM vw_SalesFacts vsf,
+                                        vw_DimBrandSku vb,
+                                        vw_DimProduct vprod,
+                                        vw_DimProductCategory vpc,
+                                        vw_DimRegion vr,
+                                        vw_DimShowRoom vsr,
+                                        vw_DimChannel Channel
+                                        {13}
+                                        WHERE vsf.SKUID=vb.SKUID
+                                        AND vprod.skuid=vsf.SKUID
+                                        AND vprod.ParentId=vpc.categoryid  
+                                        AND vsf.saleschannel=Channel.ID  
+                                        AND vsf.ShowroomID=vsr.showroomid
+                                        AND vsr.RegionID=vr.MarketHierarchyID 
+                                        {14}
+                                        {0}
+                                        {5} {6} {7} {8} {9} {10}
+                                        GROUP BY {3} ,vsf.InvoiceDate)tab1
+                                        pivot(sum(TotalSales) for InvoiceDate
+                                        in ('+@columns+')) as pivottable)t1,
+                                        (SELECT {2},SUM(vsf.InvoiceQty) TotalSales 
+                                        FROM vw_SalesFacts vsf,
+                                        vw_DimBrandSku vb,
+                                        vw_DimProduct vprod,
+                                        vw_DimProductCategory vpc,
+                                        vw_DimRegion vr,
+                                        vw_DimShowRoom vsr,
+                                        vw_DimChannel Channel
+                                        {13}
+                                        WHERE vsf.SKUID=vb.SKUID
+                                        AND vprod.skuid=vsf.SKUID
+                                        AND vprod.ParentId=vpc.categoryid  
+                                        AND vsf.saleschannel=Channel.ID  
+                                        AND vsf.ShowroomID=vsr.showroomid
+                                        AND vsr.RegionID=vr.MarketHierarchyID 
+                                        {14}
+                                        {0}
+                                        {5} {6} {7} {8} {9} {10}
+                                        GROUP BY {3}) t2 {11} {12}'
+                                        execute (@convert);", monthQuery, monthQueryCTE, reportFilterWithAlias, reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
+                                                                productIdQuery, regionIdQuery, channelIdQuery, showroomIdQuery, aliasQuery, orderQuery, _employeeTable, _employeeSearch);
             ds.Tables.Add(ExecuteDataTable());
             #endregion
 
@@ -583,7 +739,7 @@ namespace SalesVentana.Data
             string quarterQuery = string.Empty;
 
             if (string.IsNullOrEmpty(salesQuarter))
-                return quarterQuery;
+                return quarterQuery = "AND vsf.InvoiceDate BETWEEN ''1 Jan " + year + "'' AND ''31 Dec " + year + "''";
 
             quarterQuery = "AND ( ";
             string[] salesQuarterArr = salesQuarter.Split(',');
@@ -628,7 +784,7 @@ namespace SalesVentana.Data
         {
             string quarterQuery = string.Empty;
             if (string.IsNullOrEmpty(salesQuarter))
-                return quarterQuery;
+                return quarterQuery = "Where InvoiceDate BETWEEN right(convert(varchar, '1 jan " + year + "', 106), 8) and right(convert(varchar, '31 Dec " + year + "', 106), 8)";
 
             quarterQuery = "WHERE ( ";
             string[] salesQuarterArr = salesQuarter.Split(',');
@@ -667,6 +823,194 @@ namespace SalesVentana.Data
             }
 
             return quarterQuery + ")";
+        }
+
+        private string MonthSearchQuery(int year, string salesMonth)
+        {
+            string monthQuery = string.Empty;
+
+            if (string.IsNullOrEmpty(salesMonth))
+                return monthQuery = "And vsf.InvoiceDate BETWEEN ''1 Jan " + year + "'' AND ''" + DateTime.DaysInMonth(year, 1) + " Dec " + year + "''";
+
+            monthQuery = "AND ( ";
+            string[] salesMonthArr = salesMonth.Split(',');
+
+            for (int i = 0; i < salesMonthArr.Length; i++)
+            {
+                switch (salesMonthArr[i])
+                {
+                    case "January":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Jan " + year + "'' AND ''" + DateTime.DaysInMonth(year, 1) + " Jan " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Jan " + year + "'' AND ''" + DateTime.DaysInMonth(year, 1) + " Jan " + year + "''";
+                        break;
+                    case "February":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Feb " + year + "'' AND ''" + DateTime.DaysInMonth(year, 2) + " Feb " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Feb " + year + "'' AND ''" + DateTime.DaysInMonth(year, 2) + " Feb " + year + "''";
+                        break;
+                    case "March":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Mar " + year + "'' AND ''" + DateTime.DaysInMonth(year, 3) + " Mar " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Mar " + year + "'' AND ''" + DateTime.DaysInMonth(year, 3) + " Mar " + year + "''";
+                        break;
+                    case "April":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Apr " + year + "'' AND ''" + DateTime.DaysInMonth(year, 4) + " Apr " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Apr " + year + "'' AND ''" + DateTime.DaysInMonth(year, 4) + " Apr " + year + "''";
+                        break;
+                    case "May":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 May " + year + "'' AND ''" + DateTime.DaysInMonth(year, 5) + " May " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 May " + year + "'' AND ''" + DateTime.DaysInMonth(year, 5) + " May " + year + "''";
+                        break;
+                    case "June":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Jun " + year + "'' AND ''" + DateTime.DaysInMonth(year, 6) + " Jun " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Jun " + year + "'' AND ''" + DateTime.DaysInMonth(year, 6) + " Jun " + year + "''";
+                        break;
+                    case "July":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Jul " + year + "'' AND ''" + DateTime.DaysInMonth(year, 7) + " Jul " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Jul " + year + "'' AND ''" + DateTime.DaysInMonth(year, 7) + " Jul " + year + "''";
+                        break;
+                    case "August":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Aug " + year + "'' AND ''" + DateTime.DaysInMonth(year, 8) + " Aug " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Aug " + year + "'' AND ''" + DateTime.DaysInMonth(year, 8) + " Aug " + year + "''";
+                        break;
+                    case "September":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Sep " + year + "'' AND ''" + DateTime.DaysInMonth(year, 9) + " Sep " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Sep " + year + "'' AND ''" + DateTime.DaysInMonth(year, 9) + " Sep " + year + "''";
+                        break;
+                    case "October":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Oct " + year + "'' AND ''" + DateTime.DaysInMonth(year, 10) + " Oct " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Oct " + year + "'' AND ''" + DateTime.DaysInMonth(year, 10) + " Oct " + year + "''";
+                        break;
+                    case "November":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Nov " + year + "'' AND ''" + DateTime.DaysInMonth(year, 11) + " Nov " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Nov " + year + "'' AND ''" + DateTime.DaysInMonth(year, 11) + " Nov " + year + "''";
+                        break;
+                    case "December":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Dec " + year + "'' AND ''" + DateTime.DaysInMonth(year, 12) + " Dec " + year + "''" + " OR ";
+                        else
+                            monthQuery += "vsf.InvoiceDate BETWEEN ''1 Dec " + year + "'' AND ''" + DateTime.DaysInMonth(year, 12) + " Dec " + year + "''";
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return monthQuery + ")";
+        }
+
+        private string MonthSearchQueryCTE(int year, string salesMonth)
+        {
+            string monthQuery = string.Empty;
+
+            if (string.IsNullOrEmpty(salesMonth))
+                return monthQuery = "WHERE InvoiceDate BETWEEN right(convert(varchar, '1 Jan " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 1) + " Dec " + year + "', 106), 8)";
+
+            monthQuery = "WHERE ( ";
+            string[] salesMonthArr = salesMonth.Split(',');
+
+            for (int i = 0; i < salesMonthArr.Length; i++)
+            {
+                switch (salesMonthArr[i])
+                {
+                    case "January":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Jan " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 1) + " Jan " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Jan " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 1) + " Jan " + year + "', 106), 8)";
+                        break;
+                    case "February":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Feb " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 2) + " Feb " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Feb " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 2) + " Feb " + year + "', 106), 8)";
+                        break;
+                    case "March":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Mar " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 3) + " Mar " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Mar " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 3) + " Mar " + year + "', 106), 8)";
+                        break;
+                    case "April":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Apr " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 4) + " Apr " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Apr " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 4) + " Apr " + year + "', 106), 8)";
+                        break;
+                    case "May":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 May " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 5) + " May " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 May " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 5) + " May " + year + "', 106), 8)";
+                        break;
+                    case "June":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Jun " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 6) + " Jun " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Jun " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 6) + " Jun " + year + "', 106), 8)";
+                        break;
+                    case "July":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Jul " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 7) + " Jul " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Jul " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 7) + " Jul " + year + "', 106), 8)";
+                        break;
+                    case "August":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Aug " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 8) + " Aug " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Aug " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 8) + " Aug " + year + "', 106), 8)";
+                        break;
+                    case "September":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Sep " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 9) + " Sep " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Sep " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 9) + " Sep " + year + "', 106), 8)";
+                        break;
+                    case "October":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Oct " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 10) + " Oct " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Oct " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 10) + " Oct " + year + "', 106), 8)";
+                        break;
+                    case "November":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Nov " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 11) + " Nov " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Nov " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 11) + " Nov " + year + "', 106), 8)";
+                        break;
+                    case "December":
+                        if ((i + 1) < salesMonthArr.Length)
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Dec " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 12) + " Dec " + year + "', 106), 8)" + " OR ";
+                        else
+                            monthQuery += "InvoiceDate BETWEEN right(convert(varchar, '1 Dec " + year + "', 106), 8) and right(convert(varchar, '" + DateTime.DaysInMonth(year, 12) + " Dec " + year + "', 106), 8)";
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            return monthQuery + ")";
         }
 
         private IDataReader ExecuteReader()

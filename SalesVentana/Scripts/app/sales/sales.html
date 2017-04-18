@@ -5,15 +5,15 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <label>
-                            <input type="radio" name="salesType" value="Share" ng-model="salesType" ng-change="changeSalesType();" ng-checked="true">
+                            <input type="radio" name="salesType" value="yearly" ng-model="salesType" ng-change="changeSalesType();" ng-checked="true">
                             Yearly &nbsp;
                         </label>
                         <label>
-                            <input type="radio" name="salesType" value="TotalSales(Mil)" ng-model="salesType" ng-change="changeSalesType();">
+                            <input type="radio" name="salesType" value="quarterly" ng-model="salesType" ng-change="changeSalesType();">
                             Quarterly &nbsp;
                         </label>
                         <label>
-                            <input type="radio" name="salesType" value="TotalSalesWE(Mil)" ng-model="salesType" ng-change="changeSalesType();">
+                            <input type="radio" name="salesType" value="monthly" ng-model="salesType" ng-change="changeSalesType();">
                             Monthly &nbsp;
                         </label>
                     </div>
@@ -95,7 +95,7 @@
                                                     Region &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="checkbox" name="showroom" value="showroom" ng-model="showroomType" ng-change="enableChartType();">
+                                                    <input type="checkbox" name="showroom" value="showroom" ng-model="showroomType" ng-change="enableChartType();" ng-disabled="isShowroomCheckDisabled">
                                                     Showroom &nbsp;
                                                 </label>
                                                 <label>
@@ -114,6 +114,7 @@
                                                      item-label="icon channelName"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
+                                                     on-close="channelClick()"
                                                      max-labels="3"
                                                      max-height="250px">
                                                 </div>
@@ -166,7 +167,7 @@
                                                     Region &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="chartFilter" value="Showroom" ng-model="chartFilter" ng-checked="chartFilterChecked" ng-disabled="isShowroomDisabled">
+                                                    <input type="radio" name="chartFilter" value="Showroom" ng-model="chartFilter" ng-checked="chartFilterChecked" ng-disabled="isShowroomRadioDisabled">
                                                     Showroom &nbsp;
                                                 </label>
                                                 <label>
@@ -210,11 +211,26 @@
                                                      button-label="icon showroomName"
                                                      item-label="icon showroomName"
                                                      tick-property="ticked"
+                                                     is-disabled="showroomItemIsDisabled"
                                                      is-checkbox-layer-open="true"
                                                      max-labels="3"
                                                      max-height="250px">
                                                 </div>
                                             </div>
+                                            <div class="form-group">
+                                                <label>Chart type:</label>
+                                                <br />
+                                                <label>
+                                                    <input type="checkbox" name="pie" value="pie" ng-model="showPieChart">
+                                                    Pie &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" name="column" value="column" ng-model="showColumnChart">
+                                                    Column &nbsp;
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
                                             <div class="btn-group pull-right">
                                                 <input type="submit" class="btn btn-primary" value="Search" />
                                             </div>
@@ -226,7 +242,17 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6 text-center" ng-if="showChart">
+                    <div class="col-md-12 text-center" ng-if="showChart">
+                        <div fusioncharts
+                             width="100%"
+                             height="400"
+                             type="area2d"
+                             chart="{{salesareachartattrs}}"
+                             dataset="{{saleschartdataset}}">
+                        </div>
+                        <br />
+                    </div>
+                    <div class="col-md-6 text-center" ng-if="showPieChart">
                         <div fusioncharts
                              width="100%"
                              height="400"
@@ -235,7 +261,7 @@
                              dataset="{{saleschartdataset}}">
                         </div>
                     </div>
-                    <div class="col-md-6 text-center" ng-if="showChart">
+                    <div class="col-md-6 text-center" ng-if="showColumnChart">
                         <div fusioncharts
                              width="100%"
                              height="400"
@@ -245,31 +271,45 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <table class="table table-bordered table-responsive table-striped" style="font-size:13px;">
-                            <thead>
-                                <tr style="background-color: #605ca8; color: white; ">
-                                    <th ng-repeat="header in salesHeader">
-                                        {{header}}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="yearlylSale in salesData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
-                                    <td ng-repeat="header in salesHeader">
-                                        {{getCommaSeparatedValue(yearlylSale[header])}}
-                                    </td>
-                                </tr>
-                                <tr ng-if="currentPage == noOfPages">
-                                    <td ng-repeat="total in salesDataTotal track by $index">
-                                        <b>{{total}}</b>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <pagination class="pull-right" page="currentPage" max-size="noOfPages" total-items="totalItems" items-per-page="entryLimit" style="cursor:pointer;"></pagination>
+                        <div class=" panel-group" id="accordion">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="!/#collapseTwo">
+                                            Report Data in table format
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseTwo" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <table class="table table-bordered table-responsive table-striped" style="font-size:13px;">
+                                            <thead>
+                                                <tr style="background-color: #605ca8; color: white; ">
+                                                    <th ng-repeat="header in salesHeader">
+                                                        {{header}}
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="yearlylSale in salesData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
+                                                    <td ng-repeat="header in salesHeader">
+                                                        {{getCommaSeparatedValue(yearlylSale[header])}}
+                                                    </td>
+                                                </tr>
+                                                <tr ng-if="currentPage == noOfPages">
+                                                    <td ng-repeat="total in salesDataTotal track by $index">
+                                                        <b>{{total}}</b>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <pagination class="pull-right" page="currentPage" max-size="noOfPages" total-items="totalItems" items-per-page="entryLimit" style="cursor:pointer;"></pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>

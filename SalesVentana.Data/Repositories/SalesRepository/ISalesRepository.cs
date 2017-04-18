@@ -23,5 +23,7 @@ namespace SalesVentana.Data
         DataSet GetQuaterlySales(int year, string salesQuarter, string reportType, 
             string brandIds, string categoryIds, string productIds, string regionIds, 
             string channelIds, string showroomIds);
+        DataSet GetMonthlySales(int year, string salesMonth, string reportType, string brandIds, 
+            string categoryIds, string productIds, string regionIds, string channelIds, string showroomIds);
     }
 }

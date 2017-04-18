@@ -48,22 +48,26 @@
         $scope.showroomType = false;
         $scope.employeeType = false;
         $scope.showChart = false;
-        $scope.salesType = 'Share';
+        $scope.showPieChart = false;
+        $scope.showColumnChart = false;
+        $scope.salesType = 'yearly';
         $scope.chartFilter = 'Brand';
         $scope.currentYear = currentYear;
         $scope.yearItemIsDisabled = false;
         $scope.quarterItemIsDisabled = true;
         $scope.monthItemIsDisabled = true;
+        $scope.showroomItemIsDisabled = true;
         $scope.isBrandDisabled = false;
         $scope.isCategoryDisabled = true;
         $scope.isProductDisabled = true;
         $scope.isRegionDisabled = true;
-        $scope.isShowroomDisabled = true;
+        $scope.isShowroomRadioDisabled = true;
         $scope.isEmployeeDisabled = true;
         $scope.chartFilterChecked = false;
+        $scope.isShowroomCheckDisabled = true;
         $scope.currentPage = 0;
         $scope.totalItems = 0;
-        $scope.entryLimit = 0; // items per page
+        $scope.entryLimit = 0;
         $scope.noOfPages = 0;
         $scope.search = {};
         $scope.currentMonth = monthNames[new Date().getMonth()];
@@ -85,7 +89,7 @@
         //fusion chart config
         $scope.saleschartattrs = {
             "chart": {
-                caption: "Yearly Sales Share",
+                caption: "Yearly Sales",
                 bgcolor: "FFFFFF",
                 showvalues: "1",
                 showpercentvalues: "1",
@@ -106,6 +110,22 @@
                 xAxisName: $scope.chartFilter,
                 yAxisName: "Share",
                 theme: "fint"
+            }
+        };
+
+
+        $scope.salesareachartattrs = {
+            "chart": {
+                caption: "Yearly Sales",
+                subCaption: "",
+                showborder: "0",
+                xAxisName: $scope.chartFilter,
+                yAxisName: "Share",
+                theme: "fint",
+                //Setting gradient fill to true
+                usePlotGradientColor: "1",
+                //Setting the gradient formation color
+                plotGradientColor: "#605ca8"
             }
         };
 
@@ -191,11 +211,33 @@
                         dataLoadFailed);
         }
 
+        $scope.channelClick = function () {
+            var retailFound = false;
+            $.each($scope.outputChannel, function (k, v) {
+                if (v['channelName'] == 'Retail') {
+                    retailFound = true;
+                    return false;
+                }
+            });
+
+            if (retailFound) {
+                $scope.showroomItemIsDisabled = false;
+                $scope.isShowroomCheckDisabled = false;
+            }
+            else {
+                $scope.outputShowroom = [];
+                $scope.isShowroomCheckDisabled = true;
+                $.each($scope.inputShowroom, function (k, v) {
+                    v.ticked = false;
+                });
+            }
+        }
+
         $scope.filterSales = function () {
             var searchCriteria = [];
             var reportType = [];
             var brandIds = '', categoryIds = '', productIds = '', regionIds = '', channelIds = '', showroomIds = '';
-            var salesQuarter = '';
+            var salesQuarter = '', salesMonth = '';
 
             $.each($scope.outputBrands, function () {
                 brandIds += this.brandId + ',';
@@ -221,31 +263,48 @@
                 showroomIds += this.showroomId + ',';
             })
 
-            $.each($scope.outputSalesQuarter, function () {
-                salesQuarter += this.quarter + ',';
-            })
-
-            this.reportType = {};
-
-            searchCriteria = {
-                brandIds: brandIds, categoryIds: categoryIds, productIds: productIds, regionIds: regionIds, channelIds: channelIds, showroomIds: showroomIds,
-                brandType: $scope.brandType, categoryType: $scope.categoryType, productType: $scope.productType, regionType: $scope.regionType,
-                showroomType: $scope.showroomType, salesQuarter: salesQuarter, employeeType: $scope.employeeType
-            };
-
             switch ($scope.salesType) {
-                case 'Share':
+                case 'yearly':
+
+                    searchCriteria = {
+                        brandIds: brandIds, categoryIds: categoryIds, productIds: productIds, regionIds: regionIds, channelIds: channelIds, showroomIds: showroomIds,
+                        brandType: $scope.brandType, categoryType: $scope.categoryType, productType: $scope.productType, regionType: $scope.regionType,
+                        showroomType: $scope.showroomType, employeeType: $scope.employeeType
+                    };
+
                     apiService.post('api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
                         yearlySalesDataLoadCompleted,
                         dataLoadFailed);
                     break;
-                case 'TotalSales(Mil)':
+                case 'quarterly':
+
+                    $.each($scope.outputSalesQuarter, function () {
+                        salesQuarter += this.quarter + ',';
+                    })
+
+                    searchCriteria = {
+                        brandIds: brandIds, categoryIds: categoryIds, productIds: productIds, regionIds: regionIds, channelIds: channelIds, showroomIds: showroomIds,
+                        brandType: $scope.brandType, categoryType: $scope.categoryType, productType: $scope.productType, regionType: $scope.regionType,
+                        showroomType: $scope.showroomType, salesQuarter: salesQuarter, employeeType: $scope.employeeType
+                    };
+
                     apiService.post('api/sales/quarterly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
                         yearlySalesDataLoadCompleted,
                         dataLoadFailed);
                     break;
-                case 'TotalSalesWEE(Mil)':
-                    apiService.post('api/sales/yearly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
+                case 'monthly':
+
+                    $.each($scope.outputSalesMonth, function () {
+                        salesMonth += this.month + ',';
+                    })
+
+                    searchCriteria = {
+                        brandIds: brandIds, categoryIds: categoryIds, productIds: productIds, regionIds: regionIds, channelIds: channelIds, showroomIds: showroomIds,
+                        brandType: $scope.brandType, categoryType: $scope.categoryType, productType: $scope.productType, regionType: $scope.regionType,
+                        showroomType: $scope.showroomType, employeeType: $scope.employeeType, salesMonth: salesMonth
+                    };
+
+                    apiService.post('api/sales/monthly-sales/' + parseInt($scope.outputSalesYear[0]['year']), searchCriteria,
                         yearlySalesDataLoadCompleted,
                         dataLoadFailed);
                     break;
@@ -262,11 +321,14 @@
             var salesChartData = [];
             var test = [];
             var total = 0;
+            var value = 0;
             $scope.salesHeader = [];
             $scope.salesData = [];
             $scope.salesCommaSprtdData = [];
             $scope.salesDataTotal = [];
             $scope.showChart = true;
+            $scope.showPieChart = true;
+            $scope.showColumnChart = true;
             $scope.salesData = result.data.table;
             //pagination
             $scope.currentPage = 1;
@@ -275,8 +337,13 @@
             $scope.noOfPages = Math.ceil($scope.totalItems / $scope.entryLimit);
 
             $.each(result.data.table, function (k, v) {
+                if ($scope.salesType != 'yearly')
+                    value = (parseFloat(v['TotalSales(TK)']) / 1000000);
+                else
+                    value = parseFloat(v['Share']);
+
                 salesChartCategory.push({ label: v[$scope.chartFilter] });
-                salesChartData.push({ label: v[$scope.chartFilter], value: v[$scope.salesType] });
+                salesChartData.push({ label: v[$scope.chartFilter], value: value });
             });
 
             $scope.saleschartdataset.category = salesChartCategory;
@@ -302,16 +369,19 @@
                         return false;
                     }
                 })
-                if (total >= 0 && i > 0)
+
+                if (total > 0 && i > 0)
                     $scope.salesDataTotal.push(total.toLocaleString());
                 else if (i > 0)
-                    $scope.salesDataTotal.push(0);
+                    $scope.salesDataTotal.push('');
             }
         }
 
         $scope.getCommaSeparatedValue = function (data) {
             if (!isNaN(data) && data != null)
                 return parseFloat(data).toLocaleString();
+            else if (isNaN(data) || data != null)
+                return data;
             else
                 return 0;
         }
@@ -327,15 +397,15 @@
             $scope.outputSalesMonth = [];
 
             switch ($scope.salesType) {
-                case 'Share':
+                case 'yearly':
                     $scope.quarterItemIsDisabled = true;
                     $scope.monthItemIsDisabled = true;
                     break;
-                case 'TotalSales(Mil)':
+                case 'quarterly':
                     $scope.quarterItemIsDisabled = false;
                     $scope.monthItemIsDisabled = true;
                     break;
-                case 'TotalSalesWE(Mil)':
+                case 'monthly':
                     $scope.quarterItemIsDisabled = true;
                     $scope.monthItemIsDisabled = false;
                     break;
@@ -362,15 +432,14 @@
             else
                 $scope.isRegionDisabled = !$scope.regionType;
             if ($scope.showroomType)
-                $scope.isShowroomDisabled = !$scope.showroomType;
+                $scope.isShowroomRadioDisabled = !$scope.showroomType;
             else
-                $scope.isShowroomDisabled = !$scope.showroomType;
+                $scope.isShowroomRadioDisabled = !$scope.showroomType;
             if ($scope.employeeType)
                 $scope.isEmployeeDisabled = !$scope.employeeType;
             else
                 $scope.isEmployeeDisabled = !$scope.employeeType;
         }
-
 
         //common data load fail function
         function dataLoadFailed(response) {
@@ -388,7 +457,6 @@
         }
 
         //library initialization
-
     }
 
 })(angular.module('salesVentana'));
