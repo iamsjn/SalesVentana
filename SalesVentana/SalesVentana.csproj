@@ -25,6 +25,10 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,12 +59,6 @@
     <Reference Include="AutoMapper, Version=5.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.5.2.0\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="EntityFramework">
-      <HintPath>..\..\Tourer\Tourer.Model\bin\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\..\Tourer\Tourer.Model\bin\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="FluentValidation, Version=6.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentValidation.6.4.0\lib\Net45\FluentValidation.dll</HintPath>
@@ -233,12 +231,6 @@
     <Content Include="Scripts\app\account\register.html" />
     <Content Include="Scripts\app\account\registerCtrl.js" />
     <Content Include="Scripts\app\app.js" />
-    <Content Include="Scripts\app\customers\customerEditCtrl.js" />
-    <Content Include="Scripts\app\customers\customers.html" />
-    <Content Include="Scripts\app\customers\customersCtrl.js" />
-    <Content Include="Scripts\app\customers\customersRegCtrl.js" />
-    <Content Include="Scripts\app\customers\editCustomerModal.html" />
-    <Content Include="Scripts\app\customers\register.html" />
     <Content Include="Scripts\app\home\indexCtrl.js" />
     <Content Include="Scripts\app\home\rootCtrl.js" />
     <Content Include="Scripts\app\layout\sideBar.directive.js" />

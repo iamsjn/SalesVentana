@@ -12,6 +12,22 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalesVentana.BO", "SalesVentana.BO\SalesVentana.BO.csproj", "{BB5AE9BC-58BC-412B-9B0A-08C073B6FBD8}"
 EndProject
 Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 5
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = SalesVentana\\SalesVentana.csproj
+		SccProjectName1 = \u0022$/SalesVentana/SalesVentana\u0022,\u0020NKYUBAAA
+		SccLocalPath1 = SalesVentana
+		SccProjectUniqueName2 = SalesVentana.Data\\SalesVentana.Data.csproj
+		SccProjectName2 = \u0022$/SalesVentana/SalesVentana.Data\u0022,\u0020GIZUBAAA
+		SccLocalPath2 = SalesVentana.Data
+		SccProjectUniqueName3 = SalesVentana.Services\\SalesVentana.Services.csproj
+		SccProjectName3 = \u0022$/SalesVentana/SalesVentana.Services\u0022,\u0020BLZUBAAA
+		SccLocalPath3 = SalesVentana.Services
+		SccProjectUniqueName4 = SalesVentana.BO\\SalesVentana.BO.csproj
+		SccProjectName4 = \u0022$/SalesVentana/SalesVentana.BO\u0022,\u0020SGZUBAAA
+		SccLocalPath4 = SalesVentana.BO
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

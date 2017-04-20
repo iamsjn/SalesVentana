@@ -203,6 +203,7 @@ namespace SalesVentana.Controllers
                 DataTable dtTotalQty = null;
                 DataTable table = new DataTable();
                 DataRow row = null;
+                int rowCount = 0;
                 int index = 0;
                 int firstOrdinal = 0;
                 int lastOrdinal = 0;
@@ -254,16 +255,16 @@ namespace SalesVentana.Controllers
 
                 foreach (DataRow item in dtTotalSales.Rows)
                 {
-                    //index1 = dtTotalSales.Columns.Count - 3;
                     index = lastOrdinal;
 
                     for (int i = (dtTotalQty.Columns.Count - 2); i >= firstOrdinal; i--)
                     {
-                        row = dtTotalQty.AsEnumerable().Where(x => x.ItemArray[0].ToString().ToLower() == item.ItemArray[0].ToString().ToLower()).Select(x => x).First();
+                        row = dtTotalQty.Rows[rowCount];
                         item[index] = !DBNull.Value.Equals(row.ItemArray[i]) ? Convert.ToDouble(row.ItemArray[i]) : 0.0;
                         index = index - 2;
                     }
 
+                    rowCount++;
                 }
 
                 foreach (DataColumn item in dtTotalSales.Columns)
@@ -298,6 +299,7 @@ namespace SalesVentana.Controllers
                 DataTable dtTotalQty = null;
                 DataTable table = new DataTable();
                 DataRow row = null;
+                int rowCount = 0;
                 int index = 0;
                 int firstOrdinal = 0;
                 int lastOrdinal = 0;
@@ -351,16 +353,16 @@ namespace SalesVentana.Controllers
 
                 foreach (DataRow item in dtTotalSales.Rows)
                 {
-                    //index1 = dtTotalSales.Columns.Count - 3;
                     index = lastOrdinal;
 
                     for (int i = (dtTotalQty.Columns.Count - 2); i >= firstOrdinal; i--)
                     {
-                        row = dtTotalQty.AsEnumerable().Where(x => x.ItemArray[0].ToString().ToLower() == item.ItemArray[0].ToString().ToLower()).Select(x => x).First();
+                        row = dtTotalQty.Rows[rowCount];
                         item[index] = !DBNull.Value.Equals(row.ItemArray[i]) ? Convert.ToDouble(row.ItemArray[i]) : 0.0;
                         index = index - 2;
                     }
 
+                    rowCount++;
                 }
 
                 foreach (DataColumn item in dtTotalSales.Columns)

@@ -87,7 +87,7 @@
         }
 
         //fusion chart config
-        $scope.saleschartattrs = {
+        $scope.salespiechartattrs = {
             "chart": {
                 caption: "Yearly Sales",
                 bgcolor: "FFFFFF",
@@ -113,19 +113,47 @@
             }
         };
 
+        $scope.salescolumnchartattrs = {
+            "chart": {
+                caption: "Yearly Sales",
+                bgcolor: "FFFFFF",
+                showvalues: "1",
+                showpercentvalues: "1",
+                showborder: "0",
+                showplotborder: "0",
+                showlegend: "0",
+                legendborder: "0",
+                legendposition: "bottom",
+                enablesmartlabels: "1",
+                labelDisplay: "rotate",
+                slantLabels: "1",
+                use3dlighting: "0",
+                showshadow: "0",
+                legendbgcolor: "#CCCCCC",
+                legendbgalpha: "20",
+                legendborderalpha: "0",
+                legendshadow: "0",
+                legendnumcolumns: "3",
+                subCaption: "",
+                xAxisName: $scope.chartFilter,
+                yAxisName: "Share",
+                theme: "fint"
+            }
+        };
 
         $scope.salesareachartattrs = {
             "chart": {
                 caption: "Yearly Sales",
                 subCaption: "",
                 showborder: "0",
+                showvalues: "1",
+                showpercentvalues: "1",
+                enablesmartlabels: "1",
                 xAxisName: $scope.chartFilter,
                 yAxisName: "Share",
-                theme: "fint",
-                //Setting gradient fill to true
                 usePlotGradientColor: "1",
-                //Setting the gradient formation color
-                plotGradientColor: "#605ca8"
+                plotGradientColor: "#605ca8",
+                theme: "fint"
             }
         };
 

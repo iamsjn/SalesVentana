@@ -207,6 +207,27 @@ namespace SalesVentana.Data
                                         execute (@convert);", startDate, endDate, reportFilterWithAlias,
                                                             reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
                                                             productIdQuery, regionIdQuery, channelIdQuery, aliasQuery, orderQuery, showroomIdQuery, _employeeTable, _employeeSearch);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             return ExecuteDataTable();
         }
 
