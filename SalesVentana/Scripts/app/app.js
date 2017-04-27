@@ -24,7 +24,13 @@
                 templateUrl: pathName + "scripts/app/sales/sales.html",
                 controller: "salesCtrl",
                 resolve: { isAuthenticated: isAuthenticated }
-            }).otherwise({ redirectTo: "/" });
+            })
+            .when("/lc", {
+                templateUrl: pathName + "scripts/app/letterCredit/letterCredit.html",
+                controller: "letterCreditCtrl",
+                resolve: { isAuthenticated: isAuthenticated }
+            })
+            .otherwise({ redirectTo: "/" });
     }
 
     run.$inject = ['$rootScope', '$location', '$cookieStore', '$http'];

@@ -15,13 +15,13 @@ namespace SalesVentana.Controllers
     [RoutePrefix("api/sales")]
     public class SalesController : ApiControllerBase
     {
-        ISalesRepository _productCategoryWiseSalesRepository = null;
+        ISalesRepository _salesRepository = null;
         IUnitOfWork _unitOfWork = null;
-        public SalesController(IBaseRepository<Error> errorRepository, ISalesRepository productCategoryWiseSalesRepository,
+        public SalesController(IBaseRepository<Error> errorRepository, ISalesRepository salesRepository,
             IUnitOfWork unitOfWork)
             : base(errorRepository, unitOfWork)
         {
-            _productCategoryWiseSalesRepository = productCategoryWiseSalesRepository;
+            _salesRepository = salesRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -33,7 +33,7 @@ namespace SalesVentana.Controllers
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
-                DataTable table = _productCategoryWiseSalesRepository.GetBrand();
+                DataTable table = _salesRepository.GetBrand();
                 _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -51,7 +51,7 @@ namespace SalesVentana.Controllers
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
-                DataTable table = _productCategoryWiseSalesRepository.GetRegion();
+                DataTable table = _salesRepository.GetRegion();
                 _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -69,7 +69,7 @@ namespace SalesVentana.Controllers
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
-                DataTable table = _productCategoryWiseSalesRepository.GetChannel();
+                DataTable table = _salesRepository.GetChannel();
                 _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -87,7 +87,7 @@ namespace SalesVentana.Controllers
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
-                DataTable table = _productCategoryWiseSalesRepository.GetShowroom();
+                DataTable table = _salesRepository.GetShowroom();
                 _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -113,7 +113,7 @@ namespace SalesVentana.Controllers
                 if (brand != null && brand.Count() > 0)
                     brandIds = string.Join(",", brand.Select(x => x.brandId).ToArray());
 
-                table = _productCategoryWiseSalesRepository.GetProductCategory(brandIds);
+                table = _salesRepository.GetProductCategory(brandIds);
                 _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -138,7 +138,7 @@ namespace SalesVentana.Controllers
                 if (category != null && category.Count() > 0)
                     categoryIds = string.Join(",", category.Select(x => x.categoryId).ToArray());
 
-                table = _productCategoryWiseSalesRepository.GetProduct(categoryIds);
+                table = _salesRepository.GetProduct(categoryIds);
                 _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -163,7 +163,7 @@ namespace SalesVentana.Controllers
                 string regionIds = string.Empty;
                 string channelIds = string.Empty;
                 string showroomIds = string.Empty;
-                string reportType = string.Empty;
+                string reportFilter = string.Empty;
 
                 if (searchCriteria != null)
                 {
@@ -173,12 +173,10 @@ namespace SalesVentana.Controllers
                     regionIds = searchCriteria.regionIds;
                     channelIds = searchCriteria.channelIds;
                     showroomIds = searchCriteria.showroomIds;
-                    reportType = "brandType:" + searchCriteria.brandType + "," + "categoryType:" + searchCriteria.categoryType + "," +
-                        "productType:" + searchCriteria.productType + "," + "regionType:" + searchCriteria.regionType + "," + "showroomType:" + searchCriteria.showroomType + "," +
-                        "employeeType:" + searchCriteria.employeeType;
+                    reportFilter = searchCriteria.firstReportFilter + "," + searchCriteria.secondReportFilter;
                 }
 
-                DataTable table = _productCategoryWiseSalesRepository.GetYearlySales(year, reportType, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
+                DataTable table = _salesRepository.GetYearlySales(year, reportFilter, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
                 //table = table.DefaultView.ToTable( /*distinct*/ true);
                 _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
@@ -214,7 +212,7 @@ namespace SalesVentana.Controllers
                 string regionIds = string.Empty;
                 string channelIds = string.Empty;
                 string showroomIds = string.Empty;
-                string reportType = string.Empty;
+                string reportFilter = string.Empty;
                 string salesQuarter = string.Empty;
 
                 if (searchCriteria != null)
@@ -226,12 +224,10 @@ namespace SalesVentana.Controllers
                     channelIds = searchCriteria.channelIds;
                     showroomIds = searchCriteria.showroomIds;
                     salesQuarter = searchCriteria.salesQuarter;
-                    reportType = "brandType:" + searchCriteria.brandType + "," + "categoryType:" + searchCriteria.categoryType + "," +
-                        "productType:" + searchCriteria.productType + "," + "regionType:" + searchCriteria.regionType + "," + "showroomType:" + searchCriteria.showroomType + "," +
-                        "employeeType:" + searchCriteria.employeeType; ;
+                    reportFilter = searchCriteria.firstReportFilter + "," + searchCriteria.secondReportFilter;
                 }
 
-                dataSet = _productCategoryWiseSalesRepository.GetQuaterlySales(year, salesQuarter, reportType, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
+                dataSet = _salesRepository.GetQuaterlySales(year, salesQuarter, reportFilter, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
 
                 dtTotalSales = dataSet.Tables[0].Copy();
                 dtTotalQty = dataSet.Tables[1].Copy();
@@ -310,7 +306,7 @@ namespace SalesVentana.Controllers
                 string regionIds = string.Empty;
                 string channelIds = string.Empty;
                 string showroomIds = string.Empty;
-                string reportType = string.Empty;
+                string reportFilter = string.Empty;
                 string salesMonth = string.Empty;
 
                 if (searchCriteria != null)
@@ -322,12 +318,10 @@ namespace SalesVentana.Controllers
                     channelIds = searchCriteria.channelIds;
                     showroomIds = searchCriteria.showroomIds;
                     salesMonth = searchCriteria.salesMonth;
-                    reportType = "brandType:" + searchCriteria.brandType + "," + "categoryType:" + searchCriteria.categoryType + "," +
-                        "productType:" + searchCriteria.productType + "," + "regionType:" + searchCriteria.regionType + "," + "showroomType:" + searchCriteria.showroomType + "," +
-                        "employeeType:" + searchCriteria.employeeType; ;
+                    reportFilter = searchCriteria.firstReportFilter + "," + searchCriteria.secondReportFilter;
                 }
 
-                dataSet = _productCategoryWiseSalesRepository.GetMonthlySales(year, salesMonth, reportType, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
+                dataSet = _salesRepository.GetMonthlySales(year, salesMonth, reportFilter, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
 
                 dtTotalSales = dataSet.Tables[0].Copy();
                 dtTotalQty = dataSet.Tables[1].Copy();

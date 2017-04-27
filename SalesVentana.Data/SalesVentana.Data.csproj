@@ -64,6 +64,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\BaseRepository\BaseRepository.cs" />
     <Compile Include="Repositories\BaseRepository\IBaseRepository.cs" />
+    <Compile Include="Repositories\LetterCreditRepository\ILetterCreditRepository.cs" />
+    <Compile Include="Repositories\LetterCreditRepository\LetterCreditRepository.cs" />
     <Compile Include="Repositories\SalesRepository\SalesRepository.cs" />
     <Compile Include="Repositories\SalesRepository\ISalesRepository.cs" />
     <Compile Include="SalesVentanaConnection.cs" />

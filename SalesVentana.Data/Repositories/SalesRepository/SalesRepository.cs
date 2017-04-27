@@ -79,7 +79,7 @@ namespace SalesVentana.Data
             return ExecuteDataTable();
         }
 
-        public DataTable GetYearlySales(int year, string reportType, string brandIds,
+        public DataTable GetYearlySales(int year, string reportFilters, string brandIds,
             string categoryIds, string productIds, string regionIds, string channelIds, string showroomIds)
         {
             DateTime startDate = new DateTime(year, 1, 1);
@@ -90,9 +90,9 @@ namespace SalesVentana.Data
             string regionIdQuery = string.Empty;
             string channelIdQuery = string.Empty;
             string showroomIdQuery = string.Empty;
-            string reportFilterWithAlias = this.FindReportFilterWithAlias(reportType);
-            string reportFilterWithoutAlias = FindReportFilterWithoutAlias(reportType);
-            string reportFilterAlias = FindReportFilterAlias(reportType);
+            string reportFilterWithAlias = this.FindReportFilterWithAlias(reportFilters);
+            string reportFilterWithoutAlias = FindReportFilterWithoutAlias(reportFilters);
+            string reportFilterAlias = FindReportFilterAlias(reportFilters);
             string aliasQuery = YearlyAliasQuery(reportFilterAlias);
             string orderQuery = OrderQuery(reportFilterAlias);
 
@@ -208,30 +208,10 @@ namespace SalesVentana.Data
                                                             reportFilterWithoutAlias, reportFilterAlias, brandIdQuery, categoryIdQuery,
                                                             productIdQuery, regionIdQuery, channelIdQuery, aliasQuery, orderQuery, showroomIdQuery, _employeeTable, _employeeSearch);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             return ExecuteDataTable();
         }
 
-        public DataSet GetQuaterlySales(int year, string salesQuarter, string reportType, string brandIds,
+        public DataSet GetQuaterlySales(int year, string salesQuarter, string reportFilters, string brandIds,
             string categoryIds, string productIds, string regionIds, string channelIds, string showroomIds)
         {
             DataSet ds = new DataSet();
@@ -241,9 +221,9 @@ namespace SalesVentana.Data
             string regionIdQuery = string.Empty;
             string channelIdQuery = string.Empty;
             string showroomIdQuery = string.Empty;
-            string reportFilterWithAlias = this.FindReportFilterWithAlias(reportType);
-            string reportFilterWithoutAlias = FindReportFilterWithoutAlias(reportType);
-            string reportFilterAlias = FindReportFilterAlias(reportType);
+            string reportFilterWithAlias = this.FindReportFilterWithAlias(reportFilters);
+            string reportFilterWithoutAlias = FindReportFilterWithoutAlias(reportFilters);
+            string reportFilterAlias = FindReportFilterAlias(reportFilters);
             string aliasQuery = AliasQuery(reportFilterAlias);
             string orderQuery = OrderQuery(reportFilterAlias);
             string quarterQuery = QuarterSearchQuery(year, salesQuarter.Trim(','));
@@ -444,7 +424,7 @@ namespace SalesVentana.Data
 
         }
 
-        public DataSet GetMonthlySales(int year, string salesMonth, string reportType, string brandIds,
+        public DataSet GetMonthlySales(int year, string salesMonth, string reportFilters, string brandIds,
             string categoryIds, string productIds, string regionIds, string channelIds, string showroomIds)
         {
             DateTime startDate = new DateTime(year, 1, 1);
@@ -456,9 +436,9 @@ namespace SalesVentana.Data
             string regionIdQuery = string.Empty;
             string channelIdQuery = string.Empty;
             string showroomIdQuery = string.Empty;
-            string reportFilterWithAlias = this.FindReportFilterWithAlias(reportType);
-            string reportFilterWithoutAlias = FindReportFilterWithoutAlias(reportType);
-            string reportFilterAlias = FindReportFilterAlias(reportType);
+            string reportFilterWithAlias = this.FindReportFilterWithAlias(reportFilters);
+            string reportFilterWithoutAlias = FindReportFilterWithoutAlias(reportFilters);
+            string reportFilterAlias = FindReportFilterAlias(reportFilters);
             string aliasQuery = AliasQuery(reportFilterAlias);
             string orderQuery = OrderQuery(reportFilterAlias);
             string monthQuery = MonthSearchQuery(year, salesMonth.Trim(','));
@@ -603,27 +583,27 @@ namespace SalesVentana.Data
 
         }
 
-        private string FindReportFilterWithAlias(string reportType)
+        private string FindReportFilterWithAlias(string reportFilters)
         {
             string reportFilter = string.Empty;
-            string[] reportTypeArr = reportType.Split(',');
+            string[] reportFilterArr = reportFilters.Split(',');
 
-            if (reportTypeArr == null || reportTypeArr.Length <= 0)
+            if (reportFilterArr == null || reportFilterArr.Length <= 0)
                 return reportFilter;
 
-            for (int i = 0; i < reportTypeArr.Length; i++)
+            for (int i = 0; i < reportFilterArr.Length; i++)
             {
-                if (reportTypeArr[i].ToString().ToLower() == "brandtype:true")
+                if (reportFilterArr[i].ToString().ToLower() == "brand")
                     reportFilter += "vb.Brand Brand" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "categorytype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "productcategory")
                     reportFilter += "vpc.Name ProductCategory" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "producttype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "product")
                     reportFilter += "vprod.Name Product" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "regiontype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "region")
                     reportFilter += "vr.Region Region" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "showroomtype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "showroom")
                     reportFilter += "vsr.Name Showroom" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "employeetype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "employee")
                     reportFilter += "emp.Name Employee" + ",";
             }
 
@@ -633,27 +613,27 @@ namespace SalesVentana.Data
             return reportFilter;
         }
 
-        private string FindReportFilterWithoutAlias(string reportType)
+        private string FindReportFilterWithoutAlias(string reportFilters)
         {
             string reportFilter = string.Empty;
-            string[] reportTypeArr = reportType.Split(',');
+            string[] reportFilterArr = reportFilters.Split(',');
 
-            if (reportTypeArr == null || reportTypeArr.Length <= 0)
+            if (reportFilterArr == null || reportFilterArr.Length <= 0)
                 return reportFilter;
 
-            for (int i = 0; i < reportTypeArr.Length; i++)
+            for (int i = 0; i < reportFilterArr.Length; i++)
             {
-                if (reportTypeArr[i].ToString().ToLower() == "brandtype:true")
+                if (reportFilterArr[i].ToString().ToLower() == "brand")
                     reportFilter += "vb.Brand" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "categorytype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "productcategory")
                     reportFilter += "vpc.Name" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "producttype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "product")
                     reportFilter += "vprod.Name" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "regiontype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "region")
                     reportFilter += "vr.Region" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "showroomtype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "showroom")
                     reportFilter += "vsr.Name" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "employeetype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "employee")
                     reportFilter += "emp.Name" + ",";
             }
 
@@ -663,27 +643,27 @@ namespace SalesVentana.Data
             return reportFilter;
         }
 
-        private string FindReportFilterAlias(string reportType)
+        private string FindReportFilterAlias(string reportFilters)
         {
             string reportFilter = string.Empty;
-            string[] reportTypeArr = reportType.Split(',');
+            string[] reportFilterArr = reportFilters.Split(',');
 
-            if (reportTypeArr == null || reportTypeArr.Length <= 0)
+            if (reportFilterArr == null || reportFilterArr.Length <= 0)
                 return reportFilter;
 
-            for (int i = 0; i < reportTypeArr.Length; i++)
+            for (int i = 0; i < reportFilterArr.Length; i++)
             {
-                if (reportTypeArr[i].ToString().ToLower() == "brandtype:true")
+                if (reportFilterArr[i].ToString().ToLower() == "brand")
                     reportFilter += "Brand" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "categorytype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "productcategory")
                     reportFilter += "ProductCategory" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "producttype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "product")
                     reportFilter += "Product" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "regiontype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "region")
                     reportFilter += "Region" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "showroomtype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "showroom")
                     reportFilter += "Showroom" + ",";
-                else if (reportTypeArr[i].ToString().ToLower() == "employeetype:true")
+                else if (reportFilterArr[i].ToString().ToLower() == "employee")
                 {
                     reportFilter += "Employee" + ",";
                     _employeeTable = ",vw_DimEmployee emp";

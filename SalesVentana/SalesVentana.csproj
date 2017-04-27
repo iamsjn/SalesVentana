@@ -153,6 +153,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Account\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LetterCredit\LetterCreditController.cs" />
     <Compile Include="Controllers\Sales\SalesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -172,6 +173,7 @@
     <Content Include="Content\css\flat.css" />
     <Content Include="Content\css\flat.png" />
     <Content Include="Content\css\isteven-multi-select.css" />
+    <Content Include="Content\css\iziModal.min.css" />
     <Content Include="Content\css\purple.css" />
     <Content Include="Content\css\site.css" />
     <Content Include="Content\css\blank.gif" />
@@ -190,6 +192,11 @@
     <Content Include="Content\css\toastr.css" />
     <Content Include="Content\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\images\background.jpg" />
+    <Content Include="Content\images\sales\chart-icon-color.png" />
+    <Content Include="Content\images\sales\criteria-clipart-criteria-clipart-1.jpg" />
+    <Content Include="Content\images\sales\stats_area_chart_icon.jpg" />
+    <Content Include="Content\images\sales\upload-report-icon-43988.png" />
     <Content Include="Content\images\users\avatar.png" />
     <Content Include="favicon.ico" />
     <Content Include="App_Start\fonts\glyphicons-halflings-regular.svg" />
@@ -209,8 +216,11 @@
     <Content Include="Scripts\app\layout\breadCrumb.html" />
     <Content Include="Scripts\app\layout\breadCrumb.directive.js" />
     <Content Include="Scripts\app\layout\topBar.html" />
+    <Content Include="Scripts\app\letterCredit\letterCredit.html" />
+    <Content Include="Scripts\app\letterCredit\letterCreditCtrl.js" />
     <Content Include="Scripts\app\sales\sales.html" />
     <Content Include="Scripts\app\sales\salesCtrl.js" />
+    <Content Include="Scripts\app\services\excelExportService.js" />
     <Content Include="Scripts\app\services\pathNameService.js" />
     <Content Include="Scripts\site.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -221,6 +231,7 @@
     <Content Include="Scripts\vendors\fusioncharts.theme.fint.js" />
     <Content Include="Scripts\vendors\icheck.min.js" />
     <Content Include="Scripts\vendors\isteven-multi-select.js" />
+    <Content Include="Scripts\vendors\iziModal.min.js" />
     <Content Include="Scripts\vendors\jquery.min.js" />
     <Content Include="Scripts\vendors\jquery-ui.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
@@ -262,8 +273,6 @@
     <Content Include="Scripts\vendors\moment.min.js" />
     <Content Include="Scripts\vendors\raphael.js" />
     <Content Include="Scripts\vendors\respond.src.js" />
-    <Content Include="Scripts\vendors\select2.min.js" />
-    <Content Include="Scripts\vendors\smart-table.min.js" />
     <Content Include="Scripts\vendors\toastr.js" />
     <Content Include="Scripts\vendors\ui-bootstrap-tpls-0.10.0.js" />
     <Content Include="Scripts\vendors\ui-bootstrap-tpls-0.13.1.js" />

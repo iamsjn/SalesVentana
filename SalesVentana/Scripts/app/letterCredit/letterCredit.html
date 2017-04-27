@@ -1,0 +1,170 @@
+﻿<div class="row" ng-init="loadInitData();">
+    <div class="col-md-12">
+        <div class="panel panel-info">
+            <div class="panel-body">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <a data-toggle="collapse" data-parent="#accordion" href="!/#collapseOne">
+                            <div class="list-group-item list-group-item-default">
+                                <div class="row">
+                                    <div class="col-md-12  accordion-toggle">
+                                        <img style="margin-right: 5px;" src="../../../Content/images/sales/criteria-clipart-criteria-clipart-1.jpg" class="img-responsive pull-left" />
+                                        Customise report based on multiple search criteria
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div id="collapseOne" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <form role="form" role="form" novalidate angular-validator name="salesFilterForm" angular-validator-submit="filterSales();">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Status :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputStatuses"
+                                                     output-model="outputStatuses"
+                                                     button-label="icon statusName"
+                                                     item-label="icon statusName"
+                                                     tick-property="ticked"
+                                                     selection-mode="single"
+                                                     is-checkbox-layer-open="true"
+                                                     max-labels="3"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Own Bank :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputBanks"
+                                                     output-model="outputBanks"
+                                                     button-label="icon bankName"
+                                                     item-label="icon bankName"
+                                                     tick-property="ticked"
+                                                     selection-mode="single"
+                                                     is-checkbox-layer-open="true"
+                                                     max-labels="3"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Supplier :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputSuppliers"
+                                                     output-model="outputSuppliers"
+                                                     button-label="icon supplierName"
+                                                     item-label="icon supplierName"
+                                                     tick-property="ticked"
+                                                     selection-mode="single"
+                                                     is-checkbox-layer-open="true"
+                                                     max-labels="3"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Payment Terms :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputTerms"
+                                                     output-model="outputTerms"
+                                                     button-label="icon termName"
+                                                     item-label="icon termName"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     max-labels="3"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Issue Date Range:</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-addon">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </div>
+                                                    <input type="text" class="form-control pull-right" id="issueDate" ng-model="issueDate">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>LC Item :</label>
+                                                <div isteven-multi-select
+                                                     input-model="inputBrands"
+                                                     output-model="outputBrands"
+                                                     button-label="icon brandName"
+                                                     item-label="icon brandName"
+                                                     tick-property="ticked"
+                                                     is-checkbox-layer-open="true"
+                                                     max-labels="3"
+                                                     max-height="250px">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="btn-group pull-right">
+                                                <button type="submit" class="btn btn-primary" value="Search"><i class="glyphicon glyphicon-search"></i> Search</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class=" panel-group" id="accordion4">
+                            <div class="panel panel-default">
+                                <a data-toggle="collapse" data-parent="#accordion4" href="!/#collapseFour">
+                                    <div class="list-group-item list-group-item-default">
+                                        <div class="row">
+                                            <div class="col-md-12  accordion-toggle">
+                                                <img style="margin-right: 5px;" src="../../../Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
+                                                Report Data in table format
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div id="collapseFour" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}">
+                                            <span class="pull-right">
+                                                <button class="btn btn-link" ng-click="exportToExcel('#salesTable')">
+                                                    <span class="glyphicon glyphicon-share"></span> Export to Excel
+                                                </button>
+                                            </span>
+                                            <table class="table table-bordered table-striped" id="salesTable" style="font-size:13px;">
+                                                <thead>
+                                                    <tr style="background-color: #605ca8; color: white; ">
+                                                        <th ng-repeat="header in lcHeader" ng-if="header != 'lcid'">
+                                                            {{header}}
+                                                        </th>
+                                                        <th>
+                                                            &nbsp;
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="data in lcData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
+                                                        <td ng-repeat="header in lcHeader" ng-if="header != 'lcid'">
+                                                            {{getCommaSeparatedValue(data[header])}}
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button type="button" class="btn btn-block btn-xs btn-warning">view</button>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <pagination class="pull-right" page="currentPage" max-size="noOfPages" total-items="totalItems" items-per-page="entryLimit" style="cursor:pointer;"></pagination>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

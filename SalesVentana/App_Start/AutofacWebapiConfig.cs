@@ -34,6 +34,7 @@ namespace SalesVentana
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
             builder.RegisterGeneric(typeof(BaseRepository<>)).As(typeof(IBaseRepository<>)).InstancePerRequest();
             builder.RegisterType<SalesRepository>().As<ISalesRepository>().InstancePerRequest();
+            builder.RegisterType<LetterCreditRepository>().As<ILetterCreditRepository>().InstancePerRequest();
             builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerRequest();
             builder.RegisterType<MembershipService>().As<IMembershipService>().InstancePerRequest();
 

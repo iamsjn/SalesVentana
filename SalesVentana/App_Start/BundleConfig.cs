@@ -41,7 +41,7 @@ namespace SalesVentana
             "~/Scripts/Vendors/jquery.slimscroll.min.js",
             "~/Scripts/Vendors/fastclick.min.js",
             "~/Scripts/Vendors/loading-bar.js",
-            "~/Scripts/Vendors/smart-table.min.js",
+            "~/Scripts/Vendors/iziModal.min.js",
             "~/Scripts/site.js"
             ));
 
@@ -54,6 +54,7 @@ namespace SalesVentana
              "~/Scripts/app/services/membershipService.js",
              "~/Scripts/app/services/fileUploadService.js",
              "~/Scripts/app/services/pathNameService.js",
+             "~/Scripts/app/services/excelExportService.js",
              "~/Scripts/app/layout/topBar.directive.js",
              "~/Scripts/app/layout/sideBar.directive.js",
              "~/Scripts/app/layout/breadCrumb.directive.js",
@@ -62,7 +63,8 @@ namespace SalesVentana
              "~/Scripts/app/account/registerCtrl.js",
              "~/Scripts/app/home/rootCtrl.js",
              "~/Scripts/app/home/indexCtrl.js",
-             "~/Scripts/app/sales/salesCtrl.js"));
+             "~/Scripts/app/sales/salesCtrl.js",
+             "~/Scripts/app/letterCredit/letterCreditCtrl.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
             "~/content/css/bootstrap.css",
@@ -74,6 +76,7 @@ namespace SalesVentana
             "~/content/css/daterangepicker.css",
             "~/content/css/toastr.css",
             "~/content/css/jquery.fancybox.css",
+            "~/content/css/iziModal.min.css",
             "~/content/css/loading-bar.css"));
 
             BundleTable.EnableOptimizations = false;
