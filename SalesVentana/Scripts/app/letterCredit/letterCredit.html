@@ -16,7 +16,7 @@
                         </a>
                         <div id="collapseOne" class="panel-collapse collapse in">
                             <div class="panel-body">
-                                <form role="form" role="form" novalidate angular-validator name="salesFilterForm" angular-validator-submit="filterSales();">
+                                <form role="form" role="form" novalidate angular-validator name="salesFilterForm" angular-validator-submit="filterLCSummary();">
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -27,7 +27,6 @@
                                                      button-label="icon statusName"
                                                      item-label="icon statusName"
                                                      tick-property="ticked"
-                                                     selection-mode="single"
                                                      is-checkbox-layer-open="true"
                                                      max-labels="3"
                                                      max-height="250px">
@@ -41,7 +40,6 @@
                                                      button-label="icon bankName"
                                                      item-label="icon bankName"
                                                      tick-property="ticked"
-                                                     selection-mode="single"
                                                      is-checkbox-layer-open="true"
                                                      max-labels="3"
                                                      max-height="250px">
@@ -57,7 +55,6 @@
                                                      button-label="icon supplierName"
                                                      item-label="icon supplierName"
                                                      tick-property="ticked"
-                                                     selection-mode="single"
                                                      is-checkbox-layer-open="true"
                                                      max-labels="3"
                                                      max-height="250px">
@@ -103,7 +100,7 @@
                                         </div>
                                         <div class="col-md-12">
                                             <div class="btn-group pull-right">
-                                                <button type="submit" class="btn btn-primary" value="Search"><i class="glyphicon glyphicon-search"></i> Search</button>
+                                                <button type="submit" class="btn btn-primary btn-flat" value="Search"><i class="glyphicon glyphicon-search"></i> Search</button>
                                             </div>
                                         </div>
                                     </div>
@@ -128,7 +125,7 @@
                                 </a>
                                 <div id="collapseFour" class="panel-collapse collapse in">
                                     <div class="panel-body">
-                                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}">
+                                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-if="lcHeader.length > 0">
                                             <span class="pull-right">
                                                 <button class="btn btn-link" ng-click="exportToExcel('#salesTable')">
                                                     <span class="glyphicon glyphicon-share"></span> Export to Excel
@@ -137,7 +134,7 @@
                                             <table class="table table-bordered table-striped" id="salesTable" style="font-size:13px;">
                                                 <thead>
                                                     <tr style="background-color: #605ca8; color: white; ">
-                                                        <th ng-repeat="header in lcHeader" ng-if="header != 'lcid'">
+                                                        <th ng-repeat="header in lcHeader">
                                                             {{header}}
                                                         </th>
                                                         <th>
@@ -147,11 +144,11 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr ng-repeat="data in lcData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
-                                                        <td ng-repeat="header in lcHeader" ng-if="header != 'lcid'">
+                                                        <td ng-repeat="header in lcHeader" ng-d>
                                                             {{getCommaSeparatedValue(data[header])}}
                                                         </td>
                                                         <td class="text-center">
-                                                            <button type="button" class="btn btn-block btn-xs btn-warning">view</button>
+                                                            <button type="button" data-id="{{data['lcid']}}" class="btn btn-block btn-flat btn-xs btn-warning" ng-click="detailLC($event);"><i class="fa fa-table" aria-hidden="true"></i> &nbsp;Details</button>
                                                         </td>
                                                     </tr>
                                                 </tbody>

@@ -11,11 +11,11 @@
         };
     });
 
-    app.controller('letterCreditCtrl', salesCtrl);
+    app.controller('letterCreditCtrl', letterCreditCtrl);
 
-    salesCtrl.$inject = ['$scope', '$timeout', 'apiService', 'notificationService', 'excelExportService'];
+    letterCreditCtrl.$inject = ['$scope', '$timeout', 'apiService', 'notificationService', 'excelExportService', 'dataSharingService', 'Popeye'];
 
-    function salesCtrl($scope, $timeout, apiService, notificationService, excelExportService) {
+    function letterCreditCtrl($scope, $timeout, apiService, notificationService, excelExportService, dataSharingService, Popeye) {
         //variable declaration
         $scope.inputStatuses = [];
         $scope.outputStatuses = [];
@@ -25,7 +25,7 @@
         $scope.outputSuppliers = [];
         $scope.inputTerms = [];
         $scope.outputTerms = [];
-        $scope.issueDate = '';
+        $scope.issueDate = moment().subtract(29, 'days').format('MM/DD/YYYY') + ' - ' + moment().format('MM/DD/YYYY');
         $scope.lcHeader = [];
         $scope.lcData = [];
         $scope.currentPage = 0;
@@ -39,12 +39,11 @@
         $scope.loadInitData = function () {
 
             if ($scope.userData.isUserLoggedIn) {
-
                 loadStatus();
                 loadBank();
                 loadSupplier();
                 loadTerms();
-                loadLCSummary();
+                $scope.filterLCSummary();
             }
         }
 
@@ -88,8 +87,35 @@
             $scope.inputTerms = result.data.terms;
         }
 
-        function loadLCSummary() {
-            apiService.get('api/lettercredit/lc-summary/#', null,
+        $scope.filterLCSummary = function () {
+
+            var searchCriteria = [];
+            var statusIds = '', supplierIds = '', bankIds = '', termIds = '';
+            var issueDateArr = $scope.issueDate.split('-');
+            var issueFromDate = issueDateArr.length > 0 ? issueDateArr[0] : '';
+            var issueToDate = issueDateArr.length > 1 ? issueDateArr[1] : '';
+
+            $.each($scope.outputStatuses, function () {
+                statusIds += this.statusId + ',';
+            })
+
+            $.each($scope.outputSuppliers, function () {
+                supplierIds += this.supplierId + ',';
+            })
+
+            $.each($scope.outputBanks, function () {
+                bankIds += this.bankId + ',';
+            })
+
+            $.each($scope.outputTerms, function () {
+                termIds += this.termId + ',';
+            })
+
+            searchCriteria = {
+                statusIds: statusIds, supplierIds: supplierIds, bankIds: bankIds, termIds: termIds, issueFromDate: issueFromDate, issueToDate: issueToDate
+            };
+
+            apiService.post('api/lettercredit/lc-summary/#', searchCriteria,
                 lcSummaryDataLoadCompleted,
                 dataLoadFailed);
         }
@@ -101,7 +127,7 @@
             //pagination
             $scope.currentPage = 1;
             $scope.totalItems = $scope.lcData.length;
-            $scope.entryLimit = 25;
+            $scope.entryLimit = 15;
             $scope.noOfPages = Math.ceil($scope.totalItems / $scope.entryLimit);
 
             getDataHeader();
@@ -109,7 +135,7 @@
 
         $scope.getCommaSeparatedValue = function (data) {
 
-            if (!isNaN(data) && data != null)
+            if (!isNaN(data) && data != null && data != '')
                 return parseFloat(data).toLocaleString();
             else if (isNaN(data) || data != null)
                 return data;
@@ -129,8 +155,17 @@
             })
 
             for (var header in test)
-                $scope.lcHeader.push(header);
+                if (header != 'lcid')
+                    $scope.lcHeader.push(header);
         }
+
+        $scope.detailLC = function (event) {
+            dataSharingService.setData($(event.target).attr('data-id'));
+            var modal = Popeye.openModal({
+                templateUrl: "../Scripts/app/letterCredit/lcDetail.html",
+                controller: "lcDetailCtrl as lcDetailCtrl"
+            });
+        };
 
         //common data load fail function
         function dataLoadFailed(response) {
@@ -146,6 +181,7 @@
         //function calling
 
         //library initialization
+
         $('#issueDate').daterangepicker();
     }
 

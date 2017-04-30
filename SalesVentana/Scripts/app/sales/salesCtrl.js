@@ -236,6 +236,7 @@
         }
 
         $scope.filterSales = function () {
+
             var searchCriteria = [];
             var firstReportFilter = $scope.firstReportFilter;
             var secondReportFilter = $scope.secondReportFilter;
@@ -356,7 +357,7 @@
 
         $scope.getCommaSeparatedValue = function (data) {
 
-            if (!isNaN(data) && data != null)
+            if (!isNaN(data) && data != null && data != '')
                 return parseFloat(data).toLocaleString();
             else if (isNaN(data) || data != null)
                 return data;

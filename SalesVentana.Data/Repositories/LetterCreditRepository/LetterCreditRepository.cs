@@ -59,8 +59,25 @@ namespace SalesVentana.Data
             return ExecuteDataTable();
         }
 
-        public DataTable GetLCSummary()
+        public DataTable GetLCSummary(string statusIds, string supplierIds, string bankIds, string termIds, DateTime issueFromDate, DateTime issueToDate)
         {
+            string statusIdQuery = string.Empty;
+            string supplierIdQuery = string.Empty;
+            string bankIdQuery = string.Empty;
+            string termIdQuery = string.Empty;
+
+            if (!string.IsNullOrEmpty(statusIds))
+                statusIdQuery = "AND lcf.lcstatus IN(" + statusIds.Trim(',') + ")";
+
+            if (!string.IsNullOrEmpty(supplierIds))
+                supplierIdQuery = "AND lcf.supplierid IN(" + supplierIds.Trim(',') + ")";
+
+            if (!string.IsNullOrEmpty(bankIds))
+                bankIdQuery = "AND lcf.ownbankid IN(" + bankIds.Trim(',') + ")";
+
+            if (!string.IsNullOrEmpty(termIds))
+                termIdQuery = "AND lcf.Termsofpaymentoption IN(" + termIds.Trim(',') + ")";
+
             _sqlQuery = string.Format(@"SELECT lcf.lcid, lcf.lcno 'LC no.',CONVERT(VARCHAR(11),lcf.issuedate,106) 'Issue Date',lcf.lcvalue 'LC Value',cur.Currency Currency,lcf.lcvaluetk 'LC Value(TK.)',
                                         lcitem.itemcount 'Number of Items',bank.BankName 'Own Bank',supplier.SupplierName 'Supplier',
                                         lastact.lastactivity 'Last Activity Done',CONVERT(VARCHAR(11),lastact.activityDate ,106)'Activity Date',payoption.Name 'Payment Terms',
@@ -73,12 +90,31 @@ namespace SalesVentana.Data
                                         LEFT OUTER JOIN vw_DimLCItemsCount lcitem ON lcitem.lcid=lcf.lcid
                                         LEFT OUTER JOIN vw_DimLCTermsofPaymentOption payoption ON payoption.PaymentOptionID=lcf.Termsofpaymentoption
                                         LEFT OUTER JOIN vw_DimLCStatus lcstatus ON lcstatus.LCStatusID=lcf.lcstatus
-                                        WHERE lcf.issuedate BETWEEN '1 jan 2017' AND '30 Apr 2017'
-                                        AND lcf.lcstatus=2
-                                        AND lcf.supplierid=3351
-                                        AND lcf.ownbankid=57
-                                        AND lcf.Termsofpaymentoption=0
-                                        ORDER BY lcf.issuedate;");
+                                        WHERE
+                                        lcf.issuedate BETWEEN '{0}' AND '{1}'
+                                        {2}
+                                        {3}
+                                        {4}
+                                        {5}
+                                        ORDER BY lcf.issuedate;", issueFromDate, issueToDate, statusIdQuery, supplierIdQuery, bankIdQuery, termIdQuery);
+            return ExecuteDataTable();
+        }
+
+        public DataTable GetLCItems(int id)
+        {
+            _sqlQuery = string.Format(@"SELECT * FROM vw_DimLCItems WHERE lcid={0};", id);
+            return ExecuteDataTable();
+        }
+
+        public DataTable GetLCExpenditures(int id)
+        {
+            _sqlQuery = string.Format(@"Select PaymentOptionId TermId, Name TermName From vw_DimLCTermsofPaymentOption;");
+            return ExecuteDataTable();
+        }
+
+        public DataTable GetLCActivities(int id)
+        {
+            _sqlQuery = string.Format(@"SELECT * FROM vw_DimLCActivities WHERE lcid={0};", id);
             return ExecuteDataTable();
         }
 

@@ -100,13 +100,85 @@ namespace SalesVentana.Controllers
 
         [Authorize]
         [Route("lc-summary")]
+        [HttpPost]
         [HttpGet]
-        public HttpResponseMessage GetLCSummary(HttpRequestMessage request)
+        public HttpResponseMessage GetLCSummary(HttpRequestMessage request, dynamic searchCriteria)
         {
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
-                DataTable table = _letterCreditRepository.GetLCSummary();
+                string statusIds = string.Empty;
+                string supplierIds = string.Empty;
+                string bankIds = string.Empty;
+                string termIds = string.Empty;
+                DateTime issueFromDate = new DateTime();
+                DateTime issueToDate = new DateTime();
+
+                if (searchCriteria != null)
+                {
+                    statusIds = searchCriteria.statusIds;
+                    supplierIds = searchCriteria.supplierIds;
+                    bankIds = searchCriteria.bankIds;
+                    termIds = searchCriteria.termIds;
+                    issueFromDate = Convert.ToDateTime(searchCriteria.issueFromDate);
+                    issueToDate = Convert.ToDateTime(searchCriteria.issueToDate);
+                }
+
+                DataTable table = _letterCreditRepository.GetLCSummary(statusIds, supplierIds, bankIds, termIds, issueFromDate,  issueToDate);
+                _unitOfWork.Terminate();
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    table
+                });
+                return response;
+            });
+        }
+
+        [Authorize]
+        [Route("lc-items/{id}")]
+        [HttpGet]
+        public HttpResponseMessage GetLCItems(HttpRequestMessage request, int id)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                DataTable table = _letterCreditRepository.GetLCItems(id);
+                _unitOfWork.Terminate();
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    table
+                });
+                return response;
+            });
+        }
+
+        [Authorize]
+        [Route("lc-expenditures/{id}")]
+        [HttpGet]
+        public HttpResponseMessage GetLCExpenditures(HttpRequestMessage request, int id)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                DataTable table = _letterCreditRepository.GetLCExpenditures(id);
+                _unitOfWork.Terminate();
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    table
+                });
+                return response;
+            });
+        }
+
+        [Authorize]
+        [Route("lc-activities/{id}")]
+        [HttpGet]
+        public HttpResponseMessage GetLCActivities(HttpRequestMessage request, int id)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                DataTable table = _letterCreditRepository.GetLCActivities(id);
                 _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {

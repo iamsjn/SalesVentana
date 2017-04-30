@@ -232,7 +232,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="btn-group pull-right">
-                                                <button type="submit" class="btn btn-primary" value="Search"><i class="glyphicon glyphicon-search"></i> Search</button>
+                                                <button type="submit" class="btn btn-primary btn-flat" value="Search"><i class="glyphicon glyphicon-search"></i> Search</button>
                                             </div>
                                         </div>
                                     </div>
@@ -325,7 +325,7 @@
                                 </a>
                                 <div id="collapseFour" class="panel-collapse collapse">
                                     <div class="panel-body">
-                                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}">
+                                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-if="salesHeader.length > 0">
                                             <span class="pull-right">
                                                 <button class="btn btn-link" ng-click="exportToExcel('#salesTable')">
                                                     <span class="glyphicon glyphicon-share"></span> Export to Excel

@@ -24,6 +24,7 @@ namespace SalesVentana
             "~/Scripts/Vendors/angular-base64.js",
             "~/Scripts/Vendors/angular-file-upload.js",
             "~/Scripts/Vendors/angucomplete-alt.min.js",
+            "~/Scripts/Vendors/angular-animate.js",
             "~/Scripts/Vendors/ui-bootstrap-tpls-0.10.0.js",
             "~/Scripts/Vendors/underscore.js",
             "~/Scripts/Vendors/raphael.js",
@@ -41,7 +42,7 @@ namespace SalesVentana
             "~/Scripts/Vendors/jquery.slimscroll.min.js",
             "~/Scripts/Vendors/fastclick.min.js",
             "~/Scripts/Vendors/loading-bar.js",
-            "~/Scripts/Vendors/iziModal.min.js",
+            "~/Scripts/Vendors/popeye.min.js",
             "~/Scripts/site.js"
             ));
 
@@ -55,6 +56,7 @@ namespace SalesVentana
              "~/Scripts/app/services/fileUploadService.js",
              "~/Scripts/app/services/pathNameService.js",
              "~/Scripts/app/services/excelExportService.js",
+             "~/Scripts/app/services/dataSharingService.js",
              "~/Scripts/app/layout/topBar.directive.js",
              "~/Scripts/app/layout/sideBar.directive.js",
              "~/Scripts/app/layout/breadCrumb.directive.js",
@@ -64,7 +66,8 @@ namespace SalesVentana
              "~/Scripts/app/home/rootCtrl.js",
              "~/Scripts/app/home/indexCtrl.js",
              "~/Scripts/app/sales/salesCtrl.js",
-             "~/Scripts/app/letterCredit/letterCreditCtrl.js"));
+             "~/Scripts/app/letterCredit/letterCreditCtrl.js",
+             "~/Scripts/app/letterCredit/lcDetailCtrl.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
             "~/content/css/bootstrap.css",
@@ -76,8 +79,8 @@ namespace SalesVentana
             "~/content/css/daterangepicker.css",
             "~/content/css/toastr.css",
             "~/content/css/jquery.fancybox.css",
-            "~/content/css/iziModal.min.css",
-            "~/content/css/loading-bar.css"));
+            "~/content/css/loading-bar.css",
+            "~/content/css/popeye.min.css"));
 
             BundleTable.EnableOptimizations = false;
 
