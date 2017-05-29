@@ -12,12 +12,16 @@
 
         $scope.login = login;
         $scope.user = {};
+        $scope.isSignInbtnDisabled = false;
 
         function login() {
+            $scope.isSignInbtnDisabled = true;
             membershipService.login($scope.user, loginCompleted)
         }
 
         function loginCompleted(result) {
+            $scope.isSignInbtnDisabled = false;
+
             if (result.data.success) {
                 membershipService.saveCredentials($scope.user);
                 notificationService.displaySuccess('Hello ' + $scope.user.username);

@@ -13,38 +13,49 @@
 
     app.controller('letterCreditCtrl', letterCreditCtrl);
 
-    letterCreditCtrl.$inject = ['$scope', '$timeout', 'apiService', 'notificationService', 'excelExportService', 'dataSharingService', 'Popeye'];
+    letterCreditCtrl.$inject = ['$scope', '$timeout', 'apiService', 'notificationService', 'excelExportService', 'dataSharingService', 'pathNameService', 'dataHelperService', 'Popeye'];
 
-    function letterCreditCtrl($scope, $timeout, apiService, notificationService, excelExportService, dataSharingService, Popeye) {
+    function letterCreditCtrl($scope, $timeout, apiService, notificationService, excelExportService, dataSharingService, pathNameService, dataHelperService, Popeye) {
         //variable declaration
-        $scope.inputStatuses = [];
-        $scope.outputStatuses = [];
-        $scope.inputBanks = [];
-        $scope.outputBanks = [];
-        $scope.inputSuppliers = [];
-        $scope.outputSuppliers = [];
-        $scope.inputTerms = [];
-        $scope.outputTerms = [];
-        $scope.issueDate = moment().subtract(29, 'days').format('MM/DD/YYYY') + ' - ' + moment().format('MM/DD/YYYY');
-        $scope.lcHeader = [];
-        $scope.lcData = [];
-        $scope.currentPage = 0;
-        $scope.totalItems = 0;
-        $scope.entryLimit = 0;
-        $scope.noOfPages = 0;
-        $scope.search = {};
+        var vm = this;
+        vm.inputLCNos = [];
+        vm.outputLCNos = [];
+        vm.inputStatuses = [];
+        vm.outputStatuses = [];
+        vm.inputBanks = [];
+        vm.outputBanks = [];
+        vm.inputSuppliers = [];
+        vm.outputSuppliers = [];
+        vm.inputTerms = [];
+        vm.outputTerms = [];
+        vm.issueDate = moment().subtract(30, 'days').format('MM/DD/YYYY') + ' - ' + moment().format('MM/DD/YYYY');
+        vm.lcHeader = [];
+        vm.lcData = [];
+        vm.valueFormatter = 'Million';
+        vm.currentPage = 0;
+        vm.totalItems = 0;
+        vm.entryLimit = 0;
+        vm.noOfPages = 0;
+        vm.search = {};
         //drop down filling
 
         //apiServices
-        $scope.loadInitData = function () {
+        vm.initData = function () {
 
             if ($scope.userData.isUserLoggedIn) {
-                loadStatus();
-                loadBank();
-                loadSupplier();
-                loadTerms();
-                $scope.filterLCSummary();
+                loadInitData();
+                vm.filterLCSummary();
             }
+        }
+
+        function loadLCNo() {
+            apiService.get('api/lettercredit/lcnos/#', null,
+                lcNoDataLoadCompleted,
+                dataLoadFailed);
+        }
+
+        function lcNoDataLoadCompleted(result) {
+            vm.inputLCNos = result.data.lcNos;
         }
 
         function loadStatus() {
@@ -54,7 +65,7 @@
         }
 
         function statusDataLoadCompleted(result) {
-            $scope.inputStatuses = result.data.statuses;
+            vm.inputStatuses = result.data.statuses;
         }
 
         function loadBank() {
@@ -64,7 +75,7 @@
         }
 
         function bankDataLoadCompleted(result) {
-            $scope.inputBanks = result.data.banks;
+            vm.inputBanks = result.data.banks;
         }
 
         function loadSupplier() {
@@ -74,7 +85,7 @@
         }
 
         function supplierDataLoadCompleted(result) {
-            $scope.inputSuppliers = result.data.suppliers;
+            vm.inputSuppliers = result.data.suppliers;
         }
 
         function loadTerms() {
@@ -84,87 +95,115 @@
         }
 
         function termDataLoadCompleted(result) {
-            $scope.inputTerms = result.data.terms;
+            vm.inputTerms = result.data.terms;
         }
 
-        $scope.filterLCSummary = function () {
+        function loadInitData() {
+            apiService.get('api/lettercredit/initial-data/#', null,
+                loadInitDataLoadCompleted,
+                dataLoadFailed);
+        }
+
+        function loadInitDataLoadCompleted(result) {
+            vm.inputLCNos = result.data.lcNos;
+            vm.inputStatuses = result.data.statuses;
+            vm.inputBanks = result.data.banks;
+            vm.inputSuppliers = result.data.suppliers;
+            vm.inputTerms = result.data.terms;
+        }
+
+        vm.filterLCSummary = function () {
 
             var searchCriteria = [];
-            var statusIds = '', supplierIds = '', bankIds = '', termIds = '';
-            var issueDateArr = $scope.issueDate.split('-');
+            var lcIds = '', statusIds = '', supplierIds = '', bankIds = '', termIds = '';
+            var issueDateArr = vm.issueDate.split('-');
             var issueFromDate = issueDateArr.length > 0 ? issueDateArr[0] : '';
             var issueToDate = issueDateArr.length > 1 ? issueDateArr[1] : '';
 
-            $.each($scope.outputStatuses, function () {
+            $.each(vm.outputLCNos, function () {
+                lcIds += this.lcId + ',';
+            })
+
+            $.each(vm.outputStatuses, function () {
                 statusIds += this.statusId + ',';
             })
 
-            $.each($scope.outputSuppliers, function () {
+            $.each(vm.outputSuppliers, function () {
                 supplierIds += this.supplierId + ',';
             })
 
-            $.each($scope.outputBanks, function () {
+            $.each(vm.outputBanks, function () {
                 bankIds += this.bankId + ',';
             })
 
-            $.each($scope.outputTerms, function () {
+            $.each(vm.outputTerms, function () {
                 termIds += this.termId + ',';
             })
 
             searchCriteria = {
-                statusIds: statusIds, supplierIds: supplierIds, bankIds: bankIds, termIds: termIds, issueFromDate: issueFromDate, issueToDate: issueToDate
+                lcIds: lcIds, statusIds: statusIds, supplierIds: supplierIds, bankIds: bankIds, termIds: termIds, issueFromDate: issueFromDate, issueToDate: issueToDate
             };
 
-            apiService.post('api/lettercredit/lc-summary/#', searchCriteria,
+            vm.lcPromise = apiService.post('api/lettercredit/lc-summary/#', searchCriteria,
                 lcSummaryDataLoadCompleted,
                 dataLoadFailed);
         }
 
         function lcSummaryDataLoadCompleted(result) {
 
-            $scope.lcData = result.data.table;
+            vm.valueFormatter = 'Million';
+            vm.lcData = result.data.table;
 
             //pagination
-            $scope.currentPage = 1;
-            $scope.totalItems = $scope.lcData.length;
-            $scope.entryLimit = 15;
-            $scope.noOfPages = Math.ceil($scope.totalItems / $scope.entryLimit);
+            vm.currentPage = 1;
+            vm.totalItems = vm.lcData.length;
+            vm.entryLimit = 15;
+            vm.noOfPages = Math.ceil(vm.totalItems / vm.entryLimit);
 
-            getDataHeader();
+            vm.lcHeader = dataHelperService.getHeader(vm.lcData, ['lcid']);
+
+            getGrandTotal();
         }
 
-        $scope.getCommaSeparatedValue = function (data) {
-
-            if (!isNaN(data) && data != null && data != '')
-                return parseFloat(data).toLocaleString();
-            else if (isNaN(data) || data != null)
-                return data;
-            else if (data == null)
-                return '';
-            else
-                return 0;
+        vm.getCommaSeparatedData = function (data, header, exception) {
+            if (header == 'LC Value' || header == 'LC Value(TK)')
+                data = dataHelperService.getFormattedData(data, vm.valueFormatter);
+            return dataHelperService.getCommaSeparatedData(data, header, exception);
         }
 
-        function getDataHeader() {
+        function getGrandTotal() {
 
-            var test = [];
-            $scope.lcHeader = [];
+            var total = '';
+            vm.totalData = [];
 
-            $.each($scope.lcData, function (k, v) {
-                test = (k, v);
-            })
-
-            for (var header in test)
-                if (header != 'lcid')
-                    $scope.lcHeader.push(header);
+            for (var i = 0; i < vm.lcHeader.length; i++) {
+                total = dataHelperService.getGrandTotal(i, vm.lcData, vm.lcHeader[i]);
+                if (!isNaN(total)) {
+                    if (vm.lcHeader[i] == 'LC Value' || vm.lcHeader[i] == 'LC Value(TK)')
+                        total = dataHelperService.getFormattedData(total, vm.valueFormatter);
+                    vm.totalData.push(total.toLocaleString());
+                }
+                else {
+                    vm.totalData.push(total);
+                }
+            }
+            vm.lcTotal = JSON.parse(JSON.stringify(vm.totalData));
         }
 
-        $scope.detailLC = function (event) {
-            dataSharingService.setData($(event.target).attr('data-id'));
-            var modal = Popeye.openModal({
-                templateUrl: "../Scripts/app/letterCredit/lcDetail.html",
-                controller: "lcDetailCtrl as lcDetailCtrl"
-            });
+        vm.changeValueFormat = function () {
+            getGrandTotal();
+            vm.lcData = vm.lcData;
+        }
+
+        vm.detailLC = function (event) {
+
+            dataSharingService.setData([$(event.target).attr('data-id')]);
+            $timeout(function () {
+                var modal = Popeye.openModal({
+                    templateUrl: pathNameService.pathName + "Scripts/app/letterCredit/lcDetail.html",
+                    controller: "lcDetailCtrl as lcDetailCtrl"
+                });
+            }, 1000)
         };
 
         //common data load fail function
@@ -173,15 +212,12 @@
         }
 
         //Excel Export
-        $scope.exportToExcel = function (tableId) {
+        vm.exportToExcel = function (tableId) {
             var exportHref = excelExportService.tableToExcel(tableId, 'LC Data');
             $timeout(function () { location.href = exportHref; }, 100);
         }
 
-        //function calling
-
         //library initialization
-
         $('#issueDate').daterangepicker();
     }
 

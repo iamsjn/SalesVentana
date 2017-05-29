@@ -16,14 +16,30 @@ namespace SalesVentana.Controllers
     public class LetterCreditController : ApiControllerBase
     {
         ILetterCreditRepository _letterCreditRepository = null;
-        IUnitOfWork _unitOfWork = null;
 
         public LetterCreditController(IBaseRepository<Error> errorRepository, ILetterCreditRepository letterCreditRepository,
             IUnitOfWork unitOfWork)
             : base(errorRepository, unitOfWork)
         {
             _letterCreditRepository = letterCreditRepository;
-            _unitOfWork = unitOfWork;
+        }
+
+        [Authorize]
+        [Route("lcnos")]
+        [HttpGet]
+        public HttpResponseMessage GetLCNo(HttpRequestMessage request)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                DataTable table = _letterCreditRepository.GetLCNo();
+                _unitOfWork.Terminate();
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    lcNos = table.AsEnumerable().Select(x => new { lcId = x.Field<int>("LCId"), lcNo = x.Field<string>("LCNo") })
+                });
+                return response;
+            });
         }
 
         [Authorize]
@@ -99,6 +115,35 @@ namespace SalesVentana.Controllers
         }
 
         [Authorize]
+        [Route("initial-data")]
+        [HttpGet]
+        public HttpResponseMessage GetInitialData(HttpRequestMessage request)
+        {
+
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                DataTable lcNos = _letterCreditRepository.GetLCNo();
+                DataTable status = _letterCreditRepository.GetStatus();
+                DataTable bank = _letterCreditRepository.GetBank();
+                DataTable supplier = _letterCreditRepository.GetSupplier();
+                DataTable term = _letterCreditRepository.GetTerm();
+                _unitOfWork.Terminate();
+
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    lcNos = lcNos.AsEnumerable().Select(x => new { lcId = x.Field<int>("LCId"), lcNo = x.Field<string>("LCNo") }),
+                    statuses = status.AsEnumerable().Select(x => new { statusId = x.Field<int>("StatusId"), statusName = x.Field<string>("StatusName") }),
+                    banks = bank.AsEnumerable().Select(x => new { bankId = x.Field<int>("BankId"), bankName = x.Field<string>("BankName") }),
+                    suppliers = supplier.AsEnumerable().Select(x => new { supplierId = x.Field<int>("SupplierId"), supplierName = x.Field<string>("SupplierName") }),
+                    terms = term.AsEnumerable().Select(x => new { termId = x.Field<int>("TermId"), termName = x.Field<string>("TermName") })
+                });
+                return response;
+            });
+        }
+
+
+        [Authorize]
         [Route("lc-summary")]
         [HttpPost]
         [HttpGet]
@@ -107,6 +152,7 @@ namespace SalesVentana.Controllers
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
+                string lcIds = string.Empty;
                 string statusIds = string.Empty;
                 string supplierIds = string.Empty;
                 string bankIds = string.Empty;
@@ -116,6 +162,7 @@ namespace SalesVentana.Controllers
 
                 if (searchCriteria != null)
                 {
+                    lcIds = searchCriteria.lcIds;
                     statusIds = searchCriteria.statusIds;
                     supplierIds = searchCriteria.supplierIds;
                     bankIds = searchCriteria.bankIds;
@@ -124,7 +171,7 @@ namespace SalesVentana.Controllers
                     issueToDate = Convert.ToDateTime(searchCriteria.issueToDate);
                 }
 
-                DataTable table = _letterCreditRepository.GetLCSummary(statusIds, supplierIds, bankIds, termIds, issueFromDate,  issueToDate);
+                DataTable table = _letterCreditRepository.GetLCSummary(lcIds, statusIds, supplierIds, bankIds, termIds, issueFromDate,  issueToDate);
                 _unitOfWork.Terminate();
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
@@ -183,6 +230,27 @@ namespace SalesVentana.Controllers
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
                     table
+                });
+                return response;
+            });
+        }
+
+        [Authorize]
+        [Route("lc-detail/{id}")]
+        [HttpGet]
+        public HttpResponseMessage GetLCDetail(HttpRequestMessage request, int id)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                DataTable lcItem = _letterCreditRepository.GetLCItems(id);
+                DataTable expenditure = _letterCreditRepository.GetLCExpenditures(id);
+                DataTable activity = _letterCreditRepository.GetLCActivities(id);
+                _unitOfWork.Terminate();
+
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    lcItem, expenditure, activity
                 });
                 return response;
             });

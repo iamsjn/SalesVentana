@@ -15,9 +15,10 @@ namespace SalesVentana.Data
         DataTable GetBank();
         DataTable GetTerm();
         DataTable GetSupplier();
-        DataTable GetLCSummary(string statusIds, string supplierIds, string bankIds, string termIds, DateTime issueFromDate, DateTime issueToDate);
+        DataTable GetLCSummary(string lcIds, string statusIds, string supplierIds, string bankIds, string termIds, DateTime issueFromDate, DateTime issueToDate);
         DataTable GetLCItems(int id);
         DataTable GetLCExpenditures(int id);
         DataTable GetLCActivities(int id);
+        DataTable GetLCNo();
     }
 }

@@ -1,6 +1,6 @@
-﻿<div class="row" ng-init="loadInitData();">
+﻿<div class="row" ng-init="vm.initData();" cg-busy="vm.lcPromise">
     <div class="col-md-12">
-        <div class="panel panel-info">
+        <div class="panel panel-info" style="min-height: 600px;">
             <div class="panel-body">
                 <div class="panel-group" id="accordion">
                     <div class="panel panel-default">
@@ -8,7 +8,7 @@
                             <div class="list-group-item list-group-item-default">
                                 <div class="row">
                                     <div class="col-md-12  accordion-toggle">
-                                        <img style="margin-right: 5px;" src="../../../Content/images/sales/criteria-clipart-criteria-clipart-1.jpg" class="img-responsive pull-left" />
+                                        <img style="margin-right: 5px;" src="Content/images/sales/criteria-clipart-criteria-clipart-1.jpg" class="img-responsive pull-left" />
                                         Customise report based on multiple search criteria
                                     </div>
                                 </div>
@@ -16,16 +16,16 @@
                         </a>
                         <div id="collapseOne" class="panel-collapse collapse in">
                             <div class="panel-body">
-                                <form role="form" role="form" novalidate angular-validator name="salesFilterForm" angular-validator-submit="filterLCSummary();">
+                                <form role="form" role="form" novalidate angular-validator name="salesFilterForm" angular-validator-submit="vm.filterLCSummary();">
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label>Status :</label>
+                                                <label>LC No :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputStatuses"
-                                                     output-model="outputStatuses"
-                                                     button-label="icon statusName"
-                                                     item-label="icon statusName"
+                                                     input-model="vm.inputLCNos"
+                                                     output-model="vm.outputLCNos"
+                                                     button-label="icon lcNo"
+                                                     item-label="icon lcNo"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
                                                      max-labels="3"
@@ -33,12 +33,12 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label>Own Bank :</label>
+                                                <label>Status :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputBanks"
-                                                     output-model="outputBanks"
-                                                     button-label="icon bankName"
-                                                     item-label="icon bankName"
+                                                     input-model="vm.inputStatuses"
+                                                     output-model="vm.outputStatuses"
+                                                     button-label="icon statusName"
+                                                     item-label="icon statusName"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
                                                      max-labels="3"
@@ -50,8 +50,8 @@
                                             <div class="form-group">
                                                 <label>Supplier :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputSuppliers"
-                                                     output-model="outputSuppliers"
+                                                     input-model="vm.inputSuppliers"
+                                                     output-model="vm.outputSuppliers"
                                                      button-label="icon supplierName"
                                                      item-label="icon supplierName"
                                                      tick-property="ticked"
@@ -63,8 +63,8 @@
                                             <div class="form-group">
                                                 <label>Payment Terms :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputTerms"
-                                                     output-model="outputTerms"
+                                                     input-model="vm.inputTerms"
+                                                     output-model="vm.outputTerms"
                                                      button-label="icon termName"
                                                      item-label="icon termName"
                                                      tick-property="ticked"
@@ -76,25 +76,25 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
+                                                <div class="form-group">
+                                                    <label>Own Bank :</label>
+                                                    <div isteven-multi-select
+                                                         input-model="vm.inputBanks"
+                                                         output-model="vm.outputBanks"
+                                                         button-label="icon bankName"
+                                                         item-label="icon bankName"
+                                                         tick-property="ticked"
+                                                         is-checkbox-layer-open="true"
+                                                         max-labels="3"
+                                                         max-height="250px">
+                                                    </div>
+                                                </div>
                                                 <label>Issue Date Range:</label>
                                                 <div class="input-group">
                                                     <div class="input-group-addon">
                                                         <i class="fa fa-calendar"></i>
                                                     </div>
-                                                    <input type="text" class="form-control pull-right" id="issueDate" ng-model="issueDate">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>LC Item :</label>
-                                                <div isteven-multi-select
-                                                     input-model="inputBrands"
-                                                     output-model="outputBrands"
-                                                     button-label="icon brandName"
-                                                     item-label="icon brandName"
-                                                     tick-property="ticked"
-                                                     is-checkbox-layer-open="true"
-                                                     max-labels="3"
-                                                     max-height="250px">
+                                                    <input type="text" class="form-control pull-right" id="issueDate" ng-model="vm.issueDate">
                                                 </div>
                                             </div>
                                         </div>
@@ -117,7 +117,7 @@
                                     <div class="list-group-item list-group-item-default">
                                         <div class="row">
                                             <div class="col-md-12  accordion-toggle">
-                                                <img style="margin-right: 5px;" src="../../../Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
+                                                <img style="margin-right: 5px;" src="Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
                                                 Report Data in table format
                                             </div>
                                         </div>
@@ -125,16 +125,43 @@
                                 </a>
                                 <div id="collapseFour" class="panel-collapse collapse in">
                                     <div class="panel-body">
-                                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-if="lcHeader.length > 0">
+                                        <div class="table-responsive" ng-style="{'margin-top': '-9px'}" ng-show="vm.lcHeader.length > 0">
                                             <span class="pull-right">
-                                                <button class="btn btn-link" ng-click="exportToExcel('#salesTable')">
+                                                <button class="btn btn-link" ng-click="vm.exportToExcel('#salesTable')">
                                                     <span class="glyphicon glyphicon-share"></span> Export to Excel
                                                 </button>
+                                                <select class="soflow" ng-model="vm.valueFormatter" ng-change="vm.changeValueFormat()">
+                                                    <option value="Million">Value in Million</option>
+                                                    <option value="Thousand">Value in Thousand</option>
+                                                </select>
                                             </span>
-                                            <table class="table table-bordered table-striped" id="salesTable" style="font-size:13px;">
+                                            <!--export table-->
+                                            <table class="table table-bordered table-striped" id="salesTable" style="font-size:13px;" ng-show="false">
                                                 <thead>
                                                     <tr style="background-color: #605ca8; color: white; ">
-                                                        <th ng-repeat="header in lcHeader">
+                                                        <th ng-repeat="header in vm.lcHeader">
+                                                            {{header}}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="data in vm.lcData">
+                                                        <td ng-repeat="header in vm.lcHeader">
+                                                            {{vm.getCommaSeparatedData(data[header], header, ['LC No.'])}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="background-color:#605ca8; font-weight: bold; color: white;">
+                                                        <td ng-repeat="total in vm.lcTotal track by $index">
+                                                            <b>{{total}}</b>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <!--end-->
+                                            <table class="table table-bordered table-striped" style="font-size:13px;">
+                                                <thead>
+                                                    <tr style="background-color: #605ca8; color: white; ">
+                                                        <th ng-repeat="header in vm.lcHeader">
                                                             {{header}}
                                                         </th>
                                                         <th>
@@ -143,17 +170,23 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat="data in lcData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
-                                                        <td ng-repeat="header in lcHeader" ng-d>
-                                                            {{getCommaSeparatedValue(data[header])}}
+                                                    <tr ng-repeat="data in vm.lcData | startFrom:(vm.currentPage-1)*vm.entryLimit | limitTo:vm.entryLimit">
+                                                        <td ng-repeat="header in vm.lcHeader" ng-d>
+                                                            {{vm.getCommaSeparatedData(data[header], header, ['LC No.'])}}
                                                         </td>
                                                         <td class="text-center">
-                                                            <button type="button" data-id="{{data['lcid']}}" class="btn btn-block btn-flat btn-xs btn-warning" ng-click="detailLC($event);"><i class="fa fa-table" aria-hidden="true"></i> &nbsp;Details</button>
+                                                            <button type="button" data-id="{{data['lcid']}}" class="btn btn-block btn-flat btn-xs btn-warning" ng-click="vm.detailLC($event);"><i class="fa fa-table" aria-hidden="true"></i> &nbsp;Details</button>
                                                         </td>
+                                                    </tr>
+                                                    <tr ng-if="vm.currentPage == vm.noOfPages" style="background-color:#605ca8; font-weight: bold; color: white;">
+                                                        <td ng-repeat="total in vm.lcTotal track by $index">
+                                                            <b>{{total}}</b>
+                                                        </td>
+                                                        <td></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                            <pagination class="pull-right" page="currentPage" max-size="noOfPages" total-items="totalItems" items-per-page="entryLimit" style="cursor:pointer;"></pagination>
+                                            <pagination class="pull-right" page="vm.currentPage" max-size="vm.noOfPages" total-items="vm.totalItems" items-per-page="vm.entryLimit" style="cursor:pointer;"></pagination>
                                         </div>
                                     </div>
                                 </div>

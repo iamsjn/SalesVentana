@@ -1,0 +1,146 @@
+﻿<div class="row" ng-init="vm.initData();" cg-busy="vm.poPromise">
+    <div class="col-md-12">
+        <div class="panel panel-info" style="min-height: 600px;">
+            <div class="panel-body">
+                <div class=" panel-group" id="accordion2">
+                    <div class="panel panel-default">
+                        <a data-toggle="collapse" data-parent="#accordion2" href="!/#collapseTwo">
+                            <div class="list-group-item list-group-item-default">
+                                <div class="row">
+                                    <div class="col-md-12  accordion-toggle">
+                                        <img style="margin-right: 5px;" src="Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
+                                        Business Partner PO
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div id="collapseTwo" class="panel-collapse">
+                            <div class="panel-body">
+                                <div class="table-responsive" ng-style="{'margin-top': '-9px'}" ng-show="vm.bpHeader.length > 0">
+                                    <span class="pull-right">
+                                        <button class="btn btn-link" ng-click="vm.exportToExcel('#bpTable')">
+                                            <span class="glyphicon glyphicon-share"></span> Export to Excel
+                                        </button>
+                                        <select class="soflow" ng-model="vm.bpValueFormatter" ng-change="vm.changeValueFormat('bp')">
+                                            <option value="Million">Value in Million</option>
+                                            <option value="Thousand">Value in Thousand</option>
+                                        </select>
+                                    </span>
+                                    <!--export table-->
+                                    <table class="table table-bordered table-striped" id="bpTable" style="font-size:13px;" ng-show="false">
+                                        <thead>
+                                            <tr style="background-color: #605ca8; color: white; ">
+                                                <th ng-repeat="header in vm.bpHeader">
+                                                    {{header}}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="data in vm.bpData">
+                                                <td ng-repeat="header in vm.bpHeader">
+                                                    {{vm.getBPCommaSeparatedData(data[header], header, ['POQty'])}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <!--end-->
+                                    <table class="table table-bordered table-striped" style="font-size:13px;">
+                                        <thead>
+                                            <tr style="background-color: #605ca8; color: white; ">
+                                                <th ng-repeat="header in vm.bpHeader">
+                                                    {{header}}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="data in vm.bpData | startFrom:(vm.bpCurrentPage-1)*vm.bpEntryLimit | limitTo:vm.bpEntryLimit">
+                                                <td ng-repeat="header in vm.bpHeader">
+                                                    {{vm.getBPCommaSeparatedData(data[header], header, ['POQty'])}}
+                                                </td>
+                                            </tr>
+                                            <tr ng-if="vm.bpCurrentPage == vm.bpNoOfPages" style="background-color:#605ca8; font-weight: bold; color: white;">
+                                                <td ng-repeat="total in vm.bpTotal track by $index">
+                                                    <b>{{total}}</b>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <pagination class="pull-right" page="vm.bpCurrentPage" max-size="vm.bpNoOfPages" total-items="vm.bpTotalItems" items-per-page="vm.bpEntryLimit" style="cursor:pointer;"></pagination>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class=" panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <a data-toggle="collapse" data-parent="#accordion" href="!/#collapse">
+                            <div class="list-group-item list-group-item-default">
+                                <div class="row">
+                                    <div class="col-md-12  accordion-toggle">
+                                        <img style="margin-right: 5px;" src="Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
+                                        Item PO
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div id="collapse" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <div class="table-responsive" ng-style="{'margin-top': '-9px'}" ng-show="vm.itemHeader.length > 0">
+                                    <span class="pull-right">
+                                        <button class="btn btn-link" ng-click="vm.exportToExcel('#itemTable')">
+                                            <span class="glyphicon glyphicon-share"></span> Export to Excel
+                                        </button>
+                                        <select class="soflow" ng-model="vm.itemValueFormatter" ng-change="vm.changeValueFormat('item')">
+                                            <option value="Million">Value in Million</option>
+                                            <option value="Thousand">Value in Thousand</option>
+                                        </select>
+                                    </span>
+                                    <!--export table-->
+                                    <table class="table table-bordered table-striped" id="itemTable" style="font-size:13px;" ng-show="false">
+                                        <thead>
+                                            <tr style="background-color: #605ca8; color: white; ">
+                                                <th ng-repeat="header in vm.itemHeader">
+                                                    {{header}}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="data in vm.itemData">
+                                                <td ng-repeat="header in vm.itemHeader">
+                                                    {{vm.getItemCommaSeparatedData(data[header], header, ['POQty'])}}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <!--end-->
+                                    <table class="table table-bordered table-striped" style="font-size:13px;">
+                                        <thead>
+                                            <tr style="background-color: #605ca8; color: white; ">
+                                                <th ng-repeat="header in vm.itemHeader">
+                                                    {{header}}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="data in vm.itemData | startFrom:(vm.itemCurrentPage-1)*vm.itemEntryLimit | limitTo:vm.itemEntryLimit">
+                                                <td ng-repeat="header in vm.itemHeader">
+                                                    {{vm.getItemCommaSeparatedData(data[header], header, ['POQty'])}}
+                                                </td>
+                                            </tr>
+                                            <tr ng-if="vm.itemCurrentPage == vm.itemNoOfPages" style="background-color:#605ca8; font-weight: bold; color: white;">
+                                                <td ng-repeat="total in vm.itemTotal track by $index">
+                                                    <b>{{total}}</b>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <pagination class="pull-right" page="vm.itemCurrentPage" max-size="vm.itemNoOfPages" total-items="vm.itemTotalItems" items-per-page="vm.itemEntryLimit" style="cursor:pointer;"></pagination>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

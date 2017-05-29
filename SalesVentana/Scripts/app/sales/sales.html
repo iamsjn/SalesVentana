@@ -1,19 +1,19 @@
-﻿<div class="row" ng-init="loadInitData();">
+﻿<div class="row" ng-init="vm.initData();" cg-busy="vm.salesPromise">
     <div class="col-md-12">
-        <div class="panel panel-info">
+        <div class="panel panel-info" style="min-height: 600px;">
             <div class="panel-body">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <label>
-                            <input type="radio" name="salesType" value="yearly" ng-model="salesType" ng-change="changeSalesType();" ng-checked="true">
+                            <input type="radio" name="salesType" value="yearly" ng-model="vm.salesType" ng-change="vm.changeSalesType();" ng-checked="true">
                             Yearly &nbsp;
                         </label>
                         <label>
-                            <input type="radio" name="salesType" value="quarterly" ng-model="salesType" ng-change="changeSalesType();">
+                            <input type="radio" name="salesType" value="quarterly" ng-model="vm.salesType" ng-change="vm.changeSalesType();">
                             Quarterly &nbsp;
                         </label>
                         <label>
-                            <input type="radio" name="salesType" value="monthly" ng-model="salesType" ng-change="changeSalesType();">
+                            <input type="radio" name="salesType" value="monthly" ng-model="vm.salesType" ng-change="vm.changeSalesType();">
                             Monthly &nbsp;
                         </label>
                     </div>
@@ -24,7 +24,7 @@
                             <div class="list-group-item list-group-item-default">
                                 <div class="row">
                                     <div class="col-md-12  accordion-toggle">
-                                        <img style="margin-right: 5px;" src="../../../Content/images/sales/criteria-clipart-criteria-clipart-1.jpg" class="img-responsive pull-left" />
+                                        <img style="margin-right: 5px;" src="Content/images/sales/criteria-clipart-criteria-clipart-1.jpg" class="img-responsive pull-left" />
                                         Customise report based on multiple search criteria
                                     </div>
                                 </div>
@@ -32,33 +32,33 @@
                         </a>
                         <div id="collapseOne" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <form role="form" role="form" novalidate angular-validator name="salesFilterForm" angular-validator-submit="filterSales();">
+                                <form role="form" role="form" novalidate angular-validator name="salesFilterForm" angular-validator-submit="vm.filterSales();">
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Year :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputSalesYear"
-                                                     output-model="outputSalesYear"
+                                                     input-model="vm.inputSalesYear"
+                                                     output-model="vm.outputSalesYear"
                                                      button-label="icon year"
                                                      item-label="icon year"
                                                      tick-property="ticked"
                                                      selection-mode="single"
                                                      is-checkbox-layer-open="true"
-                                                     is-disabled="yearItemIsDisabled"
+                                                     is-disabled="vm.yearItemIsDisabled"
                                                      max-height="250px">
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <label>Quarter :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputSalesQuarter"
-                                                     output-model="outputSalesQuarter"
+                                                     input-model="vm.inputSalesQuarter"
+                                                     output-model="vm.outputSalesQuarter"
                                                      button-label="icon quarter"
                                                      item-label="icon quarter"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
-                                                     is-disabled="quarterItemIsDisabled"
+                                                     is-disabled="vm.quarterItemIsDisabled"
                                                      max-labels="3"
                                                      max-height="250px">
                                                 </div>
@@ -66,13 +66,13 @@
                                             <div class="form-group">
                                                 <label>Month :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputSalesMonth"
-                                                     output-model="outputSalesMonth"
+                                                     input-model="vm.inputSalesMonth"
+                                                     output-model="vm.outputSalesMonth"
                                                      button-label="icon month"
                                                      item-label="icon month"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
-                                                     is-disabled="monthItemIsDisabled"
+                                                     is-disabled="vm.monthItemIsDisabled"
                                                      max-labels="3"
                                                      max-height="250px">
                                                 </div>
@@ -81,27 +81,31 @@
                                                 <label>Report based on:</label>
                                                 <br />
                                                 <label>
-                                                    <input type="radio" name="firstReportFilter" value="Brand" ng-model="firstReportFilter" ng-checked="true" ng-change="changeSecondReportFilter();">
+                                                    <input type="radio" name="firstReportFilter" value="Brand" ng-model="vm.firstReportFilter" ng-checked="true" ng-change="vm.changeSecondReportFilter();">
                                                     Brand &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="firstReportFilter" value="ProductCategory" ng-model="firstReportFilter" ng-change="changeSecondReportFilter();">
+                                                    <input type="radio" name="firstReportFilter" value="ProductCategory" ng-model="vm.firstReportFilter" ng-change="vm.changeSecondReportFilter();">
                                                     Product Category &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="firstReportFilter" value="Product" ng-model="firstReportFilter" ng-change="changeSecondReportFilter();">
+                                                    <input type="radio" name="firstReportFilter" value="Product" ng-model="vm.firstReportFilter" ng-change="vm.changeSecondReportFilter();">
                                                     Product &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="firstReportFilter" value="Region" ng-model="firstReportFilter" ng-change="changeSecondReportFilter();">
+                                                    <input type="radio" name="firstReportFilter" value="Region" ng-model="vm.firstReportFilter" ng-change="vm.changeSecondReportFilter();">
                                                     Region &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="firstReportFilter" value="Showroom" ng-model="firstReportFilter" ng-change="changeSecondReportFilter();">
+                                                    <input type="radio" name="firstReportFilter" value="Showroom" ng-model="vm.firstReportFilter" ng-change="vm.changeSecondReportFilter();">
                                                     Showroom &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="firstReportFilter" value="Employee" ng-model="firstReportFilter" ng-change="changeSecondReportFilter();">
+                                                    <input type="radio" name="firstReportFilter" value="Channel" ng-model="vm.firstReportFilter" ng-change="vm.changeSecondReportFilter();" ng-disabled="vm.isChannelDisabled">
+                                                    Channel &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="firstReportFilter" value="Employee" ng-model="vm.firstReportFilter" ng-change="vm.changeSecondReportFilter();">
                                                     Employee &nbsp;
                                                 </label>
                                             </div>
@@ -110,8 +114,8 @@
                                             <div class="form-group">
                                                 <label>Channel :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputChannel"
-                                                     output-model="outputChannel"
+                                                     input-model="vm.inputChannel"
+                                                     output-model="vm.outputChannel"
                                                      button-label="icon channelName"
                                                      item-label="icon channelName"
                                                      tick-property="ticked"
@@ -123,13 +127,13 @@
                                             <div class="form-group">
                                                 <label>Brand :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputBrands"
-                                                     output-model="outputBrands"
+                                                     input-model="vm.inputBrands"
+                                                     output-model="vm.outputBrands"
                                                      button-label="icon brandName"
                                                      item-label="icon brandName"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
-                                                     on-close="brandClick()"
+                                                     on-close="vm.brandClick()"
                                                      max-labels="3"
                                                      max-height="250px">
                                                 </div>
@@ -137,13 +141,13 @@
                                             <div class="form-group">
                                                 <label>Product Category :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputProductCategories"
-                                                     output-model="outputProductCategories"
+                                                     input-model="vm.inputProductCategories"
+                                                     output-model="vm.outputProductCategories"
                                                      button-label="icon categoryName"
                                                      item-label="icon categoryName"
                                                      tick-property="ticked"
                                                      is-checkbox-layer-open="true"
-                                                     on-close="productCategoryClick()"
+                                                     on-close="vm.productCategoryClick()"
                                                      max-labels="3"
                                                      max-height="250px">
                                                 </div>
@@ -152,27 +156,31 @@
                                                 <label>Sort based on:</label>
                                                 <br />
                                                 <label>
-                                                    <input type="radio" name="secondReportFilter" value="Brand" ng-model="secondReportFilter" ng-checked="true">
+                                                    <input type="radio" name="secondReportFilter" value="Brand" ng-model="vm.secondReportFilter" ng-checked="true" ng-change="vm.isStackChartCompatible();">
                                                     Brand &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="secondReportFilter" value="ProductCategory" ng-model="secondReportFilter">
+                                                    <input type="radio" name="secondReportFilter" value="ProductCategory" ng-model="vm.secondReportFilter" ng-change="vm.isStackChartCompatible();">
                                                     Product Category &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="secondReportFilter" value="Product" ng-model="secondReportFilter">
+                                                    <input type="radio" name="secondReportFilter" value="Product" ng-model="vm.secondReportFilter" ng-change="vm.isStackChartCompatible();">
                                                     Product &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="secondReportFilter" value="Region" ng-model="secondReportFilter">
+                                                    <input type="radio" name="secondReportFilter" value="Region" ng-model="vm.secondReportFilter" ng-change="vm.isStackChartCompatible();">
                                                     Region &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="secondReportFilter" value="Showroom" ng-model="secondReportFilter">
+                                                    <input type="radio" name="secondReportFilter" value="Showroom" ng-model="vm.secondReportFilter" ng-change="vm.isStackChartCompatible();">
                                                     Showroom &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="radio" name="secondReportFilter" value="Employee" ng-model="secondReportFilter">
+                                                    <input type="radio" name="secondReportFilter" value="Channel" ng-model="vm.secondReportFilter" ng-change="vm.isStackChartCompatible();" ng-disabled="vm.isChannelDisabled">
+                                                    Channel &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="radio" name="secondReportFilter" value="Employee" ng-model="vm.secondReportFilter" ng-change="vm.isStackChartCompatible();">
                                                     Employee &nbsp;
                                                 </label>
                                             </div>
@@ -181,8 +189,8 @@
                                             <div class="form-group">
                                                 <label>Product :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputProducts"
-                                                     output-model="outputProducts"
+                                                     input-model="vm.inputProducts"
+                                                     output-model="vm.outputProducts"
                                                      button-label="icon productName"
                                                      item-label="icon productName"
                                                      tick-property="ticked"
@@ -194,8 +202,8 @@
                                             <div class="form-group">
                                                 <label>Region :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputRegion"
-                                                     output-model="outputRegion"
+                                                     input-model="vm.inputRegion"
+                                                     output-model="vm.outputRegion"
                                                      button-label="icon regionName"
                                                      item-label="icon regionName"
                                                      tick-property="ticked"
@@ -207,8 +215,8 @@
                                             <div class="form-group">
                                                 <label>Showroom :</label>
                                                 <div isteven-multi-select
-                                                     input-model="inputShowroom"
-                                                     output-model="outputShowroom"
+                                                     input-model="vm.inputShowroom"
+                                                     output-model="vm.outputShowroom"
                                                      button-label="icon showroomName"
                                                      item-label="icon showroomName"
                                                      tick-property="ticked"
@@ -221,18 +229,22 @@
                                                 <label>Chart type:</label>
                                                 <br />
                                                 <label>
-                                                    <input type="checkbox" name="pie" value="pie" ng-model="showPieChart">
+                                                    <input type="checkbox" name="pie" value="pie" ng-model="vm.isPieChart" ng-disabled="vm.isPieCompatible">
                                                     Pie &nbsp;
                                                 </label>
                                                 <label>
-                                                    <input type="checkbox" name="column" value="column" ng-model="showColumnChart">
+                                                    <input type="checkbox" name="column" value="column" ng-model="vm.isColumnChart" ng-disabled="vm.isColumnCompatible">
                                                     Column &nbsp;
+                                                </label>
+                                                <label>
+                                                    <input type="checkbox" name="stacked" value="stacked" ng-model="vm.isStackedChart" ng-disabled="vm.isStackedCompatible">
+                                                    MS Column &nbsp;
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-12">
                                             <div class="btn-group pull-right">
-                                                <button type="submit" class="btn btn-primary btn-flat" value="Search"><i class="glyphicon glyphicon-search"></i> Search</button>
+                                                <button type="submit" class="btn btn-primary btn-flat" value="Search" ng-disabled="vm.isSearchbtnDisabled"><i class="glyphicon glyphicon-search"></i> Search</button>
                                             </div>
                                         </div>
                                     </div>
@@ -243,13 +255,13 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="panel-group" id="accordion2" ng-if="showChart">
+                        <div class="panel-group" id="accordion2" ng-show="vm.showAreaChart">
                             <div class="panel panel-default">
                                 <a data-toggle="collapse" data-parent="#accordion2" href="!/#collapseTwo">
                                     <div class="list-group-item list-group-item-default">
                                         <div class="row">
                                             <div class="col-md-12  accordion-toggle">
-                                                <img style="margin-right: 5px;" src="../../../Content/images/sales/stats_area_chart_icon.jpg" class="img-responsive pull-left" />
+                                                <img style="margin-right: 5px;" src="Content/images/sales/stats_area_chart_icon.jpg" class="img-responsive pull-left" />
                                                 Area Chart
                                             </div>
                                         </div>
@@ -262,8 +274,8 @@
                                                  width="100%"
                                                  height="400"
                                                  type="area2d"
-                                                 chart="{{salesareachartattrs}}"
-                                                 dataset="{{saleschartdataset}}">
+                                                 chart="{{vm.areachartattrs}}"
+                                                 dataset="{{vm.sschartdataset}}">
                                             </div>
                                             <br />
                                         </div>
@@ -279,31 +291,35 @@
                                     <div class="list-group-item list-group-item-default">
                                         <div class="row">
                                             <div class="col-md-12  accordion-toggle">
-                                                <img style="margin-right: 5px;" src="../../../Content/images/sales/chart-icon-color.png" class="img-responsive pull-left" />
-                                                Pie & Column Chart
+                                                <img style="margin-right: 5px;" src="Content/images/sales/chart-icon-color.png" class="img-responsive pull-left" />
+                                                Pie & Column or MS Column Chart
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                                 <div id="collapseThree" class="panel-collapse collapse in">
                                     <div class="panel-body">
-                                        <div class="text-center" ng-class="showColumnChart ? 'col-md-6' : 'col-md-12'" ng-if="showPieChart">
+                                        <div class="text-center" ng-class="vm.showColumnChart ? 'col-md-6' : 'col-md-12'" ng-show="vm.showPieChart">
                                             <div fusioncharts
                                                  width="100%"
                                                  height="400"
                                                  type="pie3d"
-                                                 chart="{{salespiechartattrs}}"
-                                                 dataset="{{saleschartdataset}}">
+                                                 chart="{{vm.piechartattrs}}"
+                                                 dataset="{{vm.sschartdataset}}">
                                             </div>
                                         </div>
-                                        <div class="text-center" ng-class="showPieChart ? 'col-md-6' : 'col-md-12'" ng-if="showColumnChart">
+                                        <div class="text-center" ng-class="vm.showPieChart ? 'col-md-6' : 'col-md-12'" ng-show="vm.showColumnChart">
                                             <div fusioncharts
+                                                 id="test"
                                                  width="100%"
                                                  height="400"
                                                  type="column3d"
-                                                 chart="{{salescolumnchartattrs}}"
-                                                 dataset="{{saleschartdataset}}">
+                                                 chart="{{vm.columnchartattrs}}"
+                                                 dataset="{{vm.sschartdataset}}">
                                             </div>
+                                        </div>
+                                        <div class="text-center" ng-class="'col-md-12'" ng-show="vm.showStackedChart">
+                                            <div id="stacked_chart_container"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -317,7 +333,7 @@
                                     <div class="list-group-item list-group-item-default">
                                         <div class="row">
                                             <div class="col-md-12  accordion-toggle">
-                                                <img style="margin-right: 5px;" src="../../../Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
+                                                <img style="margin-right: 5px;" src="Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
                                                 Report Data in table format
                                             </div>
                                         </div>
@@ -325,34 +341,159 @@
                                 </a>
                                 <div id="collapseFour" class="panel-collapse collapse">
                                     <div class="panel-body">
-                                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-if="salesHeader.length > 0">
+                                        <div class="table-responsive" ng-style="{'margin-top': '-3px'}" ng-if="vm.salesValHeader.length > 0">
+                                            <span style="font-size:15px;">
+                                                Total Sales(BDT)
+                                            </span>
                                             <span class="pull-right">
-                                                <button class="btn btn-link" ng-click="exportToExcel('#salesTable')">
+                                                <button class="btn btn-link" ng-click="vm.exportToExcel('#valTable')">
                                                     <span class="glyphicon glyphicon-share"></span> Export to Excel
                                                 </button>
+                                                <select class="soflow" ng-model="vm.valValueFormatter" ng-change="vm.changeValueFormat('val')">
+                                                    <option value="Million">Value in Million</option>
+                                                    <option value="Thousand">Value in Thousand</option>
+                                                </select>
                                             </span>
-                                            <table class="table table-bordered table-striped" id="salesTable" style="font-size:13px;">
+                                            <hr />
+                                            <!--this table is used only for export to excel-->
+                                            <!--start-->
+                                            <table class="table table-bordered table-striped" id="valTable" style="font-size:13px;" ng-show="false">
                                                 <thead>
                                                     <tr style="background-color: #605ca8; color: white; ">
-                                                        <th ng-repeat="header in salesHeader">
+                                                        <th ng-repeat="header in vm.salesValHeader">
                                                             {{header}}
                                                         </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr ng-repeat="data in salesData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit" style="background-color:{{data['background']}}; font-weight: {{data['fontweight']}};">
-                                                        <td ng-repeat="header in salesHeader">
-                                                            {{getCommaSeparatedValue(data[header])}}
+                                                    <tr ng-repeat="data in vm.salesValData" style="background-color:{{data['background']}}; font-weight: {{data['fontweight']}};">
+                                                        <td ng-repeat="header in vm.salesValHeader">
+                                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
                                                         </td>
                                                     </tr>
-                                                    <tr ng-if="currentPage == noOfPages" style="background-color:#605ca8; font-weight: bold; color: white;">
-                                                        <td ng-repeat="total in salesDataTotal track by $index">
+                                                    <tr style="background-color:#605ca8; font-weight: bold; color: white;">
+                                                        <td ng-repeat="total in vm.salesValTotal track by $index">
                                                             <b>{{total}}</b>
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                            <pagination class="pull-right" page="currentPage" max-size="noOfPages" total-items="totalItems" items-per-page="entryLimit" style="cursor:pointer;"></pagination>
+                                            <!--end-->
+                                            <table class="table table-bordered table-striped" style="font-size:13px;">
+                                                <thead>
+                                                    <tr style="background-color: #605ca8; color: white; ">
+                                                        <th ng-repeat="header in vm.salesValHeader">
+                                                            {{header}}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="data in vm.salesValData | startFrom:(vm.valCurrentPage-1)*vm.valEntryLimit | limitTo:vm.valEntryLimit" style="background-color:{{data['background']}}; font-weight: {{data['fontweight']}};">
+                                                        <td ng-repeat="header in vm.salesValHeader">
+                                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-if="vm.valCurrentPage == vm.valNoOfPages" style="background-color:#605ca8; font-weight: bold; color: white;">
+                                                        <td ng-repeat="total in vm.salesValTotal track by $index">
+                                                            <b>{{total}}</b>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <pagination class="pull-right" page="vm.valCurrentPage" max-size="vm.valNoOfPages" total-items="vm.valTotalItems" items-per-page="vm.valEntryLimit" style="cursor:pointer;"></pagination>
+                                        </div>
+                                        <div class="table-responsive" ng-style="{'margin-top': '-5px'}" ng-if="vm.salesQtyHeader.length > 0">
+                                            <span style="font-size:15px;">
+                                                Total Sales(Units)
+                                            </span>
+                                            <span class="pull-right">
+                                                <button class="btn btn-link" ng-click="vm.exportToExcel('#qtyTable')">
+                                                    <span class="glyphicon glyphicon-share"></span> Export to Excel
+                                                </button>
+                                            </span>
+                                            <hr />
+                                            <!--this table is used only for export to excel-->
+                                            <!--start-->
+                                            <table class="table table-bordered table-striped" id="qtyTable" style="font-size:13px;" ng-show="false">
+                                                <thead>
+                                                    <tr style="background-color: #605ca8; color: white; ">
+                                                        <th ng-repeat="header in vm.salesQtyHeader">
+                                                            {{header}}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="data in vm.salesQtyData" style="background-color:{{data['background']}}; font-weight: {{data['fontweight']}};">
+                                                        <td ng-repeat="header in vm.salesQtyHeader">
+                                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="background-color:#605ca8; font-weight: bold; color: white;">
+                                                        <td ng-repeat="total in vm.salesQtyTotal track by $index">
+                                                            <b>{{total}}</b>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <!--end-->
+                                            <table class="table table-bordered table-striped" style="font-size:13px;">
+                                                <thead>
+                                                    <tr style="background-color: #605ca8; color: white; ">
+                                                        <th ng-repeat="header in vm.salesQtyHeader">
+                                                            {{header}}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="data in vm.salesQtyData | startFrom:(vm.qtyCurrentPage-1)*vm.qtyEntryLimit | limitTo:vm.qtyEntryLimit" style="background-color:{{data['background']}}; font-weight: {{data['fontweight']}};">
+                                                        <td ng-repeat="header in vm.salesQtyHeader">
+                                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-if="vm.qtyCurrentPage == vm.qtyNoOfPages" style="background-color:#605ca8; font-weight: bold; color: white;">
+                                                        <td ng-repeat="total in vm.salesQtyTotal track by $index">
+                                                            <b>{{total}}</b>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <pagination class="pull-right" page="vm.qtyCurrentPage" max-size="vm.qtyNoOfPages" total-items="vm.qtyTotalItems" items-per-page="vm.qtyEntryLimit" style="cursor:pointer;"></pagination>
+                                        </div>
+                                        <div class="table-responsive" ng-if="vm.salesCashHeader.length > 0">
+                                            <span style="font-size:15px;">
+                                                Financials
+                                            </span>
+                                            <span class="pull-right">
+                                                <button class="btn btn-link" ng-click="vm.exportToExcel('#cashTable')">
+                                                    <span class="glyphicon glyphicon-share"></span> Export to Excel
+                                                </button>
+                                                <select class="soflow" ng-model="vm.cashValueFormatter" ng-change="vm.changeValueFormat('cash')">
+                                                    <option value="Million">Value in Million</option>
+                                                    <option value="Thousand">Value in Thousand</option>
+                                                </select>
+                                            </span>
+                                            <hr style="" />
+                                            <table class="table table-bordered table-striped" id="cashTable" style="font-size:13px;">
+                                                <thead>
+                                                    <tr style="background-color: #605ca8; color: white; ">
+                                                        <th ng-repeat="header in vm.salesCashHeader">
+                                                            {{header}}
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="data in vm.salesCashData">
+                                                        <td ng-repeat="header in vm.salesCashHeader">
+                                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="background-color:#605ca8; font-weight: bold; color: white;">
+                                                        <td ng-repeat="total in vm.salesCashTotal track by $index">
+                                                            <b>{{total}}</b>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -363,3 +504,4 @@
             </div>
         </div>
     </div>
+</div>

@@ -43,6 +43,7 @@ namespace SalesVentana
             "~/Scripts/Vendors/fastclick.min.js",
             "~/Scripts/Vendors/loading-bar.js",
             "~/Scripts/Vendors/popeye.min.js",
+            "~/Scripts/Vendors/angular-busy.min.js",
             "~/Scripts/site.js"
             ));
 
@@ -57,6 +58,7 @@ namespace SalesVentana
              "~/Scripts/app/services/pathNameService.js",
              "~/Scripts/app/services/excelExportService.js",
              "~/Scripts/app/services/dataSharingService.js",
+             "~/Scripts/app/services/dataHelperService.js",
              "~/Scripts/app/layout/topBar.directive.js",
              "~/Scripts/app/layout/sideBar.directive.js",
              "~/Scripts/app/layout/breadCrumb.directive.js",
@@ -67,7 +69,12 @@ namespace SalesVentana
              "~/Scripts/app/home/indexCtrl.js",
              "~/Scripts/app/sales/salesCtrl.js",
              "~/Scripts/app/letterCredit/letterCreditCtrl.js",
-             "~/Scripts/app/letterCredit/lcDetailCtrl.js"));
+             "~/Scripts/app/letterCredit/lcDetailCtrl.js",
+             "~/Scripts/app/receivableSales/receivableSalesCtrl.js",
+             "~/Scripts/app/receivableSales/receivableSalesDetailCtrl.js",
+             "~/Scripts/app/project/projectCtrl.js",
+             "~/Scripts/app/project/projectDetailCtrl.js",
+             "~/Scripts/app/purchaseOrder/purchaseOrderCtrl.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
             "~/content/css/bootstrap.css",
@@ -80,7 +87,8 @@ namespace SalesVentana
             "~/content/css/toastr.css",
             "~/content/css/jquery.fancybox.css",
             "~/content/css/loading-bar.css",
-            "~/content/css/popeye.min.css"));
+            "~/content/css/popeye.min.css",
+            "~/content/css/angular-busy.min.css"));
 
             BundleTable.EnableOptimizations = false;
 

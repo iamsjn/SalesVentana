@@ -1,5 +1,5 @@
 ﻿<header class="main-header">
-    <a ng-href="#/home" class="logo">
+    <a ng-href="#/sales" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini"><b>S</b>V</span>
         <!-- logo for regular state and mobile devices -->
@@ -9,16 +9,44 @@
         <!--<a ng-href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button" onclick="return false;" ng-if="userData.isUserLoggedIn">
             <span class="sr-only">Toggle navigation</span>
         </a>-->
+        <div class="navbar-custom-menu" style="float:left;">
+            <ul class="nav navbar-nav" ng-if="userData.isUserLoggedIn">
+                <li class="user user-menu">
+                    <a ng-href="#/letter-credit">
+                        <img src="Content/images/lc/letter_of_credit_icon.jpg" class="user-image" alt="User Image">
+                        <span class="hidden-xs">Letter Credit</span>
+                    </a>
+                </li>
+                <li class="user user-menu">
+                    <a ng-href="#/receivable-sales">
+                        <img src="Content/images/lc/letter_of_credit_icon.jpg" class="user-image" alt="User Image">
+                        <span class="hidden-xs">Receivable Sales</span>
+                    </a>
+                </li>
+                <li class="user user-menu">
+                    <a ng-href="#/project">
+                        <img src="Content/images/lc/letter_of_credit_icon.jpg" class="user-image" alt="User Image">
+                        <span class="hidden-xs">Project</span>
+                    </a>
+                </li>
+                <li class="user user-menu">
+                    <a ng-href="#/purchase-order">
+                        <img src="Content/images/lc/letter_of_credit_icon.jpg" class="user-image" alt="User Image">
+                        <span class="hidden-xs">Purchase Order</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <li class="dropdown user user-menu" ng-if="userData.isUserLoggedIn">
                     <a ng-href="#" class="dropdown-toggle" data-toggle="dropdown" onclick="return false;">
-                        <img src="/Content/images/users/avatar.png" class="user-image" alt="User Image">
+                        <img src="Content/images/users/avatar.png" class="user-image" alt="User Image">
                         <span class="hidden-xs">{{username}}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <li class="user-header">
-                            <img src="/Content/images/users/avatar.png" class="img-circle" alt="User Image">
+                            <img src="Content/images/users/avatar.png" class="img-circle" alt="User Image">
                             <p>
                                 {{username}}
                                 <small>Member since Nov. 2012</small>

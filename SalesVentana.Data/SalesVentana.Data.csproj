@@ -50,7 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\ProductCategoryWiseSalesExtensions.cs" />
     <Compile Include="Extensions\UserExtensions.cs" />
     <Compile Include="Infrastructure\DbFactory.cs" />
     <Compile Include="Infrastructure\Disposable.cs" />
@@ -64,10 +63,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\BaseRepository\BaseRepository.cs" />
     <Compile Include="Repositories\BaseRepository\IBaseRepository.cs" />
+    <Compile Include="Repositories\PurchaseOrderRepository\IPurchaseOrderRepository.cs" />
+    <Compile Include="Repositories\PurchaseOrderRepository\PurchaseOrderRepository.cs" />
+    <Compile Include="Repositories\ProjectRepository\IProjectRepository.cs" />
+    <Compile Include="Repositories\ProjectRepository\ProjectRepository.cs" />
+    <Compile Include="Repositories\ReceivableSalesRepository\IReceivableSalesRepository.cs" />
+    <Compile Include="Repositories\ReceivableSalesRepository\ReceivableSalesRepository.cs" />
     <Compile Include="Repositories\LetterCreditRepository\ILetterCreditRepository.cs" />
     <Compile Include="Repositories\LetterCreditRepository\LetterCreditRepository.cs" />
     <Compile Include="Repositories\SalesRepository\SalesRepository.cs" />
     <Compile Include="Repositories\SalesRepository\ISalesRepository.cs" />
+    <Compile Include="Repositories\TargetVsAchievementRepository\ITargetVsAchievementRepository.cs" />
+    <Compile Include="Repositories\TargetVsAchievementRepository\TargetVsAchievementRepository.cs" />
     <Compile Include="SalesVentanaConnection.cs" />
   </ItemGroup>
   <ItemGroup>

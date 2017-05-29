@@ -6,7 +6,7 @@
 
     function dataSharingService() {
 
-        var data = '';
+        var data = [];
 
         return {
             getData: function () {

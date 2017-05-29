@@ -29,12 +29,14 @@ namespace SalesVentana
         {
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 
-            //builder.RegisterType<SalesVentanaContext>().As<DbContext>().InstancePerRequest();
             builder.RegisterType<DbFactory>().As<IDbFactory>().InstancePerRequest();
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
             builder.RegisterGeneric(typeof(BaseRepository<>)).As(typeof(IBaseRepository<>)).InstancePerRequest();
             builder.RegisterType<SalesRepository>().As<ISalesRepository>().InstancePerRequest();
             builder.RegisterType<LetterCreditRepository>().As<ILetterCreditRepository>().InstancePerRequest();
+            builder.RegisterType<ReceivableSalesRepository>().As<IReceivableSalesRepository>().InstancePerRequest();
+            builder.RegisterType<ProjectRepository>().As<IProjectRepository>().InstancePerRequest();
+            builder.RegisterType<PurchaseOrderRepository>().As<IPurchaseOrderRepository>().InstancePerRequest();
             builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerRequest();
             builder.RegisterType<MembershipService>().As<IMembershipService>().InstancePerRequest();
 

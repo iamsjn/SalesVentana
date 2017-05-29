@@ -1,5 +1,5 @@
-﻿<br/>
-<div class="row" ng-controller="lcDetailCtrl" ng-init="loadInitData();">
+﻿<br />
+<div class="row" ng-controller="lcDetailCtrl as vm" ng-init="vm.loadInitData();" cg-busy="vm.detailPromise">
     <div class="col-md-12">
         <div class=" panel-group" id="accordion">
             <div class="panel panel-default">
@@ -7,37 +7,55 @@
                     <div class="list-group-item list-group-item-default">
                         <div class="row">
                             <div class="col-md-12  accordion-toggle">
-                                <img style="margin-right: 5px;" src="../Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
-                                LC Items in table format
+                                <img style="margin-right: 5px;" src="Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
+                                LC Items
                             </div>
                         </div>
                     </div>
                 </a>
                 <div id="collapse" class="panel-collapse collapse in">
                     <div class="panel-body">
-                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-if="itemHeader.length > 0">
+                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-show="vm.itemHeader.length > 0">
                             <span class="pull-right">
-                                <button class="btn btn-link" ng-click="exportToExcel('#itemTable')">
+                                <button class="btn btn-link" ng-click="vm.exportToExcel('#itemTable')">
                                     <span class="glyphicon glyphicon-share"></span> Export to Excel
                                 </button>
                             </span>
-                            <table class="table table-bordered table-striped" id="itemTable" style="font-size:13px;">
+                            <!--export table-->
+                            <table class="table table-bordered table-striped" id="itemTable" style="font-size:13px;" ng-show="false">
                                 <thead>
                                     <tr style="background-color: #605ca8; color: white; ">
-                                        <th ng-repeat="header in itemHeader">
+                                        <th ng-repeat="header in vm.itemHeader">
                                             {{header}}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="data in itemData | itemStartFrom:(itemCurrentPage-1)*itemEntryLimit | limitTo:itemEntryLimit">
-                                        <td ng-repeat="header in itemHeader" ng-d>
-                                            {{getCommaSeparatedValue(data[header])}}
+                                    <tr ng-repeat="data in vm.itemData">
+                                        <td ng-repeat="header in vm.itemHeader">
+                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <pagination class="pull-right" page="itemCurrentPage" max-size="itemNoOfPages" total-items="itemTotalItems" items-per-page="itemEntryLimit" style="cursor:pointer;"></pagination>
+                            <!--end-->
+                            <table class="table table-bordered table-striped" style="font-size:13px;">
+                                <thead>
+                                    <tr style="background-color: #605ca8; color: white; ">
+                                        <th ng-repeat="header in vm.itemHeader">
+                                            {{header}}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="data in vm.itemData | startFrom:(vm.itemCurrentPage-1)*vm.itemEntryLimit | limitTo:vm.itemEntryLimit">
+                                        <td ng-repeat="header in vm.itemHeader">
+                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <pagination class="pull-right" page="vm.itemCurrentPage" max-size="vm.itemNoOfPages" total-items="vm.itemTotalItems" items-per-page="vm.itemEntryLimit" style="cursor:pointer;"></pagination>
                         </div>
                     </div>
                 </div>
@@ -49,43 +67,55 @@
                     <div class="list-group-item list-group-item-default">
                         <div class="row">
                             <div class="col-md-12  accordion-toggle">
-                                <img style="margin-right: 5px;" src="../Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
-                                LC Expenditures in table format
+                                <img style="margin-right: 5px;" src="Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
+                                LC Expenditures
                             </div>
                         </div>
                     </div>
                 </a>
                 <div id="collapseTwo" class="panel-collapse collapse">
                     <div class="panel-body">
-                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-if="lcHeader.length > 0">
+                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-show="vm.expenditureHeader.length > 0">
                             <span class="pull-right">
-                                <button class="btn btn-link" ng-click="exportToExcel('#expenditureTable')">
+                                <button class="btn btn-link" ng-click="vm.exportToExcel('#expenditureTable')">
                                     <span class="glyphicon glyphicon-share"></span> Export to Excel
                                 </button>
                             </span>
-                            <table class="table table-bordered table-striped" id="expenditureTable" style="font-size:13px;">
+                            <!--export table-->
+                            <table class="table table-bordered table-striped" style="font-size:13px;" ng-show="false">
                                 <thead>
                                     <tr style="background-color: #605ca8; color: white; ">
-                                        <th ng-repeat="header in lcHeader">
+                                        <th ng-repeat="header in vm.expenditureHeader">
                                             {{header}}
-                                        </th>
-                                        <th>
-                                            &nbsp;
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="data in lcData | startFrom:(currentPage-1)*entryLimit | limitTo:entryLimit">
-                                        <td ng-repeat="header in lcHeader" ng-d>
-                                            {{getCommaSeparatedValue(data[header])}}
-                                        </td>
-                                        <td class="text-center">
-                                            <button type="button" data-id="{{data['lcid']}}" class="btn btn-block btn-xs btn-warning" ng-click="openUserProfile($event);">Details</button>
+                                    <tr ng-repeat="data in vm.expenditureData">
+                                        <td ng-repeat="header in vm.expenditureHeader">
+                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <pagination class="pull-right" page="currentPage" max-size="noOfPages" total-items="totalItems" items-per-page="entryLimit" style="cursor:pointer;"></pagination>
+                            <!--end-->
+                            <table class="table table-bordered table-striped" id="expenditureTable" style="font-size:13px;">
+                                <thead>
+                                    <tr style="background-color: #605ca8; color: white; ">
+                                        <th ng-repeat="header in vm.expenditureHeader">
+                                            {{header}}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="data in vm.expenditureData | startFrom:(vm.expenditureCurrentPage-1)*vm.expenditureEntryLimit | limitTo:vm.expenditureEntryLimit">
+                                        <td ng-repeat="header in vm.expenditureHeader">
+                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <pagination class="pull-right" page="vm.expenditureCurrentPage" max-size="vm.expenditureNoOfPages" total-items="vm.expenditureTotalItems" items-per-page="vm.expenditureEntryLimit" style="cursor:pointer;"></pagination>
                         </div>
                     </div>
                 </div>
@@ -97,37 +127,55 @@
                     <div class="list-group-item list-group-item-default">
                         <div class="row">
                             <div class="col-md-12  accordion-toggle">
-                                <img style="margin-right: 5px;" src="../Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
-                                LC Activities in table format
+                                <img style="margin-right: 5px;" src="Content/images/sales/upload-report-icon-43988.png" class="img-responsive pull-left" />
+                                LC Activities
                             </div>
                         </div>
                     </div>
                 </a>
                 <div id="collapseThree" class="panel-collapse collapse">
                     <div class="panel-body">
-                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-if="activityHeader.length > 0">
+                        <div class="table-responsive" ng-style="{'margin-top': '-20px'}" ng-show="vm.activityHeader.length > 0">
                             <span class="pull-right">
-                                <button class="btn btn-link" ng-click="exportToExcel('#activityTable')">
+                                <button class="btn btn-link" ng-click="vm.exportToExcel('#activityTable')">
                                     <span class="glyphicon glyphicon-share"></span> Export to Excel
                                 </button>
                             </span>
-                            <table class="table table-bordered table-striped" id="activityTable" style="font-size:13px;">
+                            <!--export table-->
+                            <table class="table table-bordered table-striped" id="activityTable" style="font-size:13px;" ng-show="false">
                                 <thead>
                                     <tr style="background-color: #605ca8; color: white; ">
-                                        <th ng-repeat="header in activityHeader">
+                                        <th ng-repeat="header in vm.activityHeader">
                                             {{header}}
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="data in activityData | activityStartFrom:(activityCurrentPage-1)*activityEntryLimit | limitTo:activityEntryLimit">
-                                        <td ng-repeat="header in activityHeader" ng-d>
-                                            {{getCommaSeparatedValue(data[header])}}
+                                    <tr ng-repeat="data in vm.activityData">
+                                        <td ng-repeat="header in vm.activityHeader">
+                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <pagination class="pull-right" page="activityCurrentPage" max-size="activityNoOfPages" total-items="activityTotalItems" items-per-page="activityEntryLimit" style="cursor:pointer;"></pagination>
+                            <!--end-->
+                            <table class="table table-bordered table-striped" style="font-size:13px;">
+                                <thead>
+                                    <tr style="background-color: #605ca8; color: white; ">
+                                        <th ng-repeat="header in vm.activityHeader">
+                                            {{header}}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="data in vm.activityData | startFrom:(vm.activityCurrentPage-1)*vm.activityEntryLimit | limitTo:vm.activityEntryLimit">
+                                        <td ng-repeat="header in vm.activityHeader">
+                                            {{vm.getCommaSeparatedData(data[header], header, [''])}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <pagination class="pull-right" page="vm.activityCurrentPage" max-size="vm.activityNoOfPages" total-items="vm.activityTotalItems" items-per-page="vm.activityEntryLimit" style="cursor:pointer;"></pagination>
                         </div>
                     </div>
                 </div>

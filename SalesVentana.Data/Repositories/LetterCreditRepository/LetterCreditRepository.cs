@@ -35,6 +35,12 @@ namespace SalesVentana.Data
             DbFactory = dbFactory;
         }
         #endregion
+        public DataTable GetLCNo()
+        {
+            _sqlQuery = string.Format(@"Select LCId, LCNo From vw_LCFact;");
+            return ExecuteDataTable();
+        }
+
         public DataTable GetStatus()
         {
             _sqlQuery = string.Format(@"Select LCStatusId StatusId, Name StatusName From vw_DimLCStatus;");
@@ -59,12 +65,16 @@ namespace SalesVentana.Data
             return ExecuteDataTable();
         }
 
-        public DataTable GetLCSummary(string statusIds, string supplierIds, string bankIds, string termIds, DateTime issueFromDate, DateTime issueToDate)
+        public DataTable GetLCSummary(string lcIds, string statusIds, string supplierIds, string bankIds, string termIds, DateTime issueFromDate, DateTime issueToDate)
         {
+            string lcIdQuery = string.Empty;
             string statusIdQuery = string.Empty;
             string supplierIdQuery = string.Empty;
             string bankIdQuery = string.Empty;
             string termIdQuery = string.Empty;
+
+            if (!string.IsNullOrEmpty(lcIds))
+                lcIdQuery = "AND lcf.lcid IN(" + lcIds.Trim(',') + ")";
 
             if (!string.IsNullOrEmpty(statusIds))
                 statusIdQuery = "AND lcf.lcstatus IN(" + statusIds.Trim(',') + ")";
@@ -78,8 +88,8 @@ namespace SalesVentana.Data
             if (!string.IsNullOrEmpty(termIds))
                 termIdQuery = "AND lcf.Termsofpaymentoption IN(" + termIds.Trim(',') + ")";
 
-            _sqlQuery = string.Format(@"SELECT lcf.lcid, lcf.lcno 'LC no.',CONVERT(VARCHAR(11),lcf.issuedate,106) 'Issue Date',lcf.lcvalue 'LC Value',cur.Currency Currency,lcf.lcvaluetk 'LC Value(TK.)',
-                                        lcitem.itemcount 'Number of Items',bank.BankName 'Own Bank',supplier.SupplierName 'Supplier',
+            _sqlQuery = string.Format(@"SELECT lcf.lcid, lcf.lcno 'LC No.',CONVERT(VARCHAR(11),lcf.issuedate,106) 'Issue Date',lcf.lcvalue 'LC Value',cur.Currency Currency,lcf.currencyvalue 'Currency Value',lcf.lcvaluetk 'LC Value(TK)',
+                                        isnull(lcitem.itemcount,0) 'Number of Items',bank.BankName 'Own Bank',supplier.SupplierName 'Supplier',
                                         lastact.lastactivity 'Last Activity Done',CONVERT(VARCHAR(11),lastact.activityDate ,106)'Activity Date',payoption.Name 'Payment Terms',
                                         CONVERT(VARCHAR(11),lcf.expiredate,106)  'Retirement Date'
                                         FROM vw_LCFact lcf 
@@ -96,7 +106,8 @@ namespace SalesVentana.Data
                                         {3}
                                         {4}
                                         {5}
-                                        ORDER BY lcf.issuedate;", issueFromDate, issueToDate, statusIdQuery, supplierIdQuery, bankIdQuery, termIdQuery);
+                                        {6}
+                                        ORDER BY lcf.issuedate;", issueFromDate, issueToDate, lcIdQuery, statusIdQuery, supplierIdQuery, bankIdQuery, termIdQuery);
             return ExecuteDataTable();
         }
 
@@ -108,7 +119,7 @@ namespace SalesVentana.Data
 
         public DataTable GetLCExpenditures(int id)
         {
-            _sqlQuery = string.Format(@"Select PaymentOptionId TermId, Name TermName From vw_DimLCTermsofPaymentOption;");
+            _sqlQuery = string.Format(@"SELECT * FROM vw_DimLCExpense WHERE lcid={0};", id);
             return ExecuteDataTable();
         }
 

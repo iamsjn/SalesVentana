@@ -159,7 +159,7 @@ body.hold-transition .main-header .logo {
 }
 /* Content */
 .content {
-    min-height: 250px;
+    min-height: 650px;
     padding: 15px;
     margin-right: auto;
     margin-left: auto;
@@ -5868,3 +5868,24 @@ a, a:hover, a:active, a:focus {
     color: rgba(96, 92, 168, 0.91);
 }
 
+a .list-group-item {
+    color: #000;
+}
+
+select.soflow {
+    -webkit-appearance: button;
+    -webkit-border-radius: 2px;
+    -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    -webkit-user-select: none;
+    background-image: -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
+    background-position: 97% center;
+    background-repeat: no-repeat;
+    border: 1px solid #cac8e4;
+    color: #605ca8;
+    font-size: inherit;
+    overflow: hidden;
+    padding: 3px 30px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 150px;
+}

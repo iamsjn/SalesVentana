@@ -143,6 +143,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\images\raty\" />
+    <Folder Include="Scripts\vendors\angular-busy-css\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\AutofacWebapiConfig.cs" />
@@ -153,8 +154,12 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\Account\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PurchaseOrder\PurchaseOrderController.cs" />
+    <Compile Include="Controllers\Project\ProjectController.cs" />
+    <Compile Include="Controllers\ReceivableSales\ReceivableSalesController.cs" />
     <Compile Include="Controllers\LetterCredit\LetterCreditController.cs" />
     <Compile Include="Controllers\Sales\SalesController.cs" />
+    <Compile Include="Controllers\TargetVsAchievement\TargetVsAchievementController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -169,6 +174,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\css\angular-busy.min.css" />
+    <Content Include="Content\css\angular-busy-template.css" />
     <Content Include="Content\css\flat%402x.png" />
     <Content Include="Content\css\flat.css" />
     <Content Include="Content\css\flat.png" />
@@ -216,12 +223,23 @@
     <Content Include="Scripts\app\layout\breadCrumb.html" />
     <Content Include="Scripts\app\layout\breadCrumb.directive.js" />
     <Content Include="Scripts\app\layout\topBar.html" />
+    <Content Include="Scripts\app\purchaseOrder\purchaseOrder.html" />
+    <Content Include="Scripts\app\purchaseOrder\purchaseOrderCtrl.js" />
+    <Content Include="Scripts\app\project\project.html" />
+    <Content Include="Scripts\app\project\projectCtrl.js" />
+    <Content Include="Scripts\app\project\projectDetail.html" />
+    <Content Include="Scripts\app\project\projectDetailCtrl.js" />
+    <Content Include="Scripts\app\receivableSales\receivableSalesDetail.html" />
+    <Content Include="Scripts\app\receivableSales\receivableSalesDetailCtrl.js" />
+    <Content Include="Scripts\app\receivableSales\receivableSales.html" />
+    <Content Include="Scripts\app\receivableSales\receivableSalesCtrl.js" />
     <Content Include="Scripts\app\letterCredit\lcDetailCtrl.js" />
     <Content Include="Scripts\app\letterCredit\letterCredit.html" />
     <Content Include="Scripts\app\letterCredit\letterCreditCtrl.js" />
     <Content Include="Scripts\app\letterCredit\lcDetail.html" />
     <Content Include="Scripts\app\sales\sales.html" />
     <Content Include="Scripts\app\sales\salesCtrl.js" />
+    <Content Include="Scripts\app\services\dataHelperService.js" />
     <Content Include="Scripts\app\services\excelExportService.js" />
     <Content Include="Scripts\app\services\dataSharingService.js" />
     <Content Include="Scripts\app\services\pathNameService.js" />
@@ -229,6 +247,7 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\vendors\angular-animate.js" />
+    <Content Include="Scripts\vendors\angular-busy.min.js" />
     <Content Include="Scripts\vendors\angular-fusioncharts.min.js" />
     <Content Include="Scripts\vendors\fusioncharts.charts.js" />
     <Content Include="Scripts\vendors\fusioncharts.js" />
@@ -281,7 +300,9 @@
     <Content Include="Scripts\vendors\ui-bootstrap-tpls-0.10.0.js" />
     <Content Include="Scripts\vendors\ui-bootstrap-tpls-0.13.1.js" />
     <Content Include="Scripts\vendors\underscore.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>

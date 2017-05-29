@@ -40,9 +40,8 @@ namespace SalesVentana.Data
             InjectMapper<M>();
             _sqlQuery = string.Format("Select * From [{0}];", table);
             IDataReader reader = ExecuteReader();
-            while (reader.Read())
-                objCollection.Add(_mapper.MapObject(reader));
-
+            while (reader.Read()) objCollection.Add(_mapper.MapObject(reader));
+            reader.Close();
             return objCollection;
         }
 
@@ -52,9 +51,8 @@ namespace SalesVentana.Data
             InjectMapper<M>();
             _sqlQuery = string.Format(@"Select * From [{0}] Where {1} = {2};", table, column, value);
             IDataReader reader = ExecuteReader();
-            while (reader.Read())
-                objCollection.Add(_mapper.MapObject(reader));
-
+            while (reader.Read()) objCollection.Add(_mapper.MapObject(reader));
+            reader.Close();
             return objCollection;
         }
 
@@ -65,6 +63,7 @@ namespace SalesVentana.Data
             _sqlQuery = string.Format(@"Select * From [{0}] Where {1} = {2};", table, column, value);
             IDataReader reader = ExecuteReader();
             obj = _mapper.MapObject(reader);
+            reader.Close();
 
             return obj;
         }

@@ -16,13 +16,12 @@ namespace SalesVentana.Controllers
     public class SalesController : ApiControllerBase
     {
         ISalesRepository _salesRepository = null;
-        IUnitOfWork _unitOfWork = null;
+
         public SalesController(IBaseRepository<Error> errorRepository, ISalesRepository salesRepository,
             IUnitOfWork unitOfWork)
             : base(errorRepository, unitOfWork)
         {
             _salesRepository = salesRepository;
-            _unitOfWork = unitOfWork;
         }
 
         [Authorize]
@@ -149,6 +148,37 @@ namespace SalesVentana.Controllers
         }
 
         [Authorize]
+        [Route("initial-data")]
+        [HttpGet]
+        public HttpResponseMessage GetInitialData(HttpRequestMessage request)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+
+                DataTable brand = _salesRepository.GetBrand();
+                DataTable region = _salesRepository.GetRegion();
+                DataTable channel = _salesRepository.GetChannel();
+                DataTable showroom = _salesRepository.GetShowroom();
+                DataTable category = _salesRepository.GetProductCategory(string.Empty);
+                DataTable product = _salesRepository.GetProduct(string.Empty);
+
+                _unitOfWork.Terminate();
+
+                response = request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    brands = brand.AsEnumerable().Select(x => new { brandId = x.Field<int>("BrandId"), brandName = x.Field<string>("BrandName") }),
+                    regions = region.AsEnumerable().Select(x => new { regionId = x.Field<int>("RegionId"), regionName = x.Field<string>("RegionName") }),
+                    channels = channel.AsEnumerable().Select(x => new { channelId = x.Field<int>("ChannelId"), channelName = x.Field<string>("ChannelName") }),
+                    showrooms = showroom.AsEnumerable().Select(x => new { showroomId = x.Field<int>("ShowroomId"), showroomName = x.Field<string>("Name") }),
+                    productCategories = category.AsEnumerable().Select(x => new { categoryId = x.Field<int>("CategoryId"), categoryName = x.Field<string>("CategoryName") }),
+                    products = product.AsEnumerable().Select(x => new { productId = x.Field<int>("ProductId"), productName = x.Field<string>("ProductName") })
+                });
+                return response;
+            });
+        }
+
+        [Authorize]
         [Route("yearly-sales/{year}")]
         [HttpGet]
         [HttpPost]
@@ -157,6 +187,10 @@ namespace SalesVentana.Controllers
             return CreateHttpResponse(request, () =>
             {
                 HttpResponseMessage response = null;
+                DataTable dtTotalVal = null;
+                DataTable dtTotalQty = new DataTable();
+                DataTable dtTemp = null;
+                DataRow row = null;
                 string brandIds = string.Empty;
                 string categoryIds = string.Empty;
                 string productIds = string.Empty;
@@ -176,12 +210,32 @@ namespace SalesVentana.Controllers
                     reportFilter = searchCriteria.firstReportFilter + "," + searchCriteria.secondReportFilter;
                 }
 
-                DataTable table = _salesRepository.GetYearlySales(year, reportFilter, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
-                //table = table.DefaultView.ToTable( /*distinct*/ true);
+                dtTotalVal = _salesRepository.GetYearlySales(year, reportFilter, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
                 _unitOfWork.Terminate();
+
+                dtTemp = dtTotalVal.Copy();
+                dtTotalVal.Columns.Remove("InvoiceQty");
+
+                foreach (DataColumn item in dtTemp.Columns)
+                {
+                    if (item.ColumnName.ToLower() != "totalsales(tk)"
+                    && item.ColumnName.ToLower() != "retail")
+                        dtTotalQty.Columns.Add(item.ColumnName, item.DataType);
+                }
+
+                foreach (DataRow item in dtTemp.Rows)
+                {
+                    row = dtTotalQty.NewRow();
+                    foreach (DataColumn col in dtTotalQty.Columns)
+                        row[col.ColumnName] = item[col.ColumnName];
+
+                    dtTotalQty.Rows.Add(row);
+                }
+
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    table
+                    val = dtTotalVal,
+                    qty = dtTotalQty
                 });
                 return response;
             });
@@ -197,15 +251,8 @@ namespace SalesVentana.Controllers
             {
                 HttpResponseMessage response = null;
                 DataSet dataSet = null;
-                DataTable dtTotalSales = null;
+                DataTable dtTotalVal = null;
                 DataTable dtTotalQty = null;
-                DataTable table = new DataTable();
-                DataRow row = null;
-                int rowCount = 0;
-                int index = 0;
-                int firstOrdinal = 0;
-                int lastOrdinal = 0;
-                int count = 0;
                 string brandIds = string.Empty;
                 string categoryIds = string.Empty;
                 string productIds = string.Empty;
@@ -229,53 +276,15 @@ namespace SalesVentana.Controllers
 
                 dataSet = _salesRepository.GetQuaterlySales(year, salesQuarter, reportFilter, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
 
-                dtTotalSales = dataSet.Tables[0].Copy();
+                dtTotalVal = dataSet.Tables[0].Copy();
                 dtTotalQty = dataSet.Tables[1].Copy();
-
-                foreach (DataColumn item in dataSet.Tables[0].Columns)
-                {
-                    if (item.ColumnName == "Q1" || item.ColumnName == "Q2" ||
-                        item.ColumnName == "Q3" || item.ColumnName == "Q4")
-                    {
-                        lastOrdinal = dtTotalSales.Columns[item.ColumnName].Ordinal + 1;
-                        dtTotalSales.Columns.Add(item.ColumnName + " Quantity", typeof(double)).SetOrdinal(lastOrdinal);
-
-                        if (count == 0)
-                            firstOrdinal = dtTotalSales.Columns[item.ColumnName].Ordinal;
-
-                        dtTotalSales.Columns[item.ColumnName].ColumnName = item.ColumnName + " Value";
-
-                        count++;
-                    }
-                }
-
-                foreach (DataRow item in dtTotalSales.Rows)
-                {
-                    index = lastOrdinal;
-
-                    for (int i = (dtTotalQty.Columns.Count - 2); i >= firstOrdinal; i--)
-                    {
-                        row = dtTotalQty.Rows[rowCount];
-                        item[index] = !DBNull.Value.Equals(row.ItemArray[i]) ? Convert.ToDouble(row.ItemArray[i]) : 0.0;
-                        index = index - 2;
-                    }
-
-                    rowCount++;
-                }
-
-                foreach (DataColumn item in dtTotalSales.Columns)
-                    table.Columns.Add(item.ColumnName);
-
-                foreach (DataRow item in dtTotalSales.Rows)
-                {
-                    table.Rows.Add(item.ItemArray);
-                }
 
                 _unitOfWork.Terminate();
 
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    table
+                    val = dtTotalVal,
+                    qty = dtTotalQty
                 });
                 return response;
             });
@@ -291,15 +300,9 @@ namespace SalesVentana.Controllers
             {
                 HttpResponseMessage response = null;
                 DataSet dataSet = null;
-                DataTable dtTotalSales = null;
+                DataTable dtTotalVal = null;
                 DataTable dtTotalQty = null;
-                DataTable table = new DataTable();
-                DataRow row = null;
-                int rowCount = 0;
-                int index = 0;
-                int firstOrdinal = 0;
-                int lastOrdinal = 0;
-                int count = 0;
+                DataTable dtTotalCash = null;
                 string brandIds = string.Empty;
                 string categoryIds = string.Empty;
                 string productIds = string.Empty;
@@ -323,55 +326,17 @@ namespace SalesVentana.Controllers
 
                 dataSet = _salesRepository.GetMonthlySales(year, salesMonth, reportFilter, brandIds, categoryIds, productIds, regionIds, channelIds, showroomIds);
 
-                dtTotalSales = dataSet.Tables[0].Copy();
+                dtTotalVal = dataSet.Tables[0].Copy();
                 dtTotalQty = dataSet.Tables[1].Copy();
-
-                foreach (DataColumn item in dataSet.Tables[0].Columns)
-                {
-                    if (item.ColumnName.ToLower() == "jan" || item.ColumnName.ToLower() == "feb" || item.ColumnName.ToLower() == "mar" ||
-                        item.ColumnName.ToLower() == "apr" || item.ColumnName.ToLower() == "may" || item.ColumnName.ToLower() == "jun" ||
-                        item.ColumnName.ToLower() == "jul" || item.ColumnName.ToLower() == "aug" || item.ColumnName.ToLower() == "sep" ||
-                        item.ColumnName.ToLower() == "oct" || item.ColumnName.ToLower() == "nov" || item.ColumnName.ToLower() == "dec")
-                    {
-                        lastOrdinal = dtTotalSales.Columns[item.ColumnName].Ordinal + 1;
-                        dtTotalSales.Columns.Add(item.ColumnName + " Quantity", typeof(double)).SetOrdinal(lastOrdinal);
-
-                        if (count == 0)
-                            firstOrdinal = dtTotalSales.Columns[item.ColumnName].Ordinal;
-
-                        dtTotalSales.Columns[item.ColumnName].ColumnName = item.ColumnName + " Value";
-
-                        count++;
-                    }
-                }
-
-                foreach (DataRow item in dtTotalSales.Rows)
-                {
-                    index = lastOrdinal;
-
-                    for (int i = (dtTotalQty.Columns.Count - 2); i >= firstOrdinal; i--)
-                    {
-                        row = dtTotalQty.Rows[rowCount];
-                        item[index] = !DBNull.Value.Equals(row.ItemArray[i]) ? Convert.ToDouble(row.ItemArray[i]) : 0.0;
-                        index = index - 2;
-                    }
-
-                    rowCount++;
-                }
-
-                foreach (DataColumn item in dtTotalSales.Columns)
-                    table.Columns.Add(item.ColumnName);
-
-                foreach (DataRow item in dtTotalSales.Rows)
-                {
-                    table.Rows.Add(item.ItemArray);
-                }
+                dtTotalCash = dataSet.Tables[2].Copy();
 
                 _unitOfWork.Terminate();
 
                 response = request.CreateResponse(HttpStatusCode.OK, new
                 {
-                    table
+                    val = dtTotalVal,
+                    qty = dtTotalQty,
+                    cash = dtTotalCash
                 });
                 return response;
             });

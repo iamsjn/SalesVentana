@@ -23,11 +23,31 @@
             .when("/sales", {
                 templateUrl: pathName + "scripts/app/sales/sales.html",
                 controller: "salesCtrl",
+                controllerAs: "vm",
                 resolve: { isAuthenticated: isAuthenticated }
             })
-            .when("/lc", {
+            .when("/letter-credit", {
                 templateUrl: pathName + "scripts/app/letterCredit/letterCredit.html",
                 controller: "letterCreditCtrl",
+                controllerAs: "vm",
+                resolve: { isAuthenticated: isAuthenticated }
+            })
+            .when("/receivable-sales", {
+                templateUrl: pathName + "scripts/app/receivableSales/receivableSales.html",
+                controller: "receivableSalesCtrl",
+                controllerAs: "vm",
+                resolve: { isAuthenticated: isAuthenticated }
+            })
+            .when("/project", {
+                templateUrl: pathName + "scripts/app/project/project.html",
+                controller: "projectCtrl",
+                controllerAs: "vm",
+                resolve: { isAuthenticated: isAuthenticated }
+            })
+            .when("/purchase-order", {
+                templateUrl: pathName + "scripts/app/purchaseOrder/purchaseOrder.html",
+                controller: "purchaseOrderCtrl",
+                controllerAs: "vm",
                 resolve: { isAuthenticated: isAuthenticated }
             })
             .otherwise({ redirectTo: "/" });
